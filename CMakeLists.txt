@@ -29,7 +29,7 @@ target_link_libraries(hello_multicore
 
 # enable usb output, disable uart output
 pico_enable_stdio_usb(hello_multicore 1)
-pico_enable_stdio_uart(hello_multicore 0)
+pico_enable_stdio_uart(hello_multicore 1)
 
 # create map/bin/hex file etc.
 pico_add_extra_outputs(hello_multicore)

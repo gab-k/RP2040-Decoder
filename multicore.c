@@ -71,7 +71,7 @@ void core1_entry() {
     }
 }
 
-const int SIZE = 10 + 1  + 13 * 9 + 1 + 1;
+const int SIZE = 10 + 1  + 3 * 9 + 1 + 1;
 
 #define LEFTESTBIT 0x8000000000000000
 char* genCharArray(uint64_t last_read_bits, uint64_t mask);
