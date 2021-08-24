@@ -4,5 +4,6 @@
 
 #ifndef PICO_EXAMPLES_AUTOMAT_H
 #define PICO_EXAMPLES_AUTOMAT_H
-int fsm_main(const char *s);
+int fsm_main(const bool *arr, int index, const int len);
 #endif //PICO_EXAMPLES_AUTOMAT_H
+

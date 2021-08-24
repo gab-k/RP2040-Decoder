@@ -18,14 +18,21 @@ add_compile_options(-Wall
         -Wno-maybe-uninitialized
         )
 
-add_executable(hello_multicore
+add_executable(
+        hello_multicore
         multicore.c
-        automat.c)
+        automat.c
+        )
+
+pico_generate_pio_header(hello_multicore ${CMAKE_CURRENT_LIST_DIR}/pwm.pio)
 
 # Add pico_multicore which is required for multicore functionality
-target_link_libraries(hello_multicore
+target_link_libraries(
+        hello_multicore
         pico_stdlib
-        pico_multicore)
+        hardware_pio
+        pico_multicore
+        )
 
 # enable usb output, disable uart output
 pico_enable_stdio_usb(hello_multicore 1)
