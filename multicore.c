@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -15,8 +9,22 @@
 #include "automat.h"
 #include "CV.h"
 
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
 
-
+#define SIZE 128
+bool bitarray[SIZE] = {false};
+uint8_t bytearray[13] = {0};
+uint8_t index_new = 0;
+uint8_t index_old;
 
 bool readBit()
 {
@@ -24,210 +32,177 @@ bool readBit()
     return !gpio_get(17);
 }
 
-#define SIZE 128
-bool bitarray[SIZE] = {false};
-int index_neu = 0;
-int index_alt;
 void writeBit(bool bit){
-    index_alt = (index_neu+SIZE-1)%SIZE;
-    bitarray[index_alt] =  bit;
+    index_old = (index_new+SIZE-1)%SIZE;
+    bitarray[index_old] =  bit;
 }
 
-// void printer(char buf[100]){
-//     while (*buf) {
-//         multicore_fifo_push_blocking(*buf);
-//         buf++;
-//     }
-// }
-// uint32_t errorcount = 0;
+uint8_t read8bit(int index){
+    uint8_t retval = 0;
+    for (int i =0 ; i < 8; i++){
+        retval  <<= 1;
+        retval |= bitarray[index%SIZE]; 
+        index--;
+    }
+    return retval;
+}
 
-// #define FLAG_VALUE 123
+void convert_array (int8_t number_of_bytes){
+    //start of transmission -> byte_n(addressbyte) -> ... -> byte_0(error detection byte) -> end of transmission
+    for (int i = 0; i < number_of_bytes; i++)
+    {
+        bytearray[i] = read8bit(index_new + 8 + i*9);
+    }
+}
 
-// void pretty_print(char* s){
-//     char addresse[9];
-//     s+=11;
-//     for (int i = 0; i < 8 ; i++) {
-//         addresse[i] = *(s+i);
-//     }
-//     addresse[8] =0;
-//     s+=9;
+bool error_detection(int8_t number_of_bytes)
+{
+    //Bitwise XOR for all Bytes -> Successful result is: "0000 0000"
+    uint8_t exor_byte = 0;
+    for (int i = 0; i < number_of_bytes; i++)
+    {
+        exor_byte = exor_byte^bytearray[i]; 
+    }
+    if(exor_byte == 0b00000000){
+        return true;
+    }
+    return false;
+}
 
-//     char befehl[9];
-//     for (int i = 0; i < 8 ; i++) {
-//         befehl[i] = *(s+i);
-//     }
-//     befehl[8] =0;
-//     s+=9;
-//     char pruef[9];
-//     for (int i = 0; i < 8 ; i++) {
-//         pruef[i] = *(s+i);
-//     }
-//     s+=8;
-//     pruef[8] =0;
-//     static int32_t counter = 1;
-//     printf("%d address: %s befehl: %s pruef: %s %c\n", counter++, addresse, befehl, pruef, *s);
-// }
-
-// void core1_entry() {
-//     multicore_fifo_push_blocking(FLAG_VALUE);
-
-//     int index = 0;
-//     char buf[100] = {0};
-//     while (1) {
-//         buf[index] = multicore_fifo_pop_blocking();
-//         if (buf[index] == '\n' || index == 99) {
-//             pretty_print(buf);
-//             for(int i =0 ; i < 100; i++) {
-//                 buf[i] = 0;
-//             }
-//             index = -1;
-//         }
-//         index++;
-//     }
-// }
-
-// const int SIZE = 10 + 1  + 3 * 9 + 1 + 1;
-
-// #define LEFTESTBIT 0x8000000000000000
-// char* genCharArray(uint64_t last_read_bits, uint64_t mask);
-
-void gpio_callback_rise(uint gpio, uint32_t events) {
-    writeBit(readBit());
-    bool * s = bitarray;
-    int FSM_RESULT = fsm_main(s, index_neu, SIZE );
-    if( -1 != FSM_RESULT){
-        /*printf("Index: %d\n", index_neu);
-        for (int i = 0; i < SIZE; i++)
+// Returns true for long address 
+bool long_address(uint8_t number_of_bytes){
+    if (bitarray[(index_new-1+(9*number_of_bytes))%SIZE]) //most significant bit of first received byte
+    {
+        if (bitarray[(index_new-2+(9*number_of_bytes))%SIZE]) //second most significant bit of first received byte
         {
-            printf("Bit %d: %d \n",i,bitarray[i]);
-        }*/
-        for (int i = 0; i < FSM_RESULT; i++)
+             return true;
+        }    
+    }
+    return false;
+}
+
+bool address_evaluation(uint8_t number_of_bytes){
+    uint16_t read_address;
+    if(long_address(number_of_bytes))
+    {
+        //start of transmission -> address_byte_1 -> address_byte_0 -> ... -> end of transmission
+        uint8_t address_byte_1 = (bytearray[number_of_bytes-1])-192; //remove long address identifier bits
+        uint8_t address_byte_0 = (bytearray[number_of_bytes-2]);
+        read_address = (address_byte_1<<8)+address_byte_0;
+        printf("long address: %d ,was read. \n", read_address);
+    }
+    else
+    {
+        //start of transmission ->  address_byte_0 -> ... -> end of transmission
+        read_address = (bytearray[number_of_bytes-1]); 
+        printf("short address: %d ,was read. \n",read_address);
+    }
+    if (CV_1 == read_address) return true;
+    return false;
+}
+
+
+void command_evaluation(uint8_t number_of_bytes){
+    uint8_t command_byte_n;
+     //start of transmission -> ... -> command_byte_n -> ... -> command_byte_0 -> ... -> end of transmission
+     if (long_address(number_of_bytes))
+     {
+        command_byte_n = bytearray[number_of_bytes-3];
+     }
+     else
+     {
+        command_byte_n = bytearray[number_of_bytes-2];
+     }
+     if (command_byte_n>>5 == 0b00000001)           // 001X-XXXX (001 Advanced Operation Instructions)
+     {
+         switch (command_byte_n)
+         {
+         case 0b00111100:                           // 0011-1100 (Speed, Direction and Functions)
+             /* code */
+             printf("0011-1100 (Speed, Direction and Functions) \n");
+             break;
+         case 0b00111111:                           // 0011-1111 (128 Speed Step Control)
+            /*... */
+             printf("0011-1111 (128 Speed Step Control) \n");
+
+         default:
+             break;
+         }
+     }
+     if (command_byte_n>>6 == 0b00000010)           // 10XX-XXXX (Function Group Instruction)
+     {
+         if (command_byte_n>>5 == 0b00000100)       // Functions F0-F4
+         {
+            /*...........*/
+            printf("Functions F0-F4 \n");
+         }
+         else
+         {
+             switch (command_byte_n>>4)
+             {
+             case 0b00001011:                       // Functions F5-F8
+                 /* code */
+                printf("Functions F5-F8 \n");
+                break;
+             case 0b00001010:                       // Functions F9-F12 
+                printf("Functions F9-F12 \n");
+                /* code */  
+                break;
+             default:
+                 break;
+             }
+         }
+     }
+     
+     
+     
+
+}
+
+
+void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
+    writeBit(readBit());                            
+    bool * s = bitarray;                            
+    int fsm_result = fsm_main(s, index_new, SIZE );         //fsm_main returns number of bytes if it finds valid bit sequence otherwise it returns -1
+    if(fsm_result != -1){ 
+        convert_array(fsm_result);                           //converts bitarray to bytearray for easier handling
+        if(error_detection(fsm_result)){                     //Returns true if exor equals 0b00000000 matches with CV
+            printf("no error :-)\n");         
+            if(address_evaluation(fsm_result)){              //Returns true if address matches with CV
+                printf("address matches :-)\n");         
+                command_evaluation(fsm_result);
+            }
+            else  printf("ADDRESS DOES NOT MATCH!\n");
+        }
+        else  printf("ERROR DETECED!\n");
+        printf("\n");        
+
+        /*for (int i = 0; i < fsm_result; i++)
         {
-            printf("\nletzter-%d BYTE: ",i);
+            printf("\nBYTE_%d: ",i);
             for (int j = 0; j < 8; j++)
             {
-            printf("%d",bitarray[(index_neu-j+8+(9*i))%SIZE]);
+            printf("%d",bitarray[(index_new-j+8+(9*i))%SIZE]);
             }    
         }
-        printf("\nPaketgroesse: %d\n",FSM_RESULT);
+        printf("\nPaketgroesse: %d\n",fsm_result);
         printf("\n");
-    }
-    index_neu = index_alt;
+        printf(BYTE_TO_BINARY_PATTERN"\n",BYTE_TO_BINARY(error_detection(fsm_result, index_new)));
+        */   
+    }    
+    index_new = index_old;
 }
-    // static uint64_t last_read_Bits;
-    // static uint64_t mask = LEFTESTBIT;
-    // bool last_read_bit = readBit();
 
-    // if (last_read_bit) {
-    //     last_read_Bits = last_read_Bits | mask;
-    // } else {
-    //     last_read_Bits = last_read_Bits & ~mask;
-    // }
-    // if ( mask == 1) {
-    //     mask = LEFTESTBIT;
-    // } else {
-    //     mask >>= 1;
-    // }
-    // char * s = genCharArray(last_read_Bits, mask);
-    // if (fsm_main(bitarray) == 1) {
-    //     s[SIZE-2 ] ='\n';
-    //     s[SIZE-1 ] =0;
-    //     printer(s);
-    // }
-    // free(s);
-
-
-// char* genCharArray(uint64_t last_read_bits, uint64_t mask) {
-//     char *s = malloc(SIZE);
-//     for ( int i = SIZE-3; i >= 0 ; i-- ) {
-//         if ( mask == LEFTESTBIT ){
-//             mask = 1;
-//         } else {
-//             mask <<= 1;
-//         }
-//         s[i] = last_read_bits & mask ? '1': '0';
-//     }
-//     s[SIZE-2 ] =0;
-//     return s;
-// }
 
  int main() {
     stdio_init_all();
-    // multicore_launch_core1(core1_entry);
-    // Wait for it to start up
-    // uint32_t g = multicore_fifo_pop_blocking();
-
-    // if (g != FLAG_VALUE)
-    //     printf("Hmm, that's not right on core 0!\n");
-    // else {
-    //     printf("It's all gone well on core 0!");
-    // }
-
     gpio_init(17);
     gpio_set_dir(17, GPIO_IN);
-    gpio_set_irq_enabled_with_callback(17, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
-
-/*
-    //preamble
-    for (int i = 0; i < 14; i++) writeBit(1);
-    
-    //trenn bit
-    writeBit(0);
-    
-    //byte 0
-    for (int i = 0; i < 8; i++) writeBit(1);   
-    
-    //trenn bit
-    writeBit(0);
-
-    //byte 1
-    for (int i = 0; i < 8; i++) writeBit(0);
-
-    //trenn bit
-    writeBit(0);
-    
-    //byte 2
-    for (int i = 0; i < 8; i++) writeBit(1);
-    
-    //trenn bit
-    writeBit(0);
-
-    //byte 3
-    for (int i = 0; i < 8; i++) writeBit(1);
-
-    //trenn bit
-    writeBit(0);
-
-    //byte 4
-    for (int i = 0; i < 8; i++) writeBit(1);   
-    
-    //trenn bit
-    writeBit(0);
-
-    //byte 5
-    for (int i = 0; i < 8; i++) writeBit(1);   
-    
-    //end bit
-    writeBit(1);
-*/
+    gpio_set_irq_enabled_with_callback(17, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);   
     while(1);
-
-    /// \end::setup_multicore[]
-        // todo get free sm
-    // PIO pio = pio0;
-    // int sm = 0;
-    // uint offset = pio_add_program(pio, &pwm_program);
-    // printf("Loading program at %d\n", offset);
-
-    // pwm_program_init(pio, sm, offset, 10);
-    // pio_pwm_set_period(pio, sm, (1u<<16)-1000);
-
-    // int level = 0;
-    // while (true) {
-    //     printf("Level = %d\n", level);
-    //     pio_pwm_set_level(pio, sm, level * level);
-    //     level = (level + 1) % 256;
-    //     sleep_ms(100);
-    }
+}
 
 
+
+
+    

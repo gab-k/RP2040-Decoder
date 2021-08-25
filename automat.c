@@ -1793,14 +1793,13 @@ fsm_main(const bool *arr, int index, const int len)
             break;
 
             case S228: /* e.g. "10000000000000000000000000001111111111" */
-                cancel_for = true;
-                break;
+                goto endloop;
 
             default:
                 ; /* unreached */
         }
     }
-
+endloop:
     /* end states */
     switch (state) {
         case S138: return 13; /* "1[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}0[01]{8}01{10}"    13-BYTE*/
