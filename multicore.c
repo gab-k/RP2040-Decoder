@@ -32,7 +32,7 @@ uint8_t index_old;
 
 
 bool get_current_direction(){
-    return false;
+    return true;
 }
 
 void emergency_break(){
@@ -49,20 +49,26 @@ void set_outputs()
     for (uint8_t i = 0; i < SIZE_FUNCTION_BIT_ARRAY; i++)
     {
         if (function_bit_array[i])
-        {
-            uint8_t mask = 0b00000001;
-            for (uint8_t j = 0; j < 8; j++)
+        {  
+            bool direction = get_current_direction();               // true == forward , false == reverse
+            uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4+i*8-4*direction];
+            uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5+i*8-4*direction];
+            uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6+i*8-4*direction];
+            uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7+i*8-4*direction];
+            uint32_t func_cv = (func_cv_0)+(func_cv_1<<8)+(func_cv_2<<16)+(func_cv_3<<24);
+            uint32_t mask = 1;
+            for (uint8_t j = 0; j < 32; j++)
             {
-                uint8_t bit_value = (mask&CV_FUNCTION_ARRAY[i])>>j;
-              //gpio_put(j,bit_value);
-                printf("GPIO: %d set to: %d\n",j,bit_value);
-                mask = mask << 1;
+                uint32_t bit_value =  (func_cv&mask)>>j;
+                printf("GPIO: %u, set to: %d\n",j,bit_value);
+                //gpio_put(j,bit_value);
+                mask = mask<<1;
             }
             
+            // printf("func_cv: %u\n",func_cv);
+            // printf("func: F%u, direction: %u\n",func,direction);
+            //printf("func_cv_0_index: %d  func_cv_1_index: %d  func_cv_2_index: %d  func_cv_3_index: %d  \n",4+257+i*8-4*direction,4+258+i*8-4*direction,4+259+i*8-4*direction,4+260+i*8-4*direction);
         }
-        // bool current_bit = function_bit_array[i];
-        // uint8_t current_CV = CV_FUNCTION_ARRAY[i];
-        // printf("GPIO: %d - %d ; ",i,function_bit_array[i]);
     }
     printf("\n");
 }
