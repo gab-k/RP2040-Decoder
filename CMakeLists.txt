@@ -31,6 +31,7 @@ target_link_libraries(
         hello_multicore
         pico_stdlib
         hardware_pio
+        hardware_pwm
         pico_multicore
         )
 
