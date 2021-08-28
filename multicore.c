@@ -10,48 +10,32 @@
 #include "automat.h"
 #include "CV.h"
 #include "multicore.h"
-#define SIZE_BIT_ARRAY 128
-#define SIZE_BYTE_ARRAY 13
-#define SIZE_FUNCTION_BIT_ARRAY 68
-bool bit_array[SIZE_BIT_ARRAY] = {false};
-bool function_bit_array[SIZE_FUNCTION_BIT_ARRAY] = {false};
-uint8_t byte_array[SIZE_BYTE_ARRAY] = {0};
-uint8_t index_new = 0;
-uint8_t index_old;
+#define SIZE_BYTE_ARRAY 5
+#define SIZE_ACTIVE_FUNCTIONS 69
+bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
 bool direction = 1;
 
-
-void set_speed(uint8_t speed)
-{
-    if (speed == 256)   //Emergency Break
+void set_speed(uint8_t speed) {
+    if (speed == 255) //Emergency Break
     {
         // printf("EMERGENCY BREAK");
-    }
-    else                //normal speed control ranges from 0 to 126
+    } else //normal speed control ranges from 0 to 126
     {
         // printf("Speed: %u  -  Direction: %u\n", speed, direction);
     }
-    
 }
 
-void set_outputs()
-{
+void set_outputs() {
     uint32_t outputs_to_be_set = 0;
-    for (uint8_t i = 0; i < SIZE_FUNCTION_BIT_ARRAY; i++)
-    {
-        if (function_bit_array[i])
-        {  
+    for (uint8_t i = 0; i < SIZE_ACTIVE_FUNCTIONS; i++) {
+        if (active_functions[i]) {
             // printf("F%u == 1\n",i);
-            uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4+i*8-4*direction];
-            uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5+i*8-4*direction];
-            uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6+i*8-4*direction];
-            uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7+i*8-4*direction];
-            uint32_t func_cv = (func_cv_0)+(func_cv_1<<8)+(func_cv_2<<16)+(func_cv_3<<24);
-            // printf("func_cv_0: %d - ",func_cv_0);
-            // printf("func_cv_1: %d - ",func_cv_1);
-            // printf("func_cv_2: %d - ",func_cv_2);
-            // printf("func_cv_3: %d\n",func_cv_3);
-            outputs_to_be_set = outputs_to_be_set|func_cv;
+            uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4 + i * 8 - 4 * direction];
+            uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5 + i * 8 - 4 * direction];
+            uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6 + i * 8 - 4 * direction];
+            uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7 + i * 8 - 4 * direction];
+            uint32_t func_cv = (func_cv_0) + (func_cv_1 << 8) + (func_cv_2 << 16) + (func_cv_3 << 24);
+            outputs_to_be_set = outputs_to_be_set | func_cv;
             /*uint32_t mask = 1;
             or (uint8_t j = 0; j < 32; j++)
             {
@@ -68,305 +52,221 @@ void set_outputs()
     // printf("outputs_to_bet_set: %u\n",outputs_to_be_set);
 }
 
-bool readBit()
-{
+bool readBit() {
     busy_wait_us_32(87);
     return !gpio_get(17);
 }
 
-void writeBit(bool bit){
-    index_old = (index_new+SIZE_BIT_ARRAY-1)%SIZE_BIT_ARRAY;
-    bit_array[index_old] =  bit;
-}
-
-uint8_t read8bit(int index){
-    uint8_t retval = 0;
-    for (int i =0 ; i < 8; i++){
-        retval  <<= 1;
-        retval |= bit_array[index%SIZE_BIT_ARRAY]; 
-        index--;
-    }
-    return retval;
-}
-
-void parse_to_function_bit_array(uint8_t bit_index_offset,uint8_t input_byte,uint8_t count)
-{
+void update_active_functions(uint8_t function_number, uint8_t input_byte, uint8_t count) {
     uint8_t mask = 0b00000001;
-    for (uint8_t i = 0; i < count; i++)
-        {
-            function_bit_array[i+bit_index_offset] = (input_byte&mask)>>i;
-            mask = mask<<1;
-        }
-}
-
-void convert_array (int8_t number_of_bytes){
-    //start of transmission -> byte_n(addressbyte) -> ... -> byte_0(error detection byte) -> end of transmission
-    for (int i = 0; i < number_of_bytes; i++)
-    {
-        byte_array[i] = read8bit(index_new + 8 + i*9);
+    for (uint8_t i = 0; i < count; i++) {
+        active_functions[i + function_number] = (input_byte & mask) == 0 ? 0 : 1;
+        mask = mask << 1;
     }
 }
 
-bool error_detection(int8_t number_of_bytes)
-{
+bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]) {
     //Bitwise XOR for all Bytes -> Successful result is: "0000 0000"
-    uint8_t exor_byte = 0;
-    for (int i = 0; i < number_of_bytes; i++)
-    {
-        exor_byte = exor_byte^byte_array[i]; 
+    uint8_t xor_byte = 0;
+    for (int i = 0; i < number_of_bytes; i++) {
+        xor_byte = xor_byte ^ byte_array[i];
     }
-    if(exor_byte == 0b00000000){
-        return true;
-    }
-    return false;
+    return (0 == xor_byte);
 }
 
-// Returns true for long address 
-bool long_address(uint8_t number_of_bytes){
-    if (bit_array[(index_new-1+(9*number_of_bytes))%SIZE_BIT_ARRAY]) //most significant bit of first received byte
+// Returns true for long address
+bool is_long_address(uint8_t number_of_bytes, const uint8_t byte_array[]) {
+    if (byte_array[number_of_bytes - 1] >> 7) //most significant bit of first received byte
     {
-        if (bit_array[(index_new-2+(9*number_of_bytes))%SIZE_BIT_ARRAY]) //second most significant bit of first received byte
+        if (byte_array[number_of_bytes - 1] >> 6) //second most significant bit of first received byte
         {
-             return true;
-        }    
+            return true;
+        }
     }
     return false;
 }
 
-bool address_evaluation(uint8_t number_of_bytes){
+bool address_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
     uint16_t read_address;
-    if(long_address(number_of_bytes))
-    {
+    if (is_long_address(number_of_bytes, byte_array)) {
         //start of transmission -> address_byte_1 -> address_byte_0 -> ... -> end of transmission
-        uint8_t address_byte_1 = (byte_array[number_of_bytes-1])-192; //remove long address identifier bits
-        uint8_t address_byte_0 = (byte_array[number_of_bytes-2]);
-        read_address = (address_byte_1<<8)+address_byte_0;
+        uint8_t address_byte_1 = (byte_array[number_of_bytes - 1]) - 192; //remove long address identifier bits
+        uint8_t address_byte_0 = (byte_array[number_of_bytes - 2]);
+        read_address = (address_byte_1 << 8) + address_byte_0;
         // printf("long address: %u, was read. \n", read_address);
-    }
-    else
-    {
+    } else {
         //start of transmission ->  address_byte_0 -> ... -> end of transmission
-        read_address = (byte_array[number_of_bytes-1]); 
+        read_address = (byte_array[number_of_bytes - 1]);
         // printf("short address: %u, was read. \n",read_address);
     }
-    if (CV_1 == read_address) return true;
+    if (CV_1 == read_address)
+        return true;
     return false;
 }
 
-void instruction_evaluation(uint8_t number_of_bytes){
+void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
     uint8_t command_byte_n;
-    uint8_t command_byte_index;
+    uint8_t command_byte_start_index;
     // start of transmission -> ... -> command_byte_n -> ... -> command_byte_0 -> ... -> end of transmission
-    if (long_address(number_of_bytes))
-    {   
-        command_byte_index = number_of_bytes-3;
+    if (is_long_address(number_of_bytes,byte_array)) {
+        command_byte_start_index = number_of_bytes - 3;
+    } else {
+        command_byte_start_index = number_of_bytes - 2;
     }
-    else
-    {
-        command_byte_index = number_of_bytes-2;
-    }
-    command_byte_n = byte_array[command_byte_index];
+    command_byte_n = byte_array[command_byte_start_index];
 
-    if (command_byte_n>>6 == 0b00000001)    // 01XX-XXXX (Basic Speed and Direction Instruction)
+    if (command_byte_n >> 6 == 0b00000001) // 01XX-XXXX (Basic Speed and Direction Instruction)
     {
-        if (command_byte_n<<4>>4 == 0b00000001)     // 01XX-0001 (Emergency Break)
+        if (command_byte_n << 4 >> 4 == 0b00000001) // 01XX-0001 (Emergency Break)
         {
             set_speed(255);
         }
-        if (command_byte_n<<4>>4 == 0b00000000)     // 01XX-0000 (Normal Break)
+        if (command_byte_n << 4 >> 4 == 0b00000000) // 01XX-0000 (Normal Break)
         {
             set_speed(0);
-        }
-        else
-        {
+        } else {
             // printf("01XX-XXXX - Basic Speed \n");   //01XX-XXXX - Basic Speed (26 Steps)
-            uint8_t mask = 0b01111111; 
-            uint8_t speed = ((command_byte_n & mask)-1)*4;      //Max speed step is equivalent to step 104 of 128 speed step 
+            uint8_t mask = 0b01111111;
+            uint8_t speed =
+                    ((command_byte_n & mask) - 1) * 4; //Max speed step is equivalent to step 104 of 128 speed step
             mask = 0b00100000;
-            direction = (command_byte_n&mask)>>5;  
+            direction = (command_byte_n & mask) >> 5;
             set_speed(speed);
         }
     }
-    if (command_byte_n>>5 == 0b00000001)    // 001X-XXXX (Advanced Operation Instructions)
+    if (command_byte_n == 0b00111111) //0011-1111 (128 Speed Step Control) - 2 Byte length
     {
-        switch (command_byte_n)
+        // printf("0011-1111 (128 Speed Step Control) Instruction\n");
+        direction = (byte_array[command_byte_start_index - 1]) >> 7;
+        uint8_t command_byte_n_minus1 = byte_array[command_byte_start_index - 1];
+        uint8_t mask = 0b01111111;
+        uint8_t speed = (command_byte_n_minus1 & mask);
+        if (speed == 0b00000001) // 01XX-0001 (Emergency Break)
         {
-            case 0b00111100:                            // 0011-1100 (Speed, Direction and Functions) - 3 to 6 Byte length
-                // printf("0011-1100 (Speed, Direction and Functions) \n");
-                switch (command_byte_index)             //command_byte_index == Instruction Byte Length  
-                {                                       //Switch case could be replaced with for loop...
-                case 6:
-                    //F0 - F7
-                    parse_to_function_bit_array(0,byte_array[command_byte_index-2],8);
-                    //F8-F15
-                    parse_to_function_bit_array(8,byte_array[command_byte_index-3],8);
-                    //F16-F23
-                    parse_to_function_bit_array(16,byte_array[command_byte_index-4],8);
-                    //F24-F31
-                    parse_to_function_bit_array(24,byte_array[command_byte_index-5],8);
-                    //...
-                    goto speed_128;
+            set_speed(255);
+        }
+        if (speed == 0b00000000) // 01XX-0000 (Normal Break)
+        {
+            set_speed(0);
+        } else {
+            set_speed(speed - 1);
+        }
+    }
+    if (command_byte_n >> 6 == 0b00000010) // 10XX-XXXX (Function Group Instruction)
+    {
+        if (command_byte_n >> 5 == 0b00000100) // Functions F0-F4
+        {
+            update_active_functions(0, command_byte_n >> 4, 1); //F0
+            update_active_functions(1, command_byte_n, 4);      //F1-F4
+            // printf("Functions F0-F4 Instruction\n");
+        } else {
+            switch (command_byte_n >> 4) {
+                case 0b00001011: // Functions F5-F8
+                    // printf("Functions F5-F8 Instruction\n");
+                    update_active_functions(5, command_byte_n, 4);
                     break;
-                case 5: 
-                    //F0 - F7
-                    parse_to_function_bit_array(0,byte_array[command_byte_index-2],8);
-                    //F8-F15
-                    parse_to_function_bit_array(8,byte_array[command_byte_index-3],8);
-                    //F16-F23
-                    parse_to_function_bit_array(16,byte_array[command_byte_index-4],8);
-                    //...
-                    goto speed_128;
-                    break;
-                case 4:
-                    //F0 - F7
-                    parse_to_function_bit_array(0,byte_array[command_byte_index-2],8);
-                    //F8-F15
-                    parse_to_function_bit_array(8,byte_array[command_byte_index-3],8);
-                    //...
-                    goto speed_128;
-                    break;
-                case 3: 
-                    //F0 - F7
-                    parse_to_function_bit_array(0,byte_array[command_byte_index-2],8);
-                    //...
-                    goto speed_128;
+                case 0b00001010: // Functions F9-F12
+                    // printf("Functions F9-F12 Instruction\n");
+                    update_active_functions(9, command_byte_n, 4);
                     break;
                 default:
                     break;
-                }
-            break;
-
-            case 0b00111111:                            // 0011-1111 (128 Speed Step Control) - 2 Byte length
-                speed_128:
-                // printf("0011-1111 (128 Speed Step Control) Instruction\n");
-                direction = (byte_array[command_byte_index-1])>>7;
-                uint8_t command_byte_n_minus1 = byte_array[command_byte_index-1];
-                uint8_t mask = 0b01111111;
-                uint8_t speed = (command_byte_n_minus1 & mask);
-                if (speed == 0b00000001)     // 01XX-0001 (Emergency Break)
-                {
-                    set_speed(255);
-                }
-                if (speed == 0b00000000)     // 01XX-0000 (Normal Break)
-                {
-                    set_speed(0);
-                }
-                else
-                {
-                    set_speed(speed-1);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    if (command_byte_n>>6 == 0b00000010)            // 10XX-XXXX (Function Group Instruction)
-    {
-        if (command_byte_n>>5 == 0b00000100)        // Functions F0-F4
-        {
-            parse_to_function_bit_array(0,command_byte_n>>4,1);    //F0
-            parse_to_function_bit_array(1,command_byte_n,4);    //F1-F4
-            // printf("Functions F0-F4 Instruction\n");
-        }
-        else
-        {
-            switch (command_byte_n>>4)
-            {
-            case 0b00001011:                        // Functions F5-F8
-                // printf("Functions F5-F8 Instruction\n");
-                parse_to_function_bit_array(5,command_byte_n,4);
-                break;
-            case 0b00001010:                        // Functions F9-F12
-                // printf("Functions F9-F12 Instruction\n");
-                parse_to_function_bit_array(9,command_byte_n,4);
-                break;
-            default:
-                break;
             }
         }
     }
-    if (command_byte_n>>5 == 0b00000110)        //Feature Expansion Instruction 110X-XXXX
+    if (command_byte_n >> 5 == 0b00000110) //Feature Expansion Instruction 110X-XXXX
     {
-        switch (command_byte_n)
-        {
-        case 0b11011110:                        // F13-F20
-            // printf("Functions F13-F20 Instruction\n");
-            parse_to_function_bit_array(13,byte_array[command_byte_index-1],8);
-            break;
-        case 0b11011111:                        // F21-F28
-            // printf("Functions F21-F28 Instruction\n");
-            parse_to_function_bit_array(21,byte_array[command_byte_index-1],8);        
-            break;
-        case 0b11011000:                        // F29-F36
-            // printf("Functions F29-F36 Instruction\n");
-            parse_to_function_bit_array(29,byte_array[command_byte_index-1],8);        
-            break;
-        case 0b11011001:                        // F37-F44
-            // printf("Functions F37-F44 Instruction\n");
-            parse_to_function_bit_array(37,byte_array[command_byte_index-1],8);        
-            break;
-        case 0b11011010:                        // F45-F52
-            // printf("Functions F45-F52 Instruction\n");
-            parse_to_function_bit_array(45,byte_array[command_byte_index-1],8);        
-            break;
-        case 0b11011011:                        // F53-F60
-            // printf("Functions F53-F60 Instruction\n");
-            parse_to_function_bit_array(53,byte_array[command_byte_index-1],8);        
-            break;
-        case 0b11011100:                        // F61-F68
-            // printf("Functions F61-F68 Instruction\n");
-            parse_to_function_bit_array(61,byte_array[command_byte_index-1],8);        
-            break;
-        default:
-            break;
+        switch (command_byte_n) {
+            case 0b11011110: // F13-F20
+                // printf("Functions F13-F20 Instruction\n");
+                update_active_functions(13, byte_array[command_byte_start_index - 1], 8);
+                break;
+            case 0b11011111: // F21-F28
+                // printf("Functions F21-F28 Instruction\n");
+                update_active_functions(21, byte_array[command_byte_start_index - 1], 8);
+                break;
+            case 0b11011000: // F29-F36
+                // printf("Functions F29-F36 Instruction\n");
+                update_active_functions(29, byte_array[command_byte_start_index - 1], 8);
+                break;
+            default:
+                break;
         }
     }
-    
+
     set_outputs();
 }
 
+uint64_t last_bits = 0;
+#define PACKAGE_3_BYTES 0b11111111110000000000000000000000000001
+#define PACKAGEMASK_3_BYTES 0b11111111111000000001000000001000000001
+#define PACKAGE_4_BYTES 0b11111111110000000000000000000000000000000000001
+#define PACKAGEMASK_4_BYTES 0b11111111111000000001000000001000000001000000001
+#define PACKAGE_5_BYTES 0b11111111110000000000000000000000000000000000000000000001
+#define PACKAGEMASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
+
+int8_t check_for_package() {
+    uint64_t basepacketMasked = last_bits & PACKAGEMASK_3_BYTES;
+    if (basepacketMasked == PACKAGE_3_BYTES) {
+        return 3;
+    }
+    uint64_t package4Masked = last_bits & PACKAGEMASK_4_BYTES;
+    if (package4Masked == PACKAGE_4_BYTES) {
+        return 4;
+    }
+    uint64_t package5Masked = last_bits & PACKAGEMASK_5_BYTES;
+    if (package5Masked == PACKAGE_5_BYTES) {
+        return 5;
+    }
+    return -1;
+}
+
+void writeLastBit(bool bit) {
+    last_bits <<= 1;
+    last_bits |= bit;
+}
+
+//start of transmission -> byte_n(addressbyte) -> ... -> byte_0(error detection byte) -> end of transmission
+void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
+    for (uint8_t i = 0; i < number_of_bytes; i++) {
+        byte_array[i] = last_bits >> (i * 9 + 1);
+    }
+
+}
 
 void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
-    writeBit(readBit());                            
-    bool * s = bit_array;                            
-    int fsm_result = fsm_main(s, index_new, SIZE_BIT_ARRAY );       //fsm_main returns number of bytes if it finds valid bit sequence otherwise it returns -1
-    if(fsm_result != -1){
-        convert_array(fsm_result);                                  //converts bit_array to byte_array for easier handling
-        if(error_detection(fsm_result)){                            //Returns true if the XOR verification was error-free
-            // printf("no error :-)\n");         
-            if(address_evaluation(fsm_result)){                     //Returns true if address matches with CV
-                // printf("address matches :-)\n");         
-                instruction_evaluation(fsm_result);                 
+    writeLastBit(readBit());
+    absolute_time_t from = get_absolute_time();
+    int8_t number_of_bytes = check_for_package();
+    if (number_of_bytes != -1) {
+        uint8_t byte_array[SIZE_BYTE_ARRAY] = {0};
+        bits_to_byte_array(number_of_bytes,byte_array);
+        // convert_array(number_of_bytes); //converts bit_array to byte_array for easier handling
+        if (error_detection(number_of_bytes,byte_array)) { //Returns true if the XOR verification was error-free
+            // printf("no error :-)\n");
+            if (address_evaluation(number_of_bytes,byte_array)) { //Returns true if address matches with CV
+                // printf("address matches :-)\n");
+                instruction_evaluation(number_of_bytes,byte_array);
             }
             // else  printf("ADDRESS DOES NOT MATCH!\n");
         }
-        // else  printf("ERROR DETECED!\n");
-        for (int i = 0; i < fsm_result; i++)
-        {
-            printf("BYTE_%u: ",i);
-            for (int j = 0; j < 8; j++)
-            {
-            printf("%u",bit_array[(index_new-j+8+(9*i))%SIZE_BIT_ARRAY]);
-            }    
-            printf("\n");
+        // else  printf("ERROR DETECTED!\n");
+        absolute_time_t to = get_absolute_time();
+        int64_t diff = absolute_time_diff_us(from, to);
+        printf("%"PRId64"\n", diff);
+        for (int i = 0; i < number_of_bytes; i++) {
+            printf("BYTE_%u:" BYTE_TO_BINARY_PATTERN "\n", i, BYTE_TO_BINARY(byte_array[i]));
         }
-        printf("Paketgroesse: %u\n",fsm_result);
+        printf("Paketgroesse: %u\n", number_of_bytes);
         printf("\n");
-       // printf(BYTE_TO_BINARY_PATTERN"\n",BYTE_TO_BINARY(error_detection(fsm_result, index_new)));
-           
-    }    
-    index_new = index_old;
+        // printf(BYTE_TO_BINARY_PATTERN"\n",BYTE_TO_BINARY(error_detection(number_of_bytes, index_new)));
+    }
 }
 
- int main() { 
+int main() {
     stdio_init_all();
     gpio_init(17);
     gpio_set_dir(17, GPIO_IN);
-    gpio_set_irq_enabled_with_callback(17, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);   
-    while(1);
+    gpio_set_irq_enabled_with_callback(17, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
+    while (1);
 }
-
-
-
-
-    
