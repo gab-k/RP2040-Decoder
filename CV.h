@@ -12,42 +12,42 @@ const uint8_t CV_FUNCTION_ARRAY [256] = {
 //           byte_3           --           byte_2          --           byte_1         --       byte_0
 //  X  X  X  X  - X  X  X  X  -- X  X  X  X  - X  X  X  X  -- X  X  X  X  - X  X  X  X -- X X X X - X X X X
 //F0 forward
-    0b00000001,         //byte 0    -   CV_257 - Array Index: 0
+    0b00010010,         //byte 0    -   CV_257 - Array Index: 0
     0b00000000,         //byte 1    -   CV_258 - Array Index: 1
     0b00000000,         //byte 2    -   CV_259 - Array Index: 2
-    0b01000000,         //byte 3    -   CV_260 - Array Index: 3
+    0b00000000,         //byte 3    -   CV_260 - Array Index: 3
 //F0 reverse
-    0b00000000,         //byte 0    -   CV_261 - Array Index: 4
+    0b00001100,         //byte 0    -   CV_261 - Array Index: 4
     0b00000000,         //byte 1    -   CV_262 - Array Index: 5
     0b00000000,         //byte 2    -   CV_263 - Array Index: 6
     0b00000000,         //byte 3    -   CV_264 - Array Index: 7
 //F1 forward
-    0b00000000,         //byte 0    -   CV_265 - Array Index: 8
+    0b00100000,         //byte 0    -   CV_265 - Array Index: 8
     0b00000000,         //byte 1    -   CV_266 - Array Index: 9
     0b00000000,         //byte 2    -   CV_267 - Array Index: 10
     0b00000000,         //byte 3    -   CV_268 - Array Index: 11
 //F1 reverse
-    0b00000000,         //byte 0    -   CV_269 - Array Index: 12
+    0b00100000,         //byte 0    -   CV_269 - Array Index: 12
     0b00000000,         //byte 1    -   CV_270 - Array Index: 13
     0b00000000,         //byte 2    -   CV_271 - Array Index: 14
     0b00000000,         //byte 3    -   CV_272 - Array Index: 15
 //F2 forward
-    0b00000000,         //byte 0    -   CV_273 - Array Index: 16
+    0b01000000,         //byte 0    -   CV_273 - Array Index: 16
     0b00000000,         //byte 1    -   CV_274 - Array Index: 17
     0b00000000,         //byte 2    -   CV_275 - Array Index: 18
     0b00000000,         //byte 3    -   CV_276 - Array Index: 19
 //F2 reverse
-    0b00000000,         //byte 0    -   CV_277 - Array Index: 20
+    0b01000000,         //byte 0    -   CV_277 - Array Index: 20
     0b00000000,         //byte 1    -   CV_278 - Array Index: 21
     0b00000000,         //byte 2    -   CV_279 - Array Index: 22
     0b00000000,         //byte 3    -   CV_280 - Array Index: 23
 //F3 forward
-    0b00000000,         //byte 0    -   CV_281 - Array Index: 24
+    0b10000000,         //byte 0    -   CV_281 - Array Index: 24
     0b00000000,         //byte 1    -   CV_282 - Array Index: 25
     0b00000000,         //byte 2    -   CV_283 - Array Index: 26
     0b00000000,         //byte 3    -   CV_284 - Array Index: 27
 //F3 reverse
-    0b00000000,         //byte 0    -   CV_285 - Array Index: 28
+    0b10000000,         //byte 0    -   CV_285 - Array Index: 28
     0b00000000,         //byte 1    -   CV_286 - Array Index: 29
     0b00000000,         //byte 2    -   CV_287 - Array Index: 30
     0b00000000,         //byte 3    -   CV_288 - Array Index: 31

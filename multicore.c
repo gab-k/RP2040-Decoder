@@ -9,18 +9,7 @@
 #include "pwm.pio.h"
 #include "automat.h"
 #include "CV.h"
-
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0') 
-
+#include "multicore.h"
 #define SIZE_BIT_ARRAY 128
 #define SIZE_BYTE_ARRAY 13
 #define SIZE_FUNCTION_BIT_ARRAY 68
@@ -29,48 +18,54 @@ bool function_bit_array[SIZE_FUNCTION_BIT_ARRAY] = {false};
 uint8_t byte_array[SIZE_BYTE_ARRAY] = {0};
 uint8_t index_new = 0;
 uint8_t index_old;
+bool direction = 1;
 
 
-bool get_current_direction(){
-    return true;
-}
-
-void emergency_break(){
-    printf("EMERGENCY BREAK");
-}
-
-void set_speed(uint8_t speed, bool direction)
+void set_speed(uint8_t speed)
 {
-    printf("Speed: %d\nDirection: %d", speed, direction);
+    if (speed == 256)   //Emergency Break
+    {
+        // printf("EMERGENCY BREAK");
+    }
+    else                //normal speed control ranges from 0 to 126
+    {
+        // printf("Speed: %u  -  Direction: %u\n", speed, direction);
+    }
+    
 }
 
 void set_outputs()
 {
+    uint32_t outputs_to_be_set = 0;
     for (uint8_t i = 0; i < SIZE_FUNCTION_BIT_ARRAY; i++)
     {
         if (function_bit_array[i])
         {  
-            bool direction = get_current_direction();               // true == forward , false == reverse
+            // printf("F%u == 1\n",i);
             uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4+i*8-4*direction];
             uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5+i*8-4*direction];
             uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6+i*8-4*direction];
             uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7+i*8-4*direction];
             uint32_t func_cv = (func_cv_0)+(func_cv_1<<8)+(func_cv_2<<16)+(func_cv_3<<24);
-            uint32_t mask = 1;
-            for (uint8_t j = 0; j < 32; j++)
+            // printf("func_cv_0: %d - ",func_cv_0);
+            // printf("func_cv_1: %d - ",func_cv_1);
+            // printf("func_cv_2: %d - ",func_cv_2);
+            // printf("func_cv_3: %d\n",func_cv_3);
+            outputs_to_be_set = outputs_to_be_set|func_cv;
+            /*uint32_t mask = 1;
+            or (uint8_t j = 0; j < 32; j++)
             {
                 uint32_t bit_value =  (func_cv&mask)>>j;
                 printf("GPIO: %u, set to: %d\n",j,bit_value);
                 //gpio_put(j,bit_value);
                 mask = mask<<1;
-            }
-            
+            }*/
             // printf("func_cv: %u\n",func_cv);
             // printf("func: F%u, direction: %u\n",func,direction);
             //printf("func_cv_0_index: %d  func_cv_1_index: %d  func_cv_2_index: %d  func_cv_3_index: %d  \n",4+257+i*8-4*direction,4+258+i*8-4*direction,4+259+i*8-4*direction,4+260+i*8-4*direction);
         }
     }
-    printf("\n");
+    // printf("outputs_to_bet_set: %u\n",outputs_to_be_set);
 }
 
 bool readBit()
@@ -146,13 +141,13 @@ bool address_evaluation(uint8_t number_of_bytes){
         uint8_t address_byte_1 = (byte_array[number_of_bytes-1])-192; //remove long address identifier bits
         uint8_t address_byte_0 = (byte_array[number_of_bytes-2]);
         read_address = (address_byte_1<<8)+address_byte_0;
-        printf("long address: %d, was read. \n", read_address);
+        // printf("long address: %u, was read. \n", read_address);
     }
     else
     {
         //start of transmission ->  address_byte_0 -> ... -> end of transmission
         read_address = (byte_array[number_of_bytes-1]); 
-        printf("short address: %d, was read. \n",read_address);
+        // printf("short address: %u, was read. \n",read_address);
     }
     if (CV_1 == read_address) return true;
     return false;
@@ -176,20 +171,20 @@ void instruction_evaluation(uint8_t number_of_bytes){
     {
         if (command_byte_n<<4>>4 == 0b00000001)     // 01XX-0001 (Emergency Break)
         {
-            emergency_break();
+            set_speed(255);
         }
         if (command_byte_n<<4>>4 == 0b00000000)     // 01XX-0000 (Normal Break)
         {
-            set_speed(0 , 1);
+            set_speed(0);
         }
         else
         {
-            printf("01XX-XXXX - Basic Speed \n");   //01XX-XXXX - Basic Speed (26 Steps)
+            // printf("01XX-XXXX - Basic Speed \n");   //01XX-XXXX - Basic Speed (26 Steps)
             uint8_t mask = 0b01111111; 
             uint8_t speed = ((command_byte_n & mask)-1)*4;      //Max speed step is equivalent to step 104 of 128 speed step 
             mask = 0b00100000;
-            uint8_t direction = (command_byte_n&mask)>>5;  
-            set_speed(speed, direction);
+            direction = (command_byte_n&mask)>>5;  
+            set_speed(speed);
         }
     }
     if (command_byte_n>>5 == 0b00000001)    // 001X-XXXX (Advanced Operation Instructions)
@@ -197,7 +192,7 @@ void instruction_evaluation(uint8_t number_of_bytes){
         switch (command_byte_n)
         {
             case 0b00111100:                            // 0011-1100 (Speed, Direction and Functions) - 3 to 6 Byte length
-                printf("0011-1100 (Speed, Direction and Functions) \n");
+                // printf("0011-1100 (Speed, Direction and Functions) \n");
                 switch (command_byte_index)             //command_byte_index == Instruction Byte Length  
                 {                                       //Switch case could be replaced with for loop...
                 case 6:
@@ -243,12 +238,23 @@ void instruction_evaluation(uint8_t number_of_bytes){
 
             case 0b00111111:                            // 0011-1111 (128 Speed Step Control) - 2 Byte length
                 speed_128:
-                printf("0011-1111 (128 Speed Step Control) \n");
+                // printf("0011-1111 (128 Speed Step Control) Instruction\n");
+                direction = (byte_array[command_byte_index-1])>>7;
                 uint8_t command_byte_n_minus1 = byte_array[command_byte_index-1];
-                uint8_t mask = 0b01111111; 
-                uint8_t speed = (command_byte_n_minus1 & mask)-1;
-                uint8_t direction = command_byte_n_minus1>>7;
-                set_speed(speed , direction);
+                uint8_t mask = 0b01111111;
+                uint8_t speed = (command_byte_n_minus1 & mask);
+                if (speed == 0b00000001)     // 01XX-0001 (Emergency Break)
+                {
+                    set_speed(255);
+                }
+                if (speed == 0b00000000)     // 01XX-0000 (Normal Break)
+                {
+                    set_speed(0);
+                }
+                else
+                {
+                    set_speed(speed-1);
+                }
                 break;
             default:
                 break;
@@ -260,18 +266,18 @@ void instruction_evaluation(uint8_t number_of_bytes){
         {
             parse_to_function_bit_array(0,command_byte_n>>4,1);    //F0
             parse_to_function_bit_array(1,command_byte_n,4);    //F1-F4
-            printf("Functions F0-F4 \n");
+            // printf("Functions F0-F4 Instruction\n");
         }
         else
         {
             switch (command_byte_n>>4)
             {
             case 0b00001011:                        // Functions F5-F8
-                printf("Functions F5-F8 \n");
+                // printf("Functions F5-F8 Instruction\n");
                 parse_to_function_bit_array(5,command_byte_n,4);
                 break;
             case 0b00001010:                        // Functions F9-F12
-                printf("Functions F9-F12 \n");
+                // printf("Functions F9-F12 Instruction\n");
                 parse_to_function_bit_array(9,command_byte_n,4);
                 break;
             default:
@@ -284,24 +290,31 @@ void instruction_evaluation(uint8_t number_of_bytes){
         switch (command_byte_n)
         {
         case 0b11011110:                        // F13-F20
-            parse_to_function_bit_array(13,byte_array[command_byte_index-1],8);        
+            // printf("Functions F13-F20 Instruction\n");
+            parse_to_function_bit_array(13,byte_array[command_byte_index-1],8);
             break;
         case 0b11011111:                        // F21-F28
+            // printf("Functions F21-F28 Instruction\n");
             parse_to_function_bit_array(21,byte_array[command_byte_index-1],8);        
             break;
         case 0b11011000:                        // F29-F36
+            // printf("Functions F29-F36 Instruction\n");
             parse_to_function_bit_array(29,byte_array[command_byte_index-1],8);        
             break;
         case 0b11011001:                        // F37-F44
+            // printf("Functions F37-F44 Instruction\n");
             parse_to_function_bit_array(37,byte_array[command_byte_index-1],8);        
             break;
         case 0b11011010:                        // F45-F52
+            // printf("Functions F45-F52 Instruction\n");
             parse_to_function_bit_array(45,byte_array[command_byte_index-1],8);        
             break;
         case 0b11011011:                        // F53-F60
+            // printf("Functions F53-F60 Instruction\n");
             parse_to_function_bit_array(53,byte_array[command_byte_index-1],8);        
             break;
         case 0b11011100:                        // F61-F68
+            // printf("Functions F61-F68 Instruction\n");
             parse_to_function_bit_array(61,byte_array[command_byte_index-1],8);        
             break;
         default:
@@ -317,28 +330,27 @@ void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
     writeBit(readBit());                            
     bool * s = bit_array;                            
     int fsm_result = fsm_main(s, index_new, SIZE_BIT_ARRAY );       //fsm_main returns number of bytes if it finds valid bit sequence otherwise it returns -1
-    if(fsm_result != -1){ 
+    if(fsm_result != -1){
         convert_array(fsm_result);                                  //converts bit_array to byte_array for easier handling
         if(error_detection(fsm_result)){                            //Returns true if the XOR verification was error-free
-            printf("no error :-)\n");         
+            // printf("no error :-)\n");         
             if(address_evaluation(fsm_result)){                     //Returns true if address matches with CV
-                printf("address matches :-)\n");         
-                instruction_evaluation(fsm_result);                 //
+                // printf("address matches :-)\n");         
+                instruction_evaluation(fsm_result);                 
             }
-            else  printf("ADDRESS DOES NOT MATCH!\n");
+            // else  printf("ADDRESS DOES NOT MATCH!\n");
         }
-        else  printf("ERROR DETECED!\n");
-        printf("\n");        
-
+        // else  printf("ERROR DETECED!\n");
         for (int i = 0; i < fsm_result; i++)
         {
-            printf("\nBYTE_%d: ",i);
+            printf("BYTE_%u: ",i);
             for (int j = 0; j < 8; j++)
             {
-            printf("%d",bit_array[(index_new-j+8+(9*i))%SIZE_BIT_ARRAY]);
+            printf("%u",bit_array[(index_new-j+8+(9*i))%SIZE_BIT_ARRAY]);
             }    
+            printf("\n");
         }
-        printf("\nPaketgroesse: %d\n",fsm_result);
+        printf("Paketgroesse: %u\n",fsm_result);
         printf("\n");
        // printf(BYTE_TO_BINARY_PATTERN"\n",BYTE_TO_BINARY(error_detection(fsm_result, index_new)));
            
