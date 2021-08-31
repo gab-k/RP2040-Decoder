@@ -13,8 +13,59 @@
 #define SIZE_BYTE_ARRAY 5
 #define SIZE_ACTIVE_FUNCTIONS 69
 #define DCC_INPUT_PIN 17
+#define MOTOR_PWM_FORWARD 21
+#define MOTOR_PWM_REVERSE 22
+#define PACKAGE_3_BYTES 0b11111111110000000000000000000000000001
+#define PACKAGEMASK_3_BYTES 0b11111111111000000001000000001000000001
+#define PACKAGE_4_BYTES 0b11111111110000000000000000000000000000000000001
+#define PACKAGEMASK_4_BYTES 0b11111111111000000001000000001000000001000000001
+#define PACKAGE_5_BYTES 0b11111111110000000000000000000000000000000000000000000001
+#define PACKAGEMASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
 bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
 bool direction = 1;
+uint64_t last_bits = 0;
+
+int8_t check_for_package()  //function returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned
+{
+    uint64_t package3Masked = last_bits & PACKAGEMASK_3_BYTES;
+    if (package3Masked == PACKAGE_3_BYTES) {
+        return 3;
+    }
+    uint64_t package4Masked = last_bits & PACKAGEMASK_4_BYTES;
+    if (package4Masked == PACKAGE_4_BYTES) {
+        return 4;
+    }
+    uint64_t package5Masked = last_bits & PACKAGEMASK_5_BYTES;
+    if (package5Masked == PACKAGE_5_BYTES) {
+        return 5;
+    }
+    return -1;
+}
+
+bool readBit() {
+    busy_wait_us_32(87);
+    return !gpio_get(DCC_INPUT_PIN);
+}
+
+void writeLastBit(bool bit) {
+    last_bits <<= 1;
+    last_bits |= bit;
+}
+
+//start of transmission -> byte_n(address byte) -> ... -> byte_0(error detection byte) -> end of transmission
+void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
+    for (uint8_t i = 0; i < number_of_bytes; i++) {
+        byte_array[i] = last_bits >> (i * 9 + 1);
+    }
+
+}
+void init_pwm(uint gpio, uint8_t speed) {
+    uint32_t period = 126*500;
+    uint slice_num = pwm_gpio_to_slice_num(gpio);
+    pwm_set_wrap(slice_num, period);
+    pwm_set_gpio_level(gpio,0);
+    pwm_set_enabled(slice_num, true);
+}
 
 void set_speed(uint8_t speed) {
     if (speed == 255) //Emergency Break
@@ -22,7 +73,17 @@ void set_speed(uint8_t speed) {
          printf("EMERGENCY BREAK");
     } else //normal speed control ranges from 0 to 126
     {
-         printf("Speed: %u  -  Direction: %u\n", speed, direction);
+        printf("Speed: %u  -  Direction: %u\n", speed, direction);
+        uint16_t duty_cycle = speed*500;
+        if (direction)
+        {
+            pwm_set_gpio_level(MOTOR_PWM_REVERSE,1);
+            pwm_set_gpio_level(MOTOR_PWM_FORWARD,duty_cycle);
+        }
+        else{
+            pwm_set_gpio_level(MOTOR_PWM_FORWARD,1);
+            pwm_set_gpio_level(MOTOR_PWM_REVERSE,duty_cycle);
+        }
     }
 }
 
@@ -51,11 +112,6 @@ void set_outputs() {
             //printf("func_cv_0_index: %d  func_cv_1_index: %d  func_cv_2_index: %d  func_cv_3_index: %d  \n",4+257+i*8-4*direction,4+258+i*8-4*direction,4+259+i*8-4*direction,4+260+i*8-4*direction);
         }
     }
-}
-
-bool readBit() {
-    busy_wait_us_32(87);
-    return !gpio_get(DCC_INPUT_PIN);
 }
 
 void update_active_functions(uint8_t function_number, uint8_t input_byte, uint8_t count) {
@@ -198,45 +254,7 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
                 break;
         }
     }
-
     set_outputs();
-}
-
-uint64_t last_bits = 0;
-#define PACKAGE_3_BYTES 0b11111111110000000000000000000000000001
-#define PACKAGEMASK_3_BYTES 0b11111111111000000001000000001000000001
-#define PACKAGE_4_BYTES 0b11111111110000000000000000000000000000000000001
-#define PACKAGEMASK_4_BYTES 0b11111111111000000001000000001000000001000000001
-#define PACKAGE_5_BYTES 0b11111111110000000000000000000000000000000000000000000001
-#define PACKAGEMASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
-
-int8_t check_for_package() {
-    uint64_t basepacketMasked = last_bits & PACKAGEMASK_3_BYTES;
-    if (basepacketMasked == PACKAGE_3_BYTES) {
-        return 3;
-    }
-    uint64_t package4Masked = last_bits & PACKAGEMASK_4_BYTES;
-    if (package4Masked == PACKAGE_4_BYTES) {
-        return 4;
-    }
-    uint64_t package5Masked = last_bits & PACKAGEMASK_5_BYTES;
-    if (package5Masked == PACKAGE_5_BYTES) {
-        return 5;
-    }
-    return -1;
-}
-
-void writeLastBit(bool bit) {
-    last_bits <<= 1;
-    last_bits |= bit;
-}
-
-//start of transmission -> byte_n(address byte) -> ... -> byte_0(error detection byte) -> end of transmission
-void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
-    for (uint8_t i = 0; i < number_of_bytes; i++) {
-        byte_array[i] = last_bits >> (i * 9 + 1);
-    }
-
 }
 
 void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
@@ -262,6 +280,11 @@ int main() {
     stdio_init_all();
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
+    sleep_ms(1000);
+    gpio_set_function(MOTOR_PWM_FORWARD, GPIO_FUNC_PWM);
+    gpio_set_function(MOTOR_PWM_REVERSE, GPIO_FUNC_PWM);
+    init_pwm(MOTOR_PWM_FORWARD, 50);
+    init_pwm(MOTOR_PWM_REVERSE, 100);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
     while (1);
 }
