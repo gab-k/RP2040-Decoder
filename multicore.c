@@ -4,6 +4,7 @@
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "hardware/gpio.h"
+#include "hardware/irq.h"
 #include "hardware/pio.h"
 #include "hardware/pwm.h"
 #include "pwm.pio.h"
@@ -23,6 +24,8 @@
 #define PACKAGEMASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
 bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
 bool direction = 1;
+uint32_t current_speed = 10;
+uint32_t new_speed = 128;
 uint64_t last_bits = 0;
 
 int8_t check_for_package()  //function returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned
@@ -57,33 +60,48 @@ void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
     for (uint8_t i = 0; i < number_of_bytes; i++) {
         byte_array[i] = last_bits >> (i * 9 + 1);
     }
-
 }
-void init_pwm(uint gpio, uint8_t speed) {
-    uint32_t period = 126*500;
+bool get_direction(uint32_t speed_direction_byte){
+    if(speed_direction_byte>127)return true;
+    if(speed_direction_byte<128)return false;
+    return false;
+}
+
+void init_pwm(uint gpio) {
+    uint32_t pwm_period = 126*CV_9;
     uint slice_num = pwm_gpio_to_slice_num(gpio);
-    pwm_set_wrap(slice_num, period);
+    pwm_set_wrap(slice_num, pwm_period);
     pwm_set_gpio_level(gpio,0);
+    pwm_set_clkdiv(slice_num,1);
     pwm_set_enabled(slice_num, true);
 }
 
-void set_speed(uint8_t speed) {
-    if (speed == 255) //Emergency Break
-    {
-         printf("EMERGENCY BREAK");
-    } else //normal speed control ranges from 0 to 126
-    {
-        printf("Speed: %u  -  Direction: %u\n", speed, direction);
-        uint16_t duty_cycle = speed*500;
-        if (direction)
-        {
-            pwm_set_gpio_level(MOTOR_PWM_REVERSE,1);
-            pwm_set_gpio_level(MOTOR_PWM_FORWARD,duty_cycle);
-        }
-        else{
-            pwm_set_gpio_level(MOTOR_PWM_FORWARD,1);
-            pwm_set_gpio_level(MOTOR_PWM_REVERSE,duty_cycle);
-        }
+void adjust_pwm_level()
+{
+
+    //Emergency Stop
+    if (current_speed == 1 ||current_speed == 129 ){
+        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
+        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
+        return;
+    }
+    //Stop
+    if (current_speed == 0 ||current_speed == 128 ){
+        pwm_set_gpio_level(MOTOR_PWM_FORWARD,126*CV_9);
+        pwm_set_gpio_level(MOTOR_PWM_REVERSE,126*CV_9);
+        return;
+    }
+    //Forward
+    if (current_speed>127){
+        pwm_set_gpio_level(MOTOR_PWM_FORWARD,(current_speed-129)*CV_9);
+        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
+        return;
+    }
+    //Reverse
+    if (current_speed<128){
+        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
+        pwm_set_gpio_level(MOTOR_PWM_REVERSE,(current_speed-1)*CV_9);
+        return;
     }
 }
 
@@ -93,10 +111,11 @@ void set_outputs() {
     for (uint8_t i = 0; i < SIZE_ACTIVE_FUNCTIONS; i++) {
         if (active_functions[i]) {
             printf("F%u == 1\n",i);
-            uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4 + i * 8 - 4 * direction];
-            uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5 + i * 8 - 4 * direction];
-            uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6 + i * 8 - 4 * direction];
-            uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7 + i * 8 - 4 * direction];
+            bool current_direction = get_direction(current_speed);
+            uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4 + i * 8 - 4 * current_direction];
+            uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5 + i * 8 - 4 * current_direction];
+            uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6 + i * 8 - 4 * current_direction];
+            uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7 + i * 8 - 4 * current_direction];
             uint32_t func_cv = (func_cv_0) + (func_cv_1 << 8) + (func_cv_2 << 16) + (func_cv_3 << 24);
             GPIO_to_be_set = (GPIO_to_be_set | func_cv) & filter_forbidden_GPIO;
             uint32_t mask = 1;
@@ -176,58 +195,28 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     }
     command_byte_n = byte_array[command_byte_start_index];
 
-    if (command_byte_n >> 6 == 0b00000001) // 01XX-XXXX (Basic Speed and Direction Instruction)
+    //0011-1111 (128 Speed Step Control) - 2 Byte length
+    if (command_byte_n == 0b00111111)
     {
-        if (command_byte_n << 4 >> 4 == 0b00000001) // 01XX-0001 (Emergency Break)
-        {
-            set_speed(255);
-        }
-        if (command_byte_n << 4 >> 4 == 0b00000000) // 01XX-0000 (Normal Break)
-        {
-            set_speed(0);
-        } else {
-            // printf("01XX-XXXX - Basic Speed \n");   //01XX-XXXX - Basic Speed (26 Steps)
-            uint8_t mask = 0b01111111;
-            uint8_t speed =
-                    ((command_byte_n & mask) - 1) * 4; //Max speed step is equivalent to step 104 of 128 speed step
-            mask = 0b00100000;
-            direction = (command_byte_n & mask) >> 5;
-            set_speed(speed);
-        }
-    }
-    if (command_byte_n == 0b00111111) //0011-1111 (128 Speed Step Control) - 2 Byte length
-    {
-        // printf("0011-1111 (128 Speed Step Control) Instruction\n");
-        direction = (byte_array[command_byte_start_index - 1]) >> 7;
+        printf("0011-1111 (128 Speed Step Control) Instruction\n");
         uint8_t command_byte_n_minus1 = byte_array[command_byte_start_index - 1];
-        uint8_t mask = 0b01111111;
-        uint8_t speed = (command_byte_n_minus1 & mask);
-        if (speed == 0b00000001) // 01XX-0001 (Emergency Break)
-        {
-            set_speed(255);
-        }
-        if (speed == 0b00000000) // 01XX-0000 (Normal Break)
-        {
-            set_speed(0);
-        } else {
-            set_speed(speed - 1);
-        }
+        multicore_fifo_push_blocking(command_byte_n_minus1);
     }
-    if (command_byte_n >> 6 == 0b00000010) // 10XX-XXXX (Function Group Instruction)
+    // 10XX-XXXX (Function Group Instruction)
+    if (command_byte_n >> 6 == 0b00000010)
     {
         if (command_byte_n >> 5 == 0b00000100) // Functions F0-F4
         {
             update_active_functions(0, command_byte_n >> 4, 1); //F0
             update_active_functions(1, command_byte_n, 4);      //F1-F4
-            // printf("Functions F0-F4 Instruction\n");
         } else {
             switch (command_byte_n >> 4) {
-                case 0b00001011: // Functions F5-F8
-                    // printf("Functions F5-F8 Instruction\n");
+                // Functions F5-F8
+                case 0b00001011:
                     update_active_functions(5, command_byte_n, 4);
                     break;
-                case 0b00001010: // Functions F9-F12
-                    // printf("Functions F9-F12 Instruction\n");
+                // Functions F9-F12
+                case 0b00001010:
                     update_active_functions(9, command_byte_n, 4);
                     break;
                 default:
@@ -235,7 +224,8 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
             }
         }
     }
-    if (command_byte_n >> 5 == 0b00000110) //Feature Expansion Instruction 110X-XXXX
+    //Feature Expansion Instruction 110X-XXXX
+    if (command_byte_n >> 5 == 0b00000110)
     {
         switch (command_byte_n) {
             case 0b11011110: // F13-F20
@@ -256,13 +246,14 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     }
     set_outputs();
 }
-
 void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
     writeLastBit(readBit());
     int8_t number_of_bytes = check_for_package();
+    number_of_bytes = 4;
     if (number_of_bytes != -1) {
-        uint8_t byte_array[SIZE_BYTE_ARRAY] = {0};
-        bits_to_byte_array(number_of_bytes,byte_array);
+            //uint8_t byte_array[SIZE_BYTE_ARRAY] = {0};
+            uint8_t byte_array[SIZE_BYTE_ARRAY] = {(5^0b00000000^63),0b00000000,0b00111111,5,0};
+            //bits_to_byte_array(number_of_bytes,byte_array);
         if (error_detection(number_of_bytes,byte_array)) { //Returns true if the XOR verification was error-free
             if (address_evaluation(number_of_bytes,byte_array)) { //Returns true if address matches with CV
                 instruction_evaluation(number_of_bytes,byte_array);
@@ -276,15 +267,86 @@ void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
     }
 }
 
+int64_t alarm_callback(alarm_id_t id, void *user_data) {
+    printf("current speed: %u\n", current_speed);
+    if (new_speed == 1 || new_speed == 129 ){   //Emergency Break
+        current_speed = new_speed;
+        goto end;
+    }
+    //Current Direction Forward
+    if (current_speed>127) {
+        if (new_speed<128) {                                    //opposite direction -> stop
+            current_speed = 0;
+            add_alarm_in_ms(1000, alarm_callback, NULL, true);
+            goto end;
+        }
+        if (new_speed>127){
+            if (new_speed>current_speed){
+                if (current_speed == 128) current_speed++;      //Skip Emergency Break "State" on accel
+                current_speed++;
+                add_alarm_in_ms(1000, alarm_callback, NULL, true);
+                goto end;
+            }
+            if (new_speed<current_speed){
+                if (current_speed == 130)current_speed--;       //Skip Emergency Break "State" on break
+                current_speed--;
+                add_alarm_in_ms(1000, alarm_callback, NULL, true);
+                goto end;
+            }
+        }
+    }
+    // Current Direction Reverse
+    if (current_speed<128) {
+        if (new_speed>127) {                                    //opposite direction -> stop
+            current_speed = 128;
+            add_alarm_in_ms(1000, alarm_callback, NULL, true);
+            goto end;
+        }
+        if (new_speed<128){
+            if (new_speed>current_speed){
+                if (current_speed == 0) current_speed++;        //Skip Emergency Break "State" on accel
+                current_speed++;
+                add_alarm_in_ms(1000, alarm_callback, NULL, true);
+                goto end;
+            }
+            if (new_speed<current_speed){
+                if (current_speed == 2) current_speed--;        //Skip Emergency Break "State" on break
+                current_speed--;
+                add_alarm_in_ms(1000, alarm_callback, NULL, true);
+                goto end;
+            }
+        }
+    }
+    return 1;
+    end:
+    adjust_pwm_level();
+    return 0;
+}
+void core1_sio_irq() {
+    new_speed = multicore_fifo_pop_blocking();
+    printf("Speed: %d\n",new_speed);
+    add_alarm_in_ms(1000, alarm_callback, NULL, true);
+    multicore_fifo_clear_irq();
+}
+void core1_entry() {
+    multicore_fifo_clear_irq();
+    irq_set_exclusive_handler(SIO_IRQ_PROC1, core1_sio_irq);
+    irq_set_enabled(SIO_IRQ_PROC1, true);
+    gpio_set_function(MOTOR_PWM_FORWARD, GPIO_FUNC_PWM);
+    gpio_set_function(MOTOR_PWM_REVERSE, GPIO_FUNC_PWM);
+    init_pwm(MOTOR_PWM_FORWARD);
+    init_pwm(MOTOR_PWM_REVERSE);
+    while (1) ;
+}
 int main() {
     stdio_init_all();
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
-    sleep_ms(1000);
-    gpio_set_function(MOTOR_PWM_FORWARD, GPIO_FUNC_PWM);
-    gpio_set_function(MOTOR_PWM_REVERSE, GPIO_FUNC_PWM);
-    init_pwm(MOTOR_PWM_FORWARD, 50);
-    init_pwm(MOTOR_PWM_REVERSE, 100);
+    stdio_init_all();
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
-    while (1);
+    busy_wait_ms(200); //This delay is necessary to catch the breakpoint
+    multicore_launch_core1(core1_entry);
+    busy_wait_ms(200); //This delay is necessary to catch the breakpoint
+    gpio_callback_rise(0,0);
+    while (1) ;
 }
