@@ -1,13 +1,16 @@
 //All CVs are 8-bit numbers (range 0 - 255)
 #define CV_1 5      //Address                   -   Basic Address
-#define CV_2 0      //V_min                     -   Minimum Speed
-#define CV_3 5      //Acceleration Rate         -   Acceleration formula: (CV_3*0.896)/(number of speed steps in use)
-#define CV_4 5      //Deceleration Rate         -   Deceleration formula: (CV_4*0.896)/(number of speed steps in use)
+#define CV_2 1      //V_min                     -   Minimum Speed
+#define CV_3 40    //Acceleration Rate         -   Acceleration formula: (CV_3*0.896)/(number of speed steps in use)   -> CV_3*7ms/Speed Step
+#define CV_4 40     //Deceleration Rate         -   Deceleration formula: (CV_4*0.896)/(number of speed steps in use)   -> CV_4*7ms/Speed Step
 #define CV_5 255    //V_max                     -   Maximum Speed
 #define CV_6 127    //V_mid                     -   Middle Speed
 #define CV_7 13     //Version No.               -   Decoder-Software version
 #define CV_8 13     //Manufacturer              -   Manufacturer Identification (13 == "Public Domain & Do-It-Yourself Decoders").
-#define CV_9 40      //PWM-Period                -   Defines the Motor PWM-Period
+//  PWM Period Frequency Calculation: pwm_period = ( CV_9*CV_5 / CV_10 ) * 8ns
+//  The reciprocal of the period is the PWM frequency
+#define CV_9 255    //PWM-Period                -   Defines the Motor PWM-Period
+#define CV_10 1     //PWM Clock Divider         -   Additional Clock Divider for PWM-Signal
 const uint8_t CV_FUNCTION_ARRAY [256] = {
 //  31 30 29 28 - 27 26 25 24 -- 23 22 21 20 - 19 18 17 16 -- 15 14 13 12 - 11 10 9  8 -- 7 6 5 4 - 3 2 1 0   <-  GPIO
 //           byte_3           --           byte_2          --           byte_1         --       byte_0
