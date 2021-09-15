@@ -250,6 +250,7 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     }
     set_outputs();
 }
+//Interrupt handler for DCC Logic Signal
 void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
     writeLastBit(readBit());
     int8_t number_of_bytes = check_for_package();
@@ -270,7 +271,7 @@ void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
     }
 }
 
-int64_t alarm_callback(alarm_id_t id, void *user_data) {
+int64_t speed_control_alarm(alarm_id_t id, void *user_data) {
     printf("current speed: %u\n", current_speed);
     bool current_direction = get_direction(current_speed);
     bool new_direction = get_direction(new_speed);
@@ -284,7 +285,7 @@ int64_t alarm_callback(alarm_id_t id, void *user_data) {
         else current_speed = 0;
         adjust_pwm_level();
         return 10000;
-//        add_alarm_in_ms(10,alarm_callback,NULL,true);
+//        add_alarm_in_ms(10,speed_control_alarm,NULL,true);
     }
     // "Speed control"
     else{
@@ -297,22 +298,23 @@ int64_t alarm_callback(alarm_id_t id, void *user_data) {
             current_speed++;
             adjust_pwm_level();
             return 7*CV_3*1000;
-//            add_alarm_in_ms(7*CV_3,alarm_callback,NULL,true);
+//            add_alarm_in_ms(7*CV_3,speed_control_alarm,NULL,true);
         }else{
             if(current_speed == 2 || current_speed == 130)current_speed--;
             current_speed--;
             adjust_pwm_level();
             return 7*CV_4*1000;
-//            add_alarm_in_ms(7*CV_4,alarm_callback,NULL,true);
+//            add_alarm_in_ms(7*CV_4,speed_control_alarm,NULL,true);
         }
     }
 }
+//FIFO Interrupt Handler
 void core1_sio_irq() {
     //Look for changes in speed
     if (multicore_fifo_pop_blocking() != new_speed){
         new_speed = multicore_fifo_pop_blocking();
         //look for alarm running already
-        if (last_alarm_id == -2) last_alarm_id = add_alarm_in_ms(10, alarm_callback, NULL, true);
+        if (last_alarm_id == -2) last_alarm_id = add_alarm_in_ms(10, speed_control_alarm, NULL, true);
         multicore_fifo_clear_irq();
     }else{
         multicore_fifo_clear_irq();
@@ -340,5 +342,9 @@ int main() {
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
     busy_wait_ms(200); //This delay is necessary to catch the breakpoint
     //gpio_callback_rise(0,0);
-    while (1) ;
+    gpio_init(PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    gpio_put(PICO_DEFAULT_LED_PIN, true);
+    while (1);
 }
+
