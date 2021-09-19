@@ -7,6 +7,7 @@
 #include "hardware/irq.h"
 #include "hardware/pio.h"
 #include "hardware/pwm.h"
+#include "hardware/adc.h"
 #include "pwm.pio.h"
 #include "automat.h"
 #include "CV.h"
@@ -17,28 +18,40 @@
 #define MOTOR_PWM_FORWARD 21
 #define MOTOR_PWM_REVERSE 22
 #define PACKAGE_3_BYTES 0b11111111110000000000000000000000000001
-#define PACKAGEMASK_3_BYTES 0b11111111111000000001000000001000000001
+#define PACKAGE_MASK_3_BYTES 0b11111111111000000001000000001000000001
 #define PACKAGE_4_BYTES 0b11111111110000000000000000000000000000000000001
-#define PACKAGEMASK_4_BYTES 0b11111111111000000001000000001000000001000000001
+#define PACKAGE_MASK_4_BYTES 0b11111111111000000001000000001000000001000000001
 #define PACKAGE_5_BYTES 0b11111111110000000000000000000000000000000000000000000001
-#define PACKAGEMASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
-bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
-uint32_t current_speed = 128;
-uint32_t new_speed = 128;
+#define PACKAGE_MASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
+#define N_MEASUREMENTS 50
 uint64_t last_bits = 0;
-int32_t last_alarm_id = -2;
+bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
+uint32_t target_speed_step = 128;
+bool target_direction = true;
+int error = 0;
+int e_old = 0;
+int e_sum = 0;
+float t_s = 0.01f;
+int sum_limit_max = 1000;
+int sum_limit_min = -1000;
+float k_p = 0.09f;
+float k_i = 0.075f;
+float k_d = 0.008f;
+float output = 0;
+uint target_v_emf = 0;
+uint measurement;
 
 int8_t check_for_package()  //function returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned
 {
-    uint64_t package3Masked = last_bits & PACKAGEMASK_3_BYTES;
+    uint64_t package3Masked = last_bits & PACKAGE_MASK_3_BYTES;
     if (package3Masked == PACKAGE_3_BYTES) {
         return 3;
     }
-    uint64_t package4Masked = last_bits & PACKAGEMASK_4_BYTES;
+    uint64_t package4Masked = last_bits & PACKAGE_MASK_4_BYTES;
     if (package4Masked == PACKAGE_4_BYTES) {
         return 4;
     }
-    uint64_t package5Masked = last_bits & PACKAGEMASK_5_BYTES;
+    uint64_t package5Masked = last_bits & PACKAGE_MASK_5_BYTES;
     if (package5Masked == PACKAGE_5_BYTES) {
         return 5;
     }
@@ -61,51 +74,20 @@ void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
         byte_array[i] = last_bits >> (i * 9 + 1);
     }
 }
-bool get_direction(uint32_t speed_direction_byte){
-    if(speed_direction_byte>127)return true;
-    if(speed_direction_byte<128)return false;
-    return false;
-}
 
-void init_pwm(uint gpio) {
-    uint slice_num = pwm_gpio_to_slice_num(gpio);
-    uint32_t pwm_period = CV_9*CV_5;
-    pwm_set_wrap(slice_num, pwm_period);
-    pwm_set_gpio_level(gpio,0);
-    pwm_set_clkdiv(slice_num,CV_10);
-    pwm_set_enabled(slice_num, true);
-}
-
-void adjust_pwm_level()
-{
-    //Emergency Stop
-    if (current_speed == 1 ||current_speed == 129 ){
-        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
-        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
-        return;
-    }
-    //Stop
-    if (current_speed == 0 ||current_speed == 128 ){
-        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
-        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
-        return;
-    }
+void interp_speed_step(uint8_t speed_byte){
+    target_speed_step = speed_byte;
     //Forward
-    if (current_speed>127){
-        uint x = current_speed-129;
-        uint duty_cycle = ((CV_2*(126-x)+CV_5*(x-1))*CV_9)/125;
-        pwm_set_gpio_level(MOTOR_PWM_FORWARD,duty_cycle);
-        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
-        return;
+    if(speed_byte>127){
+        target_v_emf = (speed_byte-129)*32;
+        target_direction = true;
     }
     //Reverse
-    if (current_speed<128){
-        uint x = current_speed-1;
-        uint duty_cycle = ((CV_2*(126-x)+CV_5*(x-1))*CV_9)/125;
-        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
-        pwm_set_gpio_level(MOTOR_PWM_REVERSE,duty_cycle);
-        return;
+    if(speed_byte<128) {
+        target_v_emf = (speed_byte-1)*32;
+        target_direction = false;
     }
+    if (speed_byte == 128 || speed_byte==0) target_v_emf = 0;
 }
 
 void set_outputs() {
@@ -115,11 +97,10 @@ void set_outputs() {
     for (uint8_t i = 0; i < SIZE_ACTIVE_FUNCTIONS; i++) {
         if (active_functions[i]) {
             printf("F%u == 1\n",i);
-            bool current_direction = get_direction(current_speed);
-            uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4 + i * 8 - 4 * current_direction];
-            uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5 + i * 8 - 4 * current_direction];
-            uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6 + i * 8 - 4 * current_direction];
-            uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7 + i * 8 - 4 * current_direction];
+            uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7 + i * 8 - 4 * target_direction];
             uint32_t func_cv = (func_cv_0) + (func_cv_1 << 8) + (func_cv_2 << 16) + (func_cv_3 << 24);
             GPIO_to_be_set = (GPIO_to_be_set | func_cv) & filter_forbidden_GPIO;
             uint32_t mask = 1;
@@ -202,9 +183,9 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     //0011-1111 (128 Speed Step Control) - 2 Byte length
     if (command_byte_n == 0b00111111)
     {
-//        printf("0011-1111 (128 Speed Step Control) Instruction\n");
+        //printf("0011-1111 (128 Speed Step Control) Instruction\n");
         uint8_t command_byte_n_minus1 = byte_array[command_byte_start_index - 1];
-        multicore_fifo_push_blocking(command_byte_n_minus1);
+        if (command_byte_n_minus1 != target_speed_step) interp_speed_step(command_byte_n_minus1);
     }
     // 10XX-XXXX (Function Group Instruction)
     if (command_byte_n >> 6 == 0b00000010)
@@ -263,74 +244,70 @@ void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
                 instruction_evaluation(number_of_bytes,byte_array);
             }
         }
-//        for (int i = 0; i < number_of_bytes; i++) {
-//            printf("BYTE_%u:" BYTE_TO_BINARY_PATTERN "\n", i, BYTE_TO_BINARY(byte_array[i]));
-//        }
-//        printf("Paketgroesse: %u\n", number_of_bytes);
-//        printf("\n");
     }
 }
-
-int64_t speed_control_alarm(alarm_id_t id, void *user_data) {
-    printf("current speed: %u\n", current_speed);
-    bool current_direction = get_direction(current_speed);
-    bool new_direction = get_direction(new_speed);
-    // Check for Opposite Direction, Emergency Break
-    if (new_speed == 1 || new_speed == 129 ){
-        current_speed = new_speed;
-        adjust_pwm_level();
+void adjust_pwm_level(uint16_t level)
+{
+    if(target_direction){
+        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
+        pwm_set_gpio_level(MOTOR_PWM_FORWARD,level);
     }
-    if (current_direction != new_direction ){
-        if (new_direction == 1) current_speed = 128;
-        else current_speed = 0;
-        adjust_pwm_level();
-        return 10000;
-//        add_alarm_in_ms(10,speed_control_alarm,NULL,true);
-    }
-    // "Speed control"
     else{
-        if (current_speed==new_speed) {
-            last_alarm_id = -2;
-            return 0;
-        }
-        if (current_speed<new_speed){
-            if(current_speed == 0 || current_speed == 128)current_speed++;
-            current_speed++;
-            adjust_pwm_level();
-            return 7*CV_3*1000;
-//            add_alarm_in_ms(7*CV_3,speed_control_alarm,NULL,true);
-        }else{
-            if(current_speed == 2 || current_speed == 130)current_speed--;
-            current_speed--;
-            adjust_pwm_level();
-            return 7*CV_4*1000;
-//            add_alarm_in_ms(7*CV_4,speed_control_alarm,NULL,true);
-        }
+        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
+        pwm_set_gpio_level(MOTOR_PWM_REVERSE,level);
     }
 }
-//FIFO Interrupt Handler
-void core1_sio_irq() {
-    //Look for changes in speed
-    if (multicore_fifo_pop_blocking() != new_speed){
-        new_speed = multicore_fifo_pop_blocking();
-        //look for alarm running already
-        if (last_alarm_id == -2) last_alarm_id = add_alarm_in_ms(10, speed_control_alarm, NULL, true);
-        multicore_fifo_clear_irq();
-    }else{
-        multicore_fifo_clear_irq();
-    }
 
+void measure(){
+    pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
+    pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
+    busy_wait_us(100);
+    uint sum = 0;
+    for (int i = 0; i < N_MEASUREMENTS; ++i) {
+        sum = sum+adc_read();
+    }
+    measurement = (int)sum / N_MEASUREMENTS;
 }
+
+void pid_control(){
+    measure();
+    error =  (int)target_v_emf - (int)measurement;
+    e_sum = e_sum + error;
+    if (e_sum > sum_limit_max) e_sum = sum_limit_max;
+    if (e_sum < sum_limit_min) e_sum = sum_limit_min;
+    output =  output+ (k_p * (float)error) + (k_i * t_s * (float)e_sum) + ((k_d/t_s) * (float)(error - e_old));
+    e_old = error;
+    if (output > 5000) output = 5000;
+    if (output < 1400) output = 1400;
+    if (target_v_emf == 0) output = 0;
+    adjust_pwm_level((u_int16_t )output);
+    busy_wait_us(10000);
+}
+
+void init_pwm(uint gpio) {
+    uint slice_num = pwm_gpio_to_slice_num(gpio);
+    uint32_t wrap_counter = 5000;                  // 5000 Cycles @ 125MHz for 1 Period -> 25kHz
+    pwm_set_wrap(slice_num, wrap_counter);
+    pwm_set_gpio_level(gpio,0);
+    pwm_set_clkdiv(slice_num,1);
+    pwm_set_enabled(slice_num, true);
+    printf("PWM  on GPIO %u was initialized.\n",gpio);
+}
+void init_adc(){
+    adc_init();
+    adc_gpio_init(26);
+    adc_select_input(0);
+    printf("ADC was initialized.\n");
+}
+
 void core1_entry() {
-    multicore_fifo_clear_irq();
-    irq_set_exclusive_handler(SIO_IRQ_PROC1, core1_sio_irq);
-    irq_set_enabled(SIO_IRQ_PROC1, true);
     gpio_set_function(MOTOR_PWM_FORWARD, GPIO_FUNC_PWM);
     gpio_set_function(MOTOR_PWM_REVERSE, GPIO_FUNC_PWM);
+    init_adc();
     init_pwm(MOTOR_PWM_FORWARD);
     init_pwm(MOTOR_PWM_REVERSE);
-    printf("Core 1 init finished\n");
-    while (1) ;
+    printf("Core 1 was initialized.\n");
+    while (1) pid_control();
 }
 int main() {
     sleep_ms(1000);
