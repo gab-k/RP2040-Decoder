@@ -1,29 +1,13 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <inttypes.h>
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
-#include "hardware/gpio.h"
 #include "hardware/irq.h"
-#include "hardware/pio.h"
 #include "hardware/pwm.h"
 #include "hardware/adc.h"
-#include "pwm.pio.h"
-#include "automat.h"
+#include "hardware/flash.h"
 #include "CV.h"
 #include "multicore.h"
-#define SIZE_BYTE_ARRAY 5
-#define SIZE_ACTIVE_FUNCTIONS 69
-#define DCC_INPUT_PIN 17
-#define MOTOR_PWM_FORWARD 21
-#define MOTOR_PWM_REVERSE 22
-#define PACKAGE_3_BYTES 0b11111111110000000000000000000000000001
-#define PACKAGE_MASK_3_BYTES 0b11111111111000000001000000001000000001
-#define PACKAGE_4_BYTES 0b11111111110000000000000000000000000000000000001
-#define PACKAGE_MASK_4_BYTES 0b11111111111000000001000000001000000001000000001
-#define PACKAGE_5_BYTES 0b11111111110000000000000000000000000000000000000000000001
-#define PACKAGE_MASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
-#define N_MEASUREMENTS 50
+const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
 uint64_t last_bits = 0;
 bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
 uint32_t target_speed_step = 128;
@@ -40,6 +24,7 @@ float k_d = 0.008f;
 float output = 0;
 uint target_v_emf = 0;
 uint measurement;
+bool program_mode_flag = false;
 
 int8_t check_for_package()  //function returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned
 {
@@ -90,6 +75,10 @@ void interp_speed_step(uint8_t speed_byte){
     if (speed_byte == 128 || speed_byte==0) target_v_emf = 0;
 }
 
+void program_mode(){
+
+}
+
 void set_outputs() {
     uint32_t GPIO_to_be_set = 0;
     //ensures that GPIO's that are used for inputs or PWM (motor) cannot be set HIGH
@@ -97,10 +86,10 @@ void set_outputs() {
     for (uint8_t i = 0; i < SIZE_ACTIVE_FUNCTIONS; i++) {
         if (active_functions[i]) {
             printf("F%u == 1\n",i);
-            uint8_t func_cv_0 = CV_FUNCTION_ARRAY[4 + i * 8 - 4 * target_direction];
-            uint8_t func_cv_1 = CV_FUNCTION_ARRAY[5 + i * 8 - 4 * target_direction];
-            uint8_t func_cv_2 = CV_FUNCTION_ARRAY[6 + i * 8 - 4 * target_direction];
-            uint8_t func_cv_3 = CV_FUNCTION_ARRAY[7 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_0 = CV_ARRAY[4 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_1 = CV_ARRAY[5 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_2 = CV_ARRAY[6 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_3 = CV_ARRAY[7 + i * 8 - 4 * target_direction];
             uint32_t func_cv = (func_cv_0) + (func_cv_1 << 8) + (func_cv_2 << 16) + (func_cv_3 << 24);
             GPIO_to_be_set = (GPIO_to_be_set | func_cv) & filter_forbidden_GPIO;
             uint32_t mask = 1;
@@ -143,30 +132,39 @@ bool is_long_address(uint8_t number_of_bytes, const uint8_t byte_array[]) {
 
 bool address_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
     uint16_t read_address;
-    if (byte_array[number_of_bytes - 1] == 255)     //Check for Idle Package
+    //Enters Programming Mode
+    if (program_mode_flag && byte_array[number_of_bytes - 1]<128 && byte_array[number_of_bytes - 1]>111){
+        program_mode();
+    }
+    program_mode_flag = false;
+    //Check for Idle Package
+    if (byte_array[number_of_bytes - 1] == 255)
     {
-//        printf("Idle-Package found!\n");
         return false;
     }
-    if (byte_array[number_of_bytes-1] == 0)         //Check for Broadcast Package
+    //Check for Broadcast Package
+    if (byte_array[number_of_bytes-1] == 0)
     {
         printf("Broadcast-Package found!\n");
         return true;
     }
-    if (is_long_address(number_of_bytes, byte_array)) //Long Address Package
+    //Long Address Package
+    if (is_long_address(number_of_bytes, byte_array))
     {
         //start of transmission -> address_byte_1 -> address_byte_0 -> ... -> end of transmission
         uint16_t address_byte_1 = (byte_array[number_of_bytes - 1]) - 192;  //remove long address identifier bits
         uint16_t address_byte_0 = (byte_array[number_of_bytes - 2]);
         read_address = (address_byte_1 << 8) + address_byte_0;
-//        printf("long address: %u, was read. \n", read_address);
-    } else  //Short Address Package
+        //printf("long address: %u, was read. \n", read_address);
+    }
+    //Short Address Package
+    else
     {
         //start of transmission ->  address_byte_0 -> ... -> end of transmission
         read_address = (byte_array[number_of_bytes - 1]);
-//        printf("short address: %u, was read. \n",read_address);
+        //printf("short address: %u, was read. \n",read_address);
     }
-    return (CV_1 == read_address);      //returns true if Address Matches
+    return (CV_ARRAY[0] == read_address);    //returns true if Address Matches
 }
 
 void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
@@ -179,7 +177,12 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
         command_byte_start_index = number_of_bytes - 2;
     }
     command_byte_n = byte_array[command_byte_start_index];
-
+    //0000-0000  -  Reset Package
+    if (command_byte_n == 0b00000000){
+        target_speed_step = 1;
+        update_active_functions(0,0,37);
+        program_mode_flag = true;
+    }
     //0011-1111 (128 Speed Step Control) - 2 Byte length
     if (command_byte_n == 0b00111111)
     {
@@ -284,7 +287,6 @@ void pid_control(){
     busy_wait_us(10000);
 }
 
-
 void init_pwm(uint gpio) {
     uint slice_num = pwm_gpio_to_slice_num(gpio);
     uint32_t wrap_counter = 5000;                  // 5000 Cycles @ 125MHz for 1 Period -> 25kHz
@@ -294,22 +296,49 @@ void init_pwm(uint gpio) {
     pwm_set_enabled(slice_num, true);
     printf("PWM  on GPIO %u was initialized.\n",gpio);
 }
-void init_adc(){
+
+void init_adc(uint gpio){
     adc_init();
-    adc_gpio_init(26);
+    adc_gpio_init(gpio);
     adc_select_input(0);
-    printf("ADC was initialized.\n");
+    printf("ADC  on GPIO %d was initialized.\n",gpio);
 }
 
 void core1_entry() {
     gpio_set_function(MOTOR_PWM_FORWARD, GPIO_FUNC_PWM);
     gpio_set_function(MOTOR_PWM_REVERSE, GPIO_FUNC_PWM);
-    init_adc();
+    init_adc(V_EMF_ADC_PIN);
     init_pwm(MOTOR_PWM_FORWARD);
     init_pwm(MOTOR_PWM_REVERSE);
     printf("Core 1 was initialized.\n");
     while (1) pid_control();
 }
+
+
+void print_buf(const uint8_t *buf, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        printf("CV_%u: %02x",i+1, buf[i]);
+        if (i % 8 == 7)
+            printf("\n");
+        else
+            printf(" ");
+    }
+}
+
+void write_updated_cvs_to_flash(){
+    multicore_reset_core1();
+    uint32_t ints = save_and_disable_interrupts();
+    printf("Erasing CV's...\n");
+    flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE*2);
+    printf("Erasing Done.\n");
+    printf("Programming CV's...\n");
+    flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY, FLASH_PAGE_SIZE * 2);
+    printf("Programming Done. Read back CV's:\n");
+    print_buf(CV_ARRAY_FLASH, FLASH_PAGE_SIZE * 2);
+    restore_interrupts(ints);
+    multicore_launch_core1(core1_entry);
+}
+
 int main() {
     sleep_ms(1000);
     stdio_init_all();

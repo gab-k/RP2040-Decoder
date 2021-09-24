@@ -33,6 +33,7 @@ target_link_libraries(
         hardware_pio
         hardware_pwm
         hardware_adc
+        hardware_flash
         pico_multicore
         )
 
