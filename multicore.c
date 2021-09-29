@@ -2,7 +2,6 @@
 #include "string.h"
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
-#include "hardware/irq.h"
 #include "hardware/pwm.h"
 #include "hardware/adc.h"
 #include "hardware/flash.h"
@@ -16,16 +15,16 @@ uint target_speed_step = 128;
 uint current_v_emf_target = 0;
 uint measurement = 0;
 bool reset_package_flag = false;
-int sum_limit_max = 1000;
-int sum_limit_min = -1000;
-float k_p = 0.09f;
-float k_i = 0.075f;
-float k_d = 0.008f;
-float t_s = 0.01f;
+int sum_limit_max;
+int sum_limit_min;
+float k_p;
+float k_i;
+float k_d;
+float t_s;
 uint measurement_delay_in_us;
 uint measurement_iterations;
-uint measurement_period_in_ms;
 struct repeating_timer speed_helper_timer;
+struct repeating_timer pid_control_timer;
 
 int8_t check_for_package()  //function returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned
 {
@@ -105,15 +104,24 @@ void write_cv(uint16_t cv_address,uint8_t cv_data){
 }
 
 void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
-    //TODO: Program only on second identical Command/Packet...
-    uint8_t instruction_type_mask = 0b00001100;
-    uint8_t instruction_type = instruction_type_mask&byte_array[number_of_bytes-1];
-    uint8_t cv_address_mask = 0b00000011;
-    uint8_t cv_address_ms_bits = cv_address_mask&byte_array[number_of_bytes-1];
-    uint16_t cv_address = byte_array[number_of_bytes-2]+(cv_address_ms_bits<<8);
-    uint8_t cv_data = byte_array[number_of_bytes-3];
-    if (instruction_type == 0b000000100) verify_cv(cv_address,cv_data);
-    if (instruction_type == 0b000001100) write_cv(cv_address,cv_data);
+    static uint8_t prev_byte_array[SIZE_BYTE_ARRAY];
+    uint counter = 0;
+    for (int i = 0; i < number_of_bytes; ++i) {
+        if (prev_byte_array[i] == byte_array[i]) counter++;
+    }
+    for (int i = 0; i < number_of_bytes; ++i) {
+        prev_byte_array [i] = byte_array[i];
+    }
+    if (number_of_bytes == counter) {
+        uint8_t instruction_type_mask = 0b00001100;
+        uint8_t instruction_type = instruction_type_mask & byte_array[number_of_bytes - 1];
+        uint8_t cv_address_mask = 0b00000011;
+        uint8_t cv_address_ms_bits = cv_address_mask & byte_array[number_of_bytes - 1];
+        uint16_t cv_address = byte_array[number_of_bytes - 2] + (cv_address_ms_bits << 8);
+        uint8_t cv_data = byte_array[number_of_bytes - 3];
+        if (instruction_type == 0b000000100) verify_cv(cv_address, cv_data);
+        if (instruction_type == 0b000001100) write_cv(cv_address, cv_data);
+    }
 }
 
 void set_outputs() {
@@ -123,10 +131,10 @@ void set_outputs() {
     for (uint8_t i = 0; i < SIZE_ACTIVE_FUNCTIONS; i++) {
         if (active_functions[i]) {
             printf("F%u == 1\n",i);
-            uint8_t func_cv_0 = CV_ARRAY_FLASH[4 + i * 8 - 4 * target_direction];                                       //TODO: Index needs to be corrected here...
-            uint8_t func_cv_1 = CV_ARRAY_FLASH[5 + i * 8 - 4 * target_direction];
-            uint8_t func_cv_2 = CV_ARRAY_FLASH[6 + i * 8 - 4 * target_direction];
-            uint8_t func_cv_3 = CV_ARRAY_FLASH[7 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_0 = CV_ARRAY_FLASH[260 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_1 = CV_ARRAY_FLASH[261 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_2 = CV_ARRAY_FLASH[262 + i * 8 - 4 * target_direction];
+            uint8_t func_cv_3 = CV_ARRAY_FLASH[263 + i * 8 - 4 * target_direction];
             uint32_t func_cv = (func_cv_0) + (func_cv_1 << 8) + (func_cv_2 << 16) + (func_cv_3 << 24);
             GPIO_to_be_set = (GPIO_to_be_set | func_cv) & filter_forbidden_GPIO;
             uint32_t mask = 1;
@@ -224,7 +232,11 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     //0011-1111 (128 Speed Step Control) - 2 Byte length
     if (command_byte_n == 0b00111111)
     {
+        uint old_target_speed_step = target_speed_step;
         target_speed_step = byte_array[command_byte_start_index - 1];
+        if(target_speed_step>127) target_direction = true;
+        else target_direction = false;
+        init_speed_helper(old_target_speed_step);
     }
     // 10XX-XXXX (Function Group Instruction)
     if (command_byte_n >> 6 == 0b00000010)
@@ -288,10 +300,12 @@ void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
 
 void adjust_pwm_level(uint16_t level)
 {
+    //Forward
     if(target_direction){
         pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
         pwm_set_gpio_level(MOTOR_PWM_FORWARD,level);
     }
+    //Reverse
     else{
         pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
         pwm_set_gpio_level(MOTOR_PWM_REVERSE,level);
@@ -309,7 +323,7 @@ void measure(){
     measurement = (int)sum / measurement_iterations;
 }
 
-void pid_control(){
+bool pid_control(){
     static float output;
     static int error;
     static int e_old;
@@ -325,20 +339,18 @@ void pid_control(){
     if (output < 1400) output = 1400;
     if (current_v_emf_target == 0) output = 0;
     adjust_pwm_level((u_int16_t )output);
-    sleep_ms(measurement_period_in_ms);
+    return true;
 }
 
 void init_pid(){
     k_p = (float)CV_ARRAY_FLASH[48]/1024;
     k_i = (float)CV_ARRAY_FLASH[49]/1024;
     k_d = (float)CV_ARRAY_FLASH[50]/16384;
-    int t_s_in_us = CV_ARRAY_FLASH[47]*1000+CV_ARRAY_FLASH[46]+CV_ARRAY_FLASH[45]*3;
-    t_s = (float)t_s_in_us/1000000;
+    t_s = (float)CV_ARRAY_FLASH[47]/1000;
     sum_limit_max = CV_ARRAY_FLASH[51]*10;
     sum_limit_min = CV_ARRAY_FLASH[52]*(-10);
     measurement_delay_in_us = CV_ARRAY_FLASH[46];
     measurement_iterations = CV_ARRAY_FLASH[45];
-    measurement_period_in_ms = CV_ARRAY_FLASH[47];
     printf("PID variables:\nk_p = %f;\nk_i = %f;\nk_d = %f;\nt_s = %f;\n",k_p,k_i,k_d,t_s);
 }
 
@@ -359,29 +371,44 @@ void init_adc(uint gpio){
     printf("ADC on GPIO %d was initialized.\n",gpio);
 }
 bool speed_helper(struct repeating_timer *t) {
-    uint end_v_emf_target;
     //Emergency Stop
-    if (target_speed_step == 129 || target_speed_step==1) current_v_emf_target = 0;
+    if (target_speed_step == 129 || target_speed_step==1) { current_v_emf_target = 0; return false; }
     else{
-        //First Speed currently equals 2*32 while all the other steps are 1*32
+        uint end_v_emf_target;
         //Forward
-        if(target_speed_step>127){
-            target_direction = true;
+        if(target_direction){
             if (target_speed_step == 128) end_v_emf_target = 0;
             else end_v_emf_target = (target_speed_step - 129) * 32;
-            if (end_v_emf_target > current_v_emf_target) current_v_emf_target+=CV_ARRAY_FLASH[2]+1/8;
-            if (end_v_emf_target < current_v_emf_target) current_v_emf_target-=CV_ARRAY_FLASH[3]+1/8;
         }
         //Reverse
-        if(target_speed_step<128) {
-            target_direction = false;
+        else {
             if (target_speed_step == 0) end_v_emf_target = 0;
             else end_v_emf_target = (target_speed_step-1) * 32;
-            if (end_v_emf_target > current_v_emf_target) current_v_emf_target+=CV_ARRAY_FLASH[2]+1/8;
-            if (end_v_emf_target < current_v_emf_target) current_v_emf_target-=CV_ARRAY_FLASH[3]+1/8;
         }
+        if (end_v_emf_target > current_v_emf_target) { current_v_emf_target += 32; }
+        if (end_v_emf_target < current_v_emf_target) { current_v_emf_target -= 32; }
+        else return false;
     }
     return true;
+}
+
+void init_speed_helper(uint old_target_speed_step){
+    //Acceleration
+   if(target_speed_step > old_target_speed_step){
+       uint32_t acceleration_rate = CV_ARRAY_FLASH[2]*7100;
+       //Timer already running
+       if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = acceleration_rate*1000;
+       //Timer not running
+       else add_repeating_timer_us(-acceleration_rate, speed_helper, NULL, &speed_helper_timer);
+   }
+   //Deceleration
+   else{
+       uint32_t deceleration_rate = CV_ARRAY_FLASH[3]*7100;
+       //Timer already running
+       if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = deceleration_rate*1000;
+       //Timer not running
+       else add_repeating_timer_us(-deceleration_rate, speed_helper, NULL, &speed_helper_timer);
+   }
 }
 
 void core1_entry() {
@@ -391,9 +418,8 @@ void core1_entry() {
     init_pwm(MOTOR_PWM_FORWARD);
     init_pwm(MOTOR_PWM_REVERSE);
     init_pid();
-    add_repeating_timer_ms(-CV_ARRAY_FLASH[44], speed_helper, NULL, &speed_helper_timer);
-    printf("Core 1 was initialized.\n");
-    while (1) pid_control();
+    add_repeating_timer_ms(-CV_ARRAY_FLASH[47], pid_control, NULL, &pid_control_timer);
+    while (1);
 }
 
 void print_cv_array(const uint8_t *buf, size_t len) {
@@ -416,7 +442,6 @@ int main() {
     busy_wait_ms(1000); //This delay is necessary to catch the breakpoint
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
     busy_wait_ms(200); //This delay is necessary to catch the breakpoint
-
     printf("Core 0 was initialized.\n");
     printf("CV_ARRAY read from flash:\n");
     print_cv_array(CV_ARRAY_FLASH, FLASH_PAGE_SIZE * 2);
