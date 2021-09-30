@@ -23,4 +23,4 @@
 #define PACKAGE_MASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
 #define FLASH_TARGET_OFFSET (PICO_FLASH_SIZE_BYTES-FLASH_SECTOR_SIZE*2)
 void core1_entry();
-void init_speed_helper(uint old_target_speed_step);
+void init_speed_helper();

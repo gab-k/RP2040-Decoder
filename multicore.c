@@ -232,11 +232,10 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     //0011-1111 (128 Speed Step Control) - 2 Byte length
     if (command_byte_n == 0b00111111)
     {
-        uint old_target_speed_step = target_speed_step;
         target_speed_step = byte_array[command_byte_start_index - 1];
         if(target_speed_step>127) target_direction = true;
         else target_direction = false;
-        init_speed_helper(old_target_speed_step);
+        init_speed_helper();
     }
     // 10XX-XXXX (Function Group Instruction)
     if (command_byte_n >> 6 == 0b00000010)
@@ -370,21 +369,23 @@ void init_adc(uint gpio){
     adc_select_input(0);
     printf("ADC on GPIO %d was initialized.\n",gpio);
 }
+uint calc_end_v_emf_target(){
+    //Forward
+    if(target_direction){
+        if (target_speed_step == 128) return 0;
+        else return (target_speed_step - 129) * 32;
+    }
+    //Reverse
+    else {
+        if (target_speed_step == 0) return 0;
+        else return (target_speed_step-1) * 32;
+    }
+}
 bool speed_helper(struct repeating_timer *t) {
     //Emergency Stop
     if (target_speed_step == 129 || target_speed_step==1) { current_v_emf_target = 0; return false; }
     else{
-        uint end_v_emf_target;
-        //Forward
-        if(target_direction){
-            if (target_speed_step == 128) end_v_emf_target = 0;
-            else end_v_emf_target = (target_speed_step - 129) * 32;
-        }
-        //Reverse
-        else {
-            if (target_speed_step == 0) end_v_emf_target = 0;
-            else end_v_emf_target = (target_speed_step-1) * 32;
-        }
+        uint end_v_emf_target = calc_end_v_emf_target();
         if (end_v_emf_target > current_v_emf_target) { current_v_emf_target += 32; }
         if (end_v_emf_target < current_v_emf_target) { current_v_emf_target -= 32; }
         else return false;
@@ -392,23 +393,24 @@ bool speed_helper(struct repeating_timer *t) {
     return true;
 }
 
-void init_speed_helper(uint old_target_speed_step){
+void init_speed_helper(){
+    uint end_v_emf_target = calc_end_v_emf_target();
     //Acceleration
-   if(target_speed_step > old_target_speed_step){
-       uint32_t acceleration_rate = CV_ARRAY_FLASH[2]*7100;
-       //Timer already running
-       if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = acceleration_rate*1000;
-       //Timer not running
-       else add_repeating_timer_us(-acceleration_rate, speed_helper, NULL, &speed_helper_timer);
-   }
-   //Deceleration
-   else{
-       uint32_t deceleration_rate = CV_ARRAY_FLASH[3]*7100;
-       //Timer already running
-       if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = deceleration_rate*1000;
-       //Timer not running
-       else add_repeating_timer_us(-deceleration_rate, speed_helper, NULL, &speed_helper_timer);
-   }
+    if(end_v_emf_target > current_v_emf_target){
+        uint32_t acceleration_rate = CV_ARRAY_FLASH[2]*7111;
+        //Timer already running
+        if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = acceleration_rate;
+        //Timer not running
+        else add_repeating_timer_us(-acceleration_rate, speed_helper, NULL, &speed_helper_timer);
+    }
+    //Deceleration
+    else{
+        uint32_t deceleration_rate = CV_ARRAY_FLASH[3]*7111;
+        //Timer already running
+        if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = deceleration_rate;
+        //Timer not running
+        else add_repeating_timer_us(-deceleration_rate, speed_helper, NULL, &speed_helper_timer);
+    }
 }
 
 void core1_entry() {
