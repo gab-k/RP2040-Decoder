@@ -141,7 +141,7 @@ void set_outputs() {
             for (uint8_t j = 0; j < 32; j++)
             {
                 uint32_t bit_value =  (GPIO_to_be_set&mask)>>j;
-                printf("GPIO: %u, set to: %d\n",j,bit_value);
+                //printf("GPIO: %u, set to: %d\n",j,bit_value);
                 //gpio_put(j,bit_value);
                 mask = mask<<1;
             }
@@ -314,6 +314,7 @@ void adjust_pwm_level(uint16_t level)
 void measure(){
     pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
     pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
+    adc_select_input(target_direction);
     busy_wait_us(measurement_delay_in_us);
     uint sum = 0;
     for (int i = 0; i < measurement_iterations; ++i) {
@@ -332,7 +333,7 @@ bool pid_control(){
     e_sum = e_sum + error;
     if (e_sum > sum_limit_max) e_sum = sum_limit_max;
     if (e_sum < sum_limit_min) e_sum = sum_limit_min;
-    output =  output+ (k_p * (float)error) + (k_i * t_s * (float)e_sum) + ((k_d/t_s) * (float)(error - e_old));
+    output =  output+ (k_p * (float)error) + (k_i * t_s * (float)e_sum) + (k_d/t_s) * (float)(error - e_old);
     e_old = error;
     if (output > 5000) output = 5000;
     if (output < 1400) output = 1400;
@@ -366,19 +367,18 @@ void init_pwm(uint gpio) {
 void init_adc(uint gpio){
     adc_init();
     adc_gpio_init(gpio);
-    adc_select_input(0);
     printf("ADC on GPIO %d was initialized.\n",gpio);
 }
 uint calc_end_v_emf_target(){
     //Forward
     if(target_direction){
         if (target_speed_step == 128) return 0;
-        else return (target_speed_step - 129) * 32;
+        else return (target_speed_step - 129) * 16;
     }
     //Reverse
     else {
         if (target_speed_step == 0) return 0;
-        else return (target_speed_step-1) * 32;
+        else return (target_speed_step-1) * 16;
     }
 }
 bool speed_helper(struct repeating_timer *t) {
@@ -386,8 +386,8 @@ bool speed_helper(struct repeating_timer *t) {
     if (target_speed_step == 129 || target_speed_step==1) { current_v_emf_target = 0; return false; }
     else{
         uint end_v_emf_target = calc_end_v_emf_target();
-        if (end_v_emf_target > current_v_emf_target) { current_v_emf_target += 32; }
-        if (end_v_emf_target < current_v_emf_target) { current_v_emf_target -= 32; }
+        if (end_v_emf_target > current_v_emf_target)  current_v_emf_target += 16;
+        else if(end_v_emf_target < current_v_emf_target)  current_v_emf_target -= 16;
         else return false;
     }
     return true;
@@ -397,30 +397,33 @@ void init_speed_helper(){
     uint end_v_emf_target = calc_end_v_emf_target();
     //Acceleration
     if(end_v_emf_target > current_v_emf_target){
-        uint32_t acceleration_rate = CV_ARRAY_FLASH[2]*7111;
+        int64_t acceleration_rate = -CV_ARRAY_FLASH[2]*7111;
         //Timer already running
         if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = acceleration_rate;
         //Timer not running
-        else add_repeating_timer_us(-acceleration_rate, speed_helper, NULL, &speed_helper_timer);
+        else add_repeating_timer_us(acceleration_rate, speed_helper, NULL, &speed_helper_timer);
     }
     //Deceleration
-    else{
-        uint32_t deceleration_rate = CV_ARRAY_FLASH[3]*7111;
+    if(end_v_emf_target < current_v_emf_target){
+        int64_t deceleration_rate = -CV_ARRAY_FLASH[3]*7111;
         //Timer already running
         if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = deceleration_rate;
         //Timer not running
-        else add_repeating_timer_us(-deceleration_rate, speed_helper, NULL, &speed_helper_timer);
+        else add_repeating_timer_us(deceleration_rate, speed_helper, NULL, &speed_helper_timer);
     }
 }
+
 
 void core1_entry() {
     gpio_set_function(MOTOR_PWM_FORWARD, GPIO_FUNC_PWM);
     gpio_set_function(MOTOR_PWM_REVERSE, GPIO_FUNC_PWM);
-    init_adc(V_EMF_ADC_PIN);
+    init_adc(V_EMF_ADC_PIN_FORWARD);
+    init_adc(V_EMF_ADC_PIN_REVERSE);
     init_pwm(MOTOR_PWM_FORWARD);
     init_pwm(MOTOR_PWM_REVERSE);
     init_pid();
     add_repeating_timer_ms(-CV_ARRAY_FLASH[47], pid_control, NULL, &pid_control_timer);
+    printf("Core 1 was initialized.\n");
     while (1);
 }
 
@@ -438,15 +441,16 @@ int main() {
     sleep_ms(1000);
     stdio_init_all();
     gpio_init(DCC_INPUT_PIN);
+    gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
-    gpio_put(PICO_DEFAULT_LED_PIN, true);
-    busy_wait_ms(1000); //This delay is necessary to catch the breakpoint
-    gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
-    busy_wait_ms(200); //This delay is necessary to catch the breakpoint
-    printf("Core 0 was initialized.\n");
     printf("CV_ARRAY read from flash:\n");
     print_cv_array(CV_ARRAY_FLASH, FLASH_PAGE_SIZE * 2);
     multicore_launch_core1(core1_entry);
+    busy_wait_ms(2000); //This delay is necessary to catch the breakpoint
+    gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
+    busy_wait_ms(200); //This delay is necessary to catch the breakpoint
+    gpio_put(PICO_DEFAULT_LED_PIN, true);
+    printf("Core 0 was initialized.\n");
     while (1);
 }

@@ -7,8 +7,8 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    // Note that there is an integer division in play here which will get rid of the fractional part
    // this means that a value of 254 for example, will result in the same behaviour as an 248.
    // This does not correspond to the norm and might be changed eventually.
-   0b00000000,         //CV_3  -    Acceleration Rate
-   0b00000000,         //CV_4  -    Deceleration Rate
+   0b00000010,         //CV_3  -    Acceleration Rate
+   0b00000010,         //CV_4  -    Deceleration Rate
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b11111111,         //CV_5  -    V_max
    0b01111111,         //CV_6  -    V_mid
@@ -67,9 +67,9 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    0b01011100,         //CV_49  -   PID Control P_Factor        =   CV_49/1024     i.e. Default = 92  -> 0.08984375
    0b01001101,         //CV_50  -   PID Control I_Factor        =   CV_50/1024     i.e. Default = 77  -> 0.0751953125
    0b10000011,         //CV_51  -   PID Control D_Factor        =   CV_51/16384    i.e. Default = 131 -> 0.00799560547
-   0b00000000,         //CV_52  -   PID Integral Limit positive = CV_52*10         i.e. Default = 100 -> +1000
-   0b01100100,         //CV_53  -   PID Integral Limit negative = CV_53*(-10)      i.e. Default = 100 -> -1000
-   0b01100100,         //CV_54  -
+   0b00110000,         //CV_52  -   PID Integral Limit positive = CV_52*10         i.e. Default = 100 -> +1000
+   0b00110000,         //CV_53  -   PID Integral Limit negative = CV_53*(-10)      i.e. Default = 100 -> -1000
+   0b00000000,         //CV_54  -
    0b00000000,         //CV_55  -
    0b00000000,         //CV_56  -
    0b00000000,         //CV_57  -
