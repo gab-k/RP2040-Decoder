@@ -4,5 +4,6 @@ The Hardware and all the associated Design Files are licensed with the CERN Open
 
 ![Top View](https://user-images.githubusercontent.com/82903393/141682454-37e5eb27-441a-4b72-bfd2-aa3c5bd911c7.png =248x221)
 ![Bottom View](https://user-images.githubusercontent.com/82903393/141682455-d829b00d-ffff-487e-a901-82d6fb121bdd.png =248x221)
+<img src="https://user-images.githubusercontent.com/82903393/141682455-d829b00d-ffff-487e-a901-82d6fb121bdd.png" alt="tester" width="248"/>
 
 Further details about the project can be found here:  [RP2040-Decoder Wiki](https://github.com/GabrielKoppenstein/pico-decoder/wiki)
