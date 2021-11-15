@@ -1,6 +1,7 @@
 The RP2040-Decoder is a DIY DCC Decoder for model railroad locomotives which aims to be cost effective. It is based around an RP2040 microcontroller. 
 The Software is written in C and licensed as MIT license.
 The Hardware and all the associated Design Files are licensed as CERN Open Hardware Licence Version 2 - Permissive.
+
 Note: The decoder is still in early development, the Wiki is also work in progress and will be updated to be as comprehensive as possible.
 
 <p float="left">
