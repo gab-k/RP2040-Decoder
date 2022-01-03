@@ -62,7 +62,7 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    //(CV_46*2us)+(CV_47)+(CV_48*1000) is the Total duration of one PID-cycle i.e. the sampling time t_s
    0b00110010,         //CV_46  -   V_EMF Measurement Iterations
    0b01100100,         //CV_47  -   V_EMF Measurement Delay in us
-   0b00001010,         //CV_48  -   V_EMF Measurement Period duration in ms / equals 1 PID-Cycle
+   0b10001010,         //CV_48  -   V_EMF Measurement Period duration in ms / equals 1 PID-Cycle
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b01011100,         //CV_49  -   PID Control P_Factor        =   CV_49/1024     i.e. Default = 92  -> 0.08984375
    0b01001101,         //CV_50  -   PID Control I_Factor        =   CV_50/1024     i.e. Default = 77  -> 0.0751953125
