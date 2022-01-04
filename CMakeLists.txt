@@ -21,8 +21,7 @@ add_compile_options(-Wall
 add_executable(
         hello_multicore
         multicore.c
-        automat.c
-        )
+)
 
 pico_generate_pio_header(hello_multicore ${CMAKE_CURRENT_LIST_DIR}/pwm.pio)
 
