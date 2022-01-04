@@ -1,3 +1,8 @@
+////////////////////////////////////
+//        RP2040-Decoder          //
+// created by Gabriel Koppenstein //
+////////////////////////////////////
+
 #include <stdio.h>
 #include "string.h"
 #include "pico/stdlib.h"
@@ -28,7 +33,6 @@ typedef struct pid_params{
 pid_params pid_config;
 uint measurement_delay_in_us;
 uint measurement_iterations;
-static uint8_t prev_byte_array[SIZE_BYTE_ARRAY] = {0};
 struct repeating_timer speed_helper_timer;
 struct repeating_timer pid_control_timer;
 
@@ -48,15 +52,14 @@ int8_t check_for_package()  //function returns number of bytes if valid bit-patt
     }
     return -1;
 }
-
-bool readBit() {
-    busy_wait_us_32(87);
-    return !gpio_get(DCC_INPUT_PIN);
-}
-
 void writeLastBit(bool bit) {
     last_bits <<= 1;
     last_bits |= bit;
+}
+int64_t readBit_alarm_callback(alarm_id_t id, void *user_data){
+    writeLastBit(!gpio_get(DCC_INPUT_PIN));
+    evaluation();
+    return 0;
 }
 
 //start of transmission -> byte_n(address byte) -> ... -> byte_0(error detection byte) -> end of transmission
@@ -65,8 +68,6 @@ void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
         byte_array[i] = last_bits >> (i * 9 + 1);
     }
 }
-absolute_time_t from;
-absolute_time_t to;
 
 
 void acknowledge(){
@@ -86,33 +87,27 @@ void verify_cv_bit(uint16_t cv_address,bool bit_val, uint8_t bit_pos){
 void verify_cv_byte(uint16_t cv_address, uint8_t cv_data){
     if (CV_ARRAY_FLASH[cv_address] == cv_data) acknowledge();
 }
-//TODO: FIX Acknowledge
 void write_cv_byte(uint16_t cv_address, uint8_t cv_data){
-    uint32_t saved_interrupts = save_and_disable_interrupts();
-    multicore_reset_core1();
-    //CV_7 and CV_8 are read-only
+    //CV_7 read-only
     if (cv_address == 6){
     }
-    else if (cv_address == 7){
-        //Reset all CVs to Default
-        if (cv_data == 8){
+    else{
+        //Reset all CVs to Default (CV_8; Value = 8)
+        if (cv_address == 7 && cv_data == 8){
             flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
             flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
             acknowledge();
         }
+        else{
+            uint8_t CV_ARRAY_TEMP[512] = {0};
+            memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
+            CV_ARRAY_TEMP[cv_address] = cv_data;
+            flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+            flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
+            acknowledge();
+        }
+
     }
-    else{
-        uint8_t CV_ARRAY_TEMP[512] = {0};
-        memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
-        CV_ARRAY_TEMP[cv_address] = cv_data;
-        flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-        flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
-        acknowledge();
-    }
-    busy_wait_ms(100);
-    restore_interrupts(saved_interrupts);
-    busy_wait_ms(100);
-    multicore_launch_core1(core1_entry);
 }
 
 bool reset_package_check(uint8_t number_of_bytes,const uint8_t byte_array[]){
@@ -132,6 +127,9 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
             uint8_t cv_address_ms_bits_mask = 0b00000011;
             uint16_t cv_address_ms_bits = cv_address_ms_bits_mask & byte_array[number_of_bytes - 1];
             uint16_t cv_address = byte_array[number_of_bytes - 2] + (cv_address_ms_bits << 8);
+            alarm_pool_destroy(pid_control_timer.pool);
+            multicore_reset_core1();
+            uint32_t saved_interrupts = save_and_disable_interrupts();
             if (instruction_type == 0b000001000) {
                 uint8_t bit_pos_mask = 0b00000111;
                 uint8_t bit_pos = bit_pos_mask&byte_array[number_of_bytes - 3];
@@ -148,6 +146,8 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
                 uint8_t cv_data = byte_array[number_of_bytes - 3];
                 write_cv_byte(cv_address, cv_data);
             }
+            restore_interrupts(saved_interrupts);
+            multicore_launch_core1(core1_entry);
     }
 }
 
@@ -292,7 +292,9 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
 
 //Interrupt handler for DCC Logic Signal
 void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
-    writeLastBit(readBit());
+    add_alarm_in_us(87, &readBit_alarm_callback, NULL, true);
+}
+void evaluation(){
     int8_t number_of_bytes = check_for_package();
     if (number_of_bytes != -1) {
         uint8_t byte_array[SIZE_BYTE_ARRAY] = {0};
@@ -316,6 +318,7 @@ void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
 
 void adjust_pwm_level(uint16_t level)
 {
+    //absolute_time_t from = get_absolute_time();
     //Forward
     if(target_direction){
         pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
@@ -326,6 +329,9 @@ void adjust_pwm_level(uint16_t level)
         pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
         pwm_set_gpio_level(MOTOR_PWM_REVERSE,level);
     }
+    //absolute_time_t to = get_absolute_time();
+    //int64_t zeit = absolute_time_diff_us(from,to);
+    //printf("zeit:%lld\n",zeit);
 }
 
 void measure(){
@@ -357,7 +363,7 @@ bool pid_control(struct repeating_timer *t){
     if (output > 5000) output = 5000;
     if (output < 1400) output = 1400;
     if (current_v_emf_target == 0) output = 0;
-    adjust_pwm_level((u_int16_t )output);
+    adjust_pwm_level((uint16_t )output);
     return true;
 }
 
@@ -370,7 +376,7 @@ void init_pid(){
     pid_config.sum_limit_min = CV_ARRAY_FLASH[52]*(-10);
     measurement_delay_in_us = CV_ARRAY_FLASH[46];
     measurement_iterations = CV_ARRAY_FLASH[45];
-    printf("PID variables:\nk_p = %f;\nk_i = %f;\nk_d = %f;\nt_s = %f;\n",pid_config.k_p,pid_config.k_i,pid_config.k_d,pid_config.t_s);
+    //printf("PID variables:\nk_p = %f;\nk_i = %f;\nk_d = %f;\nt_s = %f;\n",pid_config.k_p,pid_config.k_i,pid_config.k_d,pid_config.t_s);
 }
 
 void init_pwm(uint gpio) {
@@ -380,14 +386,9 @@ void init_pwm(uint gpio) {
     pwm_set_gpio_level(gpio,0);
     pwm_set_clkdiv(slice_num,1);
     pwm_set_enabled(slice_num, true);
-    printf("PWM on GPIO %u was initialized.\n",gpio);
+    //printf("PWM on GPIO %u was initialized.\n",gpio);
 }
 
-void init_adc(uint gpio){
-    adc_init();
-    adc_gpio_init(gpio);
-    printf("ADC on GPIO %d was initialized.\n",gpio);
-}
 uint calc_end_v_emf_target(){
     //Forward
     if(target_direction){
@@ -402,8 +403,6 @@ uint calc_end_v_emf_target(){
 }
 bool speed_helper(struct repeating_timer *t) {
     //Emergency Stop
-    uint core_num = get_core_num();
-    printf("c_n:%u\n",core_num);
     if (target_speed_step == 129 || target_speed_step==1) { current_v_emf_target = 0; return false; }
     else{
         uint end_v_emf_target = calc_end_v_emf_target();
@@ -422,7 +421,7 @@ void init_speed_helper(){
         //Timer already running
         if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = acceleration_rate;
         //Timer not running
-        else alarm_pool_add_repeating_timer_us(alarm_pool_create(1,2),acceleration_rate, speed_helper, NULL, &speed_helper_timer);
+        else alarm_pool_add_repeating_timer_us(alarm_pool_create(1,1),acceleration_rate, speed_helper, NULL, &speed_helper_timer);
     }
     //Deceleration
     if(end_v_emf_target < current_v_emf_target){
@@ -430,7 +429,7 @@ void init_speed_helper(){
         //Timer already running
         if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = deceleration_rate;
         //Timer not running
-        else alarm_pool_add_repeating_timer_us(alarm_pool_create(1,2),deceleration_rate, speed_helper, NULL, &speed_helper_timer);
+        else alarm_pool_add_repeating_timer_us(alarm_pool_create(1,1),deceleration_rate, speed_helper, NULL, &speed_helper_timer);
     }
 }
 void print_cv_array(const uint8_t *buf, size_t len) {
@@ -444,24 +443,22 @@ void print_cv_array(const uint8_t *buf, size_t len) {
 }
 
 void core1_entry() {
-    gpio_set_function(MOTOR_PWM_FORWARD, GPIO_FUNC_PWM);
-    gpio_set_function(MOTOR_PWM_REVERSE, GPIO_FUNC_PWM);
-    init_adc(V_EMF_ADC_PIN_FORWARD);
-    init_adc(V_EMF_ADC_PIN_REVERSE);
-    init_pwm(MOTOR_PWM_FORWARD);
-    init_pwm(MOTOR_PWM_REVERSE);
-    init_pid();
-    init_speed_helper();
-    if (pid_control_timer.alarm_id != 0) {
-        pid_control_timer.delay_us = /*-CV_ARRAY_FLASH[47]*/ -1*1000;
+    if(gpio_get_function(MOTOR_PWM_FORWARD)!=4){
+        gpio_set_function(MOTOR_PWM_FORWARD, GPIO_FUNC_PWM);
+        gpio_set_function(MOTOR_PWM_REVERSE, GPIO_FUNC_PWM);
+        adc_init();
+        adc_gpio_init(V_EMF_ADC_PIN_FORWARD);
+        adc_gpio_init(V_EMF_ADC_PIN_REVERSE);
+        init_pwm(MOTOR_PWM_FORWARD);
+        init_pwm(MOTOR_PWM_REVERSE);
+        init_pid();
+        init_speed_helper();
     }
-    else{
-        alarm_pool_add_repeating_timer_ms( alarm_pool_create(0,1),/*-CV_ARRAY_FLASH[47]*/ -1, pid_control, NULL, &pid_control_timer);
-    }
-    printf("delay_us: %lld \n",pid_control_timer.delay_us);
-    //printf("CV_ARRAY read from flash:\n");
-    //print_cv_array(CV_ARRAY_FLASH, FLASH_PAGE_SIZE * 2);
-    printf("Core 1 was initialized.\n");
+    alarm_pool_add_repeating_timer_ms(alarm_pool_create(0,1),
+                                      -CV_ARRAY_FLASH[47],
+                                      pid_control,
+                                      NULL,
+                                      &pid_control_timer);
     while (1);
 }
 
@@ -472,10 +469,8 @@ int main() {
     gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
-    busy_wait_ms(1000); //This delay is necessary to catch the breakpoint
     multicore_launch_core1(core1_entry);
-    busy_wait_ms(1000); //This delay is necessary to catch the breakpoint
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
-    printf("Core 0 was initialized.\n");
+    printf("Launched successfully.\n");
     while (1);
 }
