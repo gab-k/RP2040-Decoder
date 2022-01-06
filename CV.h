@@ -1,4 +1,6 @@
+#include "inttypes.h"
 //All CVs are 8-bit numbers (range 0 - 255)
+//Note : CV_1 ≙ index 0, CV_2 ≙ index 1, CV_3 ≙ index 2, ...
 uint8_t CV_ARRAY_DEFAULT [512] = {
    0b00000111,         //CV_1  -    Basic Address
    0b00000000,         //CV_2  -    Minimum Speed
@@ -55,31 +57,35 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    0b00000000,         //CV_42  -
    0b00000000,         //CV_43  -
    0b00000000,         //CV_44  -
+   0b00000000,         //CV_45  -
+   0b00000000,         //CV_46  -
+   0b00000000,         //CV_47  -
+   // PID - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
+   0b00000101,         //CV_48  -   PID Control Sampling Time t_s  in ms ≙ Duration of 1 PID-Cycle                    //
+   0b00100110,         //CV_49  -   PID Control P_Factor        ≙   CV_49/1024     i.e. Default = 154 -> 0.1504       //
+   0b10000101,         //CV_50  -   PID Control I_Factor        ≙   CV_50/256      i.e. Default = 133 -> 0.5195(1/sec)//
+   0b10100011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/16384    i.e. Default = 163 -> 0.009949sec  //
+   0b00110000,         //CV_52  -   PID Integral Limit positive ≙ CV_52*10         i.e. Default = 48  -> +480         //
+   0b00110000,         //CV_53  -   PID Integral Limit negative ≙ CV_53*(-10)      i.e. Default = 48  -> -480         //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // This value will indirectly change the acceleration/deceleration rates
-   0b00101101,         //CV_45  -   Speed Helper Function Period in ms
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   //(CV_46*2us)+(CV_47)+(CV_48*1000) is the Total duration of one PID-cycle i.e. the sampling time t_s
-   0b00110010,         //CV_46  -   V_EMF Measurement Iterations
-   0b01100100,         //CV_47  -   V_EMF Measurement Delay in us
-   0b10001010,         //CV_48  -   V_EMF Measurement Period duration in ms / equals 1 PID-Cycle
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b01011100,         //CV_49  -   PID Control P_Factor        =   CV_49/1024     i.e. Default = 92  -> 0.08984375
-   0b01001101,         //CV_50  -   PID Control I_Factor        =   CV_50/1024     i.e. Default = 77  -> 0.0751953125
-   0b10000011,         //CV_51  -   PID Control D_Factor        =   CV_51/16384    i.e. Default = 131 -> 0.00799560547
-   0b00110000,         //CV_52  -   PID Integral Limit positive = CV_52*10         i.e. Default = 100 -> +1000
-   0b00110000,         //CV_53  -   PID Integral Limit negative = CV_53*(-10)      i.e. Default = 100 -> -1000
    0b00000000,         //CV_54  -
    0b00000000,         //CV_55  -
    0b00000000,         //CV_56  -
    0b00000000,         //CV_57  -
    0b00000000,         //CV_58  -
    0b00000000,         //CV_59  -
-   0b00000000,         //CV_60  -
-   0b00000000,         //CV_61  -
-   0b00000000,         //CV_62  -
-   0b00000000,         //CV_63  -
-   0b00000000,         //CV_64  -
+   0b00010100,         //CV_60  -   PWM scaling factor (target EMF Voltage) : CV_60 = 16 -> 126*16 = 2016 = end_target
+   // V_EMF Measurement Configuration //////////////////////////////////////////////////////////////////////////////////
+   0b00110010,         //CV_61  -   V_EMF Total amount of Measurement Iterations                                      //
+   0b01100100,         //CV_62  -   V_EMF Delay before Measuring                                                      //
+   // CV_63 and CV_64 are used to determine how many elements of the sorted measurement array will be discarded       //
+   // This is used to filter out data.                                                                                //
+   // For Example: CV_63 = x and CV_64 = y  - Default: CV_63 = 10; CV_64 = 10                                         //
+   // -> The x smallest values will be discarded.                                                                     //
+   // -> The y largest values will be discarded.                                                                      //
+   0b00001010,         //CV_63  -   left_side_array_cutoff                                                            //
+   0b00001010,         //CV_64  -   right_side_array_cutoff                                                           //
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000000,         //CV_65  -
    0b00000000,         //CV_66  -
    0b00000000,         //CV_67  -

@@ -1,8 +1,10 @@
-////////////////////////////////////
-//        RP2040-Decoder          //
-// created by Gabriel Koppenstein //
-////////////////////////////////////
+//////////////////////////
+//   RP2040-Decoder     //
+// Gabriel Koppenstein  //
+//////////////////////////
 
+#include "CV.h"
+#include "decoder.h"
 #include <stdio.h>
 #include "string.h"
 #include "pico/stdlib.h"
@@ -11,32 +13,37 @@
 #include "hardware/adc.h"
 #include "hardware/flash.h"
 #include "hardware/irq.h"
-#include "CV.h"
-#include "multicore.h"
-#include "inttypes.h"
+#include "stdint.h"
 const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
 bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
 uint64_t last_bits = 0;
 bool target_direction = true;
 uint target_speed_step = 128;
-uint current_v_emf_target = 300;
-uint measurement = 0;
+uint current_target = 0;
 bool reset_package_flag = false;
 typedef struct pid_params{
     float k_p;
-    float k_i;
-    float k_d;
     float t_s;
+    float a_1;
+    float a_2;
     int sum_limit_max;
     int sum_limit_min;
+    float output;
+    int e;
+    int e_prev;
+    int e_sum;
 }pid_params;
-pid_params pid_config;
-uint measurement_delay_in_us;
-uint measurement_iterations;
-struct repeating_timer speed_helper_timer;
-struct repeating_timer pid_control_timer;
+pid_params pid;
+typedef struct measure_params{
+    uint8_t delay_in_us;
+    uint8_t total_iterations;
+    uint8_t left_side_array_cutoff;
+    uint8_t right_side_array_cutoff;
+}measure_params;
+measure_params msr;
+struct repeating_timer pid_control_timer,speed_helper_timer;
 
-int8_t check_for_package()  //function returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned
+int8_t check_for_package()  //returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned.
 {
     uint64_t package3Masked = last_bits & PACKAGE_MASK_3_BYTES;
     if (package3Masked == PACKAGE_3_BYTES) {
@@ -69,7 +76,18 @@ void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
     }
 }
 
-
+void adjust_pwm_level(uint16_t level)
+{
+    if(target_direction){
+        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
+        pwm_set_gpio_level(MOTOR_PWM_FORWARD,level);
+    }
+    //Reverse
+    else{
+        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
+        pwm_set_gpio_level(MOTOR_PWM_REVERSE,level);
+    }
+}
 void acknowledge(){
     target_direction = false;
     adjust_pwm_level(5000);
@@ -106,7 +124,6 @@ void write_cv_byte(uint16_t cv_address, uint8_t cv_data){
             flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
             acknowledge();
         }
-
     }
 }
 
@@ -119,6 +136,7 @@ bool reset_package_check(uint8_t number_of_bytes,const uint8_t byte_array[]){
         return false;
     }
 }
+
 void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
     //Check for valid programming command ("address" 112-127)
     if (byte_array[number_of_bytes - 1]<128 && byte_array[number_of_bytes - 1]>111){
@@ -128,6 +146,7 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
             uint16_t cv_address_ms_bits = cv_address_ms_bits_mask & byte_array[number_of_bytes - 1];
             uint16_t cv_address = byte_array[number_of_bytes - 2] + (cv_address_ms_bits << 8);
             alarm_pool_destroy(pid_control_timer.pool);
+            alarm_pool_destroy(speed_helper_timer.pool);
             multicore_reset_core1();
             uint32_t saved_interrupts = save_and_disable_interrupts();
             if (instruction_type == 0b000001000) {
@@ -151,7 +170,7 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
     }
 }
 
-void set_outputs() {
+void set_outputs() {/*
     uint32_t GPIO_to_be_set = 0;
     //ensures that GPIO's that are used for inputs or PWM (motor) cannot be set HIGH
     uint32_t filter_forbidden_GPIO = 0b00000000000111111111111111111110;
@@ -176,7 +195,7 @@ void set_outputs() {
             // printf("func: F%u, direction: %u\n",func,direction);
             //printf("func_cv_0_index: %d  func_cv_1_index: %d  func_cv_2_index: %d  func_cv_3_index: %d  \n",4+257+i*8-4*direction,4+258+i*8-4*direction,4+259+i*8-4*direction,4+260+i*8-4*direction);
         }
-    }
+    }*/
 }
 
 void update_active_functions(uint8_t function_number, uint8_t input_byte, uint8_t count) {
@@ -244,7 +263,6 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
         target_speed_step = byte_array[command_byte_start_index - 1];
         if(target_speed_step>127) target_direction = true;
         else target_direction = false;
-        init_speed_helper();
     }
     // 10XX-XXXX (Function Group Instruction)
     if (command_byte_n >> 6 == 0b00000010){
@@ -287,13 +305,14 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
                 break;
         }
     }
-    set_outputs();
+    //set_outputs();
 }
 
 //Interrupt handler for DCC Logic Signal
 void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
     add_alarm_in_us(87, &readBit_alarm_callback, NULL, true);
 }
+
 void evaluation(){
     int8_t number_of_bytes = check_for_package();
     if (number_of_bytes != -1) {
@@ -316,67 +335,116 @@ void evaluation(){
     }
 }
 
-void adjust_pwm_level(uint16_t level)
-{
-    //absolute_time_t from = get_absolute_time();
-    //Forward
-    if(target_direction){
-        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
-        pwm_set_gpio_level(MOTOR_PWM_FORWARD,level);
+void quicksort(uint16_t number[msr.total_iterations], int first, int last){
+    int i, j, pivot, temp;
+    if(first<last){
+        pivot=first;
+        i=first;
+        j=last;
+        while(i<j){
+            while(number[i]<=number[pivot]&&i<last)
+                i++;
+            while(number[j]>number[pivot])
+                j--;
+            if(i<j){
+                temp=number[i];
+                number[i]=number[j];
+                number[j]=temp;
+            }
+        }
+        temp=number[pivot];
+        number[pivot]=number[j];
+        number[j]=temp;
+        quicksort(number,first,j-1);
+        quicksort(number,j+1,last);
     }
-    //Reverse
-    else{
-        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
-        pwm_set_gpio_level(MOTOR_PWM_REVERSE,level);
-    }
-    //absolute_time_t to = get_absolute_time();
-    //int64_t zeit = absolute_time_diff_us(from,to);
-    //printf("zeit:%lld\n",zeit);
 }
 
-void measure(){
+uint calc_end_target(){
+    //Forward
+    if(target_direction){
+        if (target_speed_step == 128) return 0;
+        else return (target_speed_step - 129) * CV_ARRAY_FLASH[59];
+    }
+    //Reverse
+    else {
+        if (target_speed_step == 0) return 0;
+        else return (target_speed_step-1) * CV_ARRAY_FLASH[59];
+    }
+}
+
+bool speed_helper() {
+    uint8_t accel_rate = CV_ARRAY_FLASH[2];
+    uint8_t decel_rate = CV_ARRAY_FLASH[3];
+    uint end_target = calc_end_target();
+    static uint8_t speed_helper_counter;
+    //Emergency Stop
+    if (target_speed_step == 129 || target_speed_step==1) {
+        current_target = 0;
+        speed_helper_counter = 0;
+    }
+    //Acceleration
+    else if (end_target > current_target && speed_helper_counter == accel_rate) {
+        current_target += CV_ARRAY_FLASH[59];
+        speed_helper_counter = 0;
+    }
+    //Deceleration
+    else if (end_target < current_target && speed_helper_counter == decel_rate) {
+        current_target -= CV_ARRAY_FLASH[59];
+        speed_helper_counter = 0;
+    }
+    else{
+        speed_helper_counter++;
+    }
+    return true;
+}
+
+int measure(){
     pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
     pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
-    adc_select_input(target_direction);
-    busy_wait_us(measurement_delay_in_us);
-    uint sum = 0;
-    for (int i = 0; i < measurement_iterations; ++i) {
-        sum = sum+adc_read();
+    adc_select_input(!target_direction);
+    busy_wait_us(msr.delay_in_us);
+    int sum = 0;
+    // ≈ 270us
+    uint16_t adc_values[msr.total_iterations];
+    for (int i = 0; i < msr.total_iterations; ++i) {
+        adc_values[i] = adc_read();
     }
-    measurement = (int)sum / measurement_iterations;
+    // Worst Case ≈ 415us
+    quicksort(adc_values, 0, msr.total_iterations - 1);
+    for (uint8_t i = msr.left_side_array_cutoff; i < msr.total_iterations - msr.right_side_array_cutoff ; ++i) {
+        sum = sum+adc_values[i];
+    }
+    return sum/(msr.total_iterations - 20);
 }
 
 bool pid_control(struct repeating_timer *t){
-    static float output;
-    static int error;
-    static int e_old;
-    static int e_sum;
-    measure();
-    error = (int)current_v_emf_target - (int)measurement;
-    e_sum = e_sum + error;
-    if (e_sum > pid_config.sum_limit_max) e_sum = pid_config.sum_limit_max;
-    if (e_sum < pid_config.sum_limit_min) e_sum = pid_config.sum_limit_min;
-     output += (pid_config.k_p * (float)error) +
-              (pid_config.k_i * pid_config.t_s * (float)e_sum) +
-              (pid_config.k_d/pid_config.t_s) * (float)(error - e_old);
-    e_old = error;
-    if (output > 5000) output = 5000;
-    if (output < 1400) output = 1400;
-    if (current_v_emf_target == 0) output = 0;
-    adjust_pwm_level((uint16_t )output);
+    pid.e = (int)current_target - measure();
+    pid.e_sum = pid.e_sum + pid.e;
+    if (pid.e_sum > pid.sum_limit_max) pid.e_sum = pid.sum_limit_max;
+    else if (pid.e_sum < pid.sum_limit_min) pid.e_sum = pid.sum_limit_min;
+    pid.output +=   (pid.k_p * (float)pid.e) +
+                    (pid.a_1 * (float)pid.e_sum) +                         //  k_i*t_s*e_sum
+                    (pid.a_2 * (float)(pid.e - pid.e_prev));                //  (k_d/t_s)*(e-e_prev)
+    pid.e_prev = pid.e;
+    if (current_target == 0) pid.output = 0;
+    else if (pid.output > 5000) pid.output = 5000;
+    else if (pid.output < 1000) pid.output = 1000;
+    adjust_pwm_level((uint16_t )pid.output);
     return true;
 }
 
 void init_pid(){
-    pid_config.k_d = (float)CV_ARRAY_FLASH[48]/1024;
-    pid_config.k_i = (float)CV_ARRAY_FLASH[49]/1024;
-    pid_config.k_d = (float)CV_ARRAY_FLASH[50]/16384;
-    pid_config.t_s = (float)CV_ARRAY_FLASH[47]/1000;
-    pid_config.sum_limit_max = CV_ARRAY_FLASH[51]*10;
-    pid_config.sum_limit_min = CV_ARRAY_FLASH[52]*(-10);
-    measurement_delay_in_us = CV_ARRAY_FLASH[46];
-    measurement_iterations = CV_ARRAY_FLASH[45];
-    //printf("PID variables:\nk_p = %f;\nk_i = %f;\nk_d = %f;\nt_s = %f;\n",pid_config.k_p,pid_config.k_i,pid_config.k_d,pid_config.t_s);
+    pid.k_p = ((float)CV_ARRAY_FLASH[48] / 1024);
+    pid.t_s = ((float)CV_ARRAY_FLASH[47] / 1000);
+    pid.a_1 = ((float)CV_ARRAY_FLASH[49] / 256) * pid.t_s ;         //  k_i*t_s
+    pid.a_2 = ((float)CV_ARRAY_FLASH[50] / 16384) / pid.t_s;        //  k_d/t_s                                                                     //  k_d/t_s
+    pid.sum_limit_max = CV_ARRAY_FLASH[51] * 10;
+    pid.sum_limit_min = CV_ARRAY_FLASH[52] * (-10);
+    msr.total_iterations = CV_ARRAY_FLASH[60];
+    msr.delay_in_us = CV_ARRAY_FLASH[61];
+    msr.left_side_array_cutoff = CV_ARRAY_FLASH[62];
+    msr.right_side_array_cutoff = CV_ARRAY_FLASH[63];
 }
 
 void init_pwm(uint gpio) {
@@ -386,52 +454,8 @@ void init_pwm(uint gpio) {
     pwm_set_gpio_level(gpio,0);
     pwm_set_clkdiv(slice_num,1);
     pwm_set_enabled(slice_num, true);
-    //printf("PWM on GPIO %u was initialized.\n",gpio);
 }
 
-uint calc_end_v_emf_target(){
-    //Forward
-    if(target_direction){
-        if (target_speed_step == 128) return 0;
-        else return (target_speed_step - 129) * 16;
-    }
-    //Reverse
-    else {
-        if (target_speed_step == 0) return 0;
-        else return (target_speed_step-1) * 16;
-    }
-}
-bool speed_helper(struct repeating_timer *t) {
-    //Emergency Stop
-    if (target_speed_step == 129 || target_speed_step==1) { current_v_emf_target = 0; return false; }
-    else{
-        uint end_v_emf_target = calc_end_v_emf_target();
-        if (end_v_emf_target > current_v_emf_target)  current_v_emf_target += 16;
-        else if(end_v_emf_target < current_v_emf_target)  current_v_emf_target -= 16;
-        else return false;
-    }
-    return true;
-}
-
-void init_speed_helper(){
-    uint end_v_emf_target = calc_end_v_emf_target();
-    //Acceleration
-    if(end_v_emf_target > current_v_emf_target){
-        int64_t acceleration_rate = -CV_ARRAY_FLASH[2]*7111;
-        //Timer already running
-        if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = acceleration_rate;
-        //Timer not running
-        else alarm_pool_add_repeating_timer_us(alarm_pool_create(1,1),acceleration_rate, speed_helper, NULL, &speed_helper_timer);
-    }
-    //Deceleration
-    if(end_v_emf_target < current_v_emf_target){
-        int64_t deceleration_rate = -CV_ARRAY_FLASH[3]*7111;
-        //Timer already running
-        if (speed_helper_timer.alarm_id != 0) speed_helper_timer.delay_us = deceleration_rate;
-        //Timer not running
-        else alarm_pool_add_repeating_timer_us(alarm_pool_create(1,1),deceleration_rate, speed_helper, NULL, &speed_helper_timer);
-    }
-}
 void print_cv_array(const uint8_t *buf, size_t len) {
     for (size_t i = 0; i < len; ++i) {
         printf("CV_%u: %02x",i+1, buf[i]);
@@ -452,23 +476,27 @@ void core1_entry() {
         init_pwm(MOTOR_PWM_FORWARD);
         init_pwm(MOTOR_PWM_REVERSE);
         init_pid();
-        init_speed_helper();
     }
     alarm_pool_add_repeating_timer_ms(alarm_pool_create(0,1),
-                                      -CV_ARRAY_FLASH[47],
+                                      //-CV_ARRAY_FLASH[47],
+                                      5,
                                       pid_control,
                                       NULL,
                                       &pid_control_timer);
+    irq_set_priority(0,0x00); // 0x00 is equivalent to the highest priority!
+    alarm_pool_add_repeating_timer_ms(alarm_pool_create(1,1),
+                                      7,
+                                      speed_helper,
+                                      NULL,
+                                      &speed_helper_timer);
     while (1);
 }
 
 int main() {
-    sleep_ms(1000);
+    busy_wait_ms(1000);
     stdio_init_all();
     gpio_init(DCC_INPUT_PIN);
-    gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
     multicore_launch_core1(core1_entry);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
     printf("Launched successfully.\n");
