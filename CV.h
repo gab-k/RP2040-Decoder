@@ -2,15 +2,15 @@
 //All CVs are 8-bit numbers (range 0 - 255)
 //Note : CV_1 ≙ index 0, CV_2 ≙ index 1, CV_3 ≙ index 2, ...
 uint8_t CV_ARRAY_DEFAULT [512] = {
-   0b00000111,         //CV_1  -    Basic Address
+   0b00000011,         //CV_1  -    Basic Address
    0b00000000,         //CV_2  -    Minimum Speed
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 255 == Fastest dec/acc rate; 0 == slowest;
    // Note that there is an integer division in play here which will get rid of the fractional part
    // this means that a value of 254 for example, will result in the same behaviour as an 248.
    // This does not correspond to the norm and might be changed eventually.
-   0b00000010,         //CV_3  -    Acceleration Rate
-   0b00000010,         //CV_4  -    Deceleration Rate
+   0b00000101,         //CV_3  -    Acceleration Rate
+   0b00000101,         //CV_4  -    Deceleration Rate
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b11111111,         //CV_5  -    V_max
    0b01111111,         //CV_6  -    V_mid
@@ -18,8 +18,8 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    0b00001101,         //CV_8  -    Manufacturer
    0b00000000,         //CV_9  -    PWM-Period
    0b00000001,         //CV_10  -   PWM Clock Divider
-   0b11111111,         //CV_11  -   Packet Timeout in seconds
-   0b00000000,         //CV_12  -
+   0b11111111,         //CV_11  -   Packet Timeout in seconds TODO: not implemented yet
+   0b00000100,         //CV_12  -   Permitted operating modes
    0b00000000,         //CV_13  -
    0b00000000,         //CV_14  -
    0b00000000,         //CV_15  -
@@ -61,10 +61,10 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    0b00000000,         //CV_46  -
    0b00000000,         //CV_47  -
    // PID - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000101,         //CV_48  -   PID Control Sampling Time t_s  in ms ≙ Duration of 1 PID-Cycle                    //
-   0b00100110,         //CV_49  -   PID Control P_Factor        ≙   CV_49/1024     i.e. Default = 154 -> 0.1504       //
-   0b10000101,         //CV_50  -   PID Control I_Factor        ≙   CV_50/256      i.e. Default = 133 -> 0.5195(1/sec)//
-   0b10100011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/16384    i.e. Default = 163 -> 0.009949sec  //
+   0b00001111,         //CV_48  -   PID Control Sampling Time t_s  in ms ≙ Duration of 1 PID-Cycle                    //
+   0b01110011,         //CV_49  -   PID Control P_Factor        ≙   CV_49/256      i.e. Default = 115 -> 0.4492       //
+   0b01100110,         //CV_50  -   PID Control I_Factor        ≙   CV_50/64       i.e. Default = 102 -> 1.594 (1/sec)//
+   0b01111011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/4096     i.e. Default = 123 -> 0.03002 sec  //
    0b00110000,         //CV_52  -   PID Integral Limit positive ≙ CV_52*10         i.e. Default = 48  -> +480         //
    0b00110000,         //CV_53  -   PID Integral Limit negative ≙ CV_53*(-10)      i.e. Default = 48  -> -480         //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,17 +74,17 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    0b00000000,         //CV_57  -
    0b00000000,         //CV_58  -
    0b00000000,         //CV_59  -
-   0b00010100,         //CV_60  -   PWM scaling factor (target EMF Voltage) : CV_60 = 16 -> 126*16 = 2016 = end_target
+   0b00010100,         //CV_60  -   PWM scaling factor (target EMF Voltage) -> 126*CV_60 = end_target|max
    // V_EMF Measurement Configuration //////////////////////////////////////////////////////////////////////////////////
-   0b00110010,         //CV_61  -   V_EMF Total amount of Measurement Iterations                                      //
-   0b01100100,         //CV_62  -   V_EMF Delay before Measuring                                                      //
+   0b01000110,         //CV_61  -   V_EMF Total amount of Measurement Iterations    -   Default = 70 iterations       //
+   0b01100100,         //CV_62  -   V_EMF Delay before Measuring                    -   Default = 100us               //
    // CV_63 and CV_64 are used to determine how many elements of the sorted measurement array will be discarded       //
    // This is used to filter out data.                                                                                //
-   // For Example: CV_63 = x and CV_64 = y  - Default: CV_63 = 10; CV_64 = 10                                         //
+   // For Example: CV_63 = x and CV_64 = y                                                                            //
    // -> The x smallest values will be discarded.                                                                     //
    // -> The y largest values will be discarded.                                                                      //
-   0b00001010,         //CV_63  -   left_side_array_cutoff                                                            //
-   0b00001010,         //CV_64  -   right_side_array_cutoff                                                           //
+   0b00001111,         //CV_63  -   left_side_array_cutoff      -   Default = 15                                       //
+   0b00001111,         //CV_64  -   right_side_array_cutoff     -   Default = 15                                       //                                                  //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000000,         //CV_65  -
    0b00000000,         //CV_66  -
@@ -284,36 +284,36 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
 //  X  X  X  X  - X  X  X  X  -- X  X  X  X  - X  X  X  X  -- X  X  X  X  - X  X  X  X -- X X X X - X X X X
 //F0 forward
     0b00000000,         //byte 0    -   CV_257
-    0b00000000,         //byte 1    -   CV_258
-    0b00010010,         //byte 2    -   CV_259
+    0b00001110,         //byte 1    -   CV_258
+    0b00000000,         //byte 2    -   CV_259
     0b00000000,         //byte 3    -   CV_260
 //F0 reverse
     0b00000000,         //byte 0    -   CV_261
-    0b00000000,         //byte 1    -   CV_262
-    0b00001100,         //byte 2    -   CV_263
+    0b00001110,         //byte 1    -   CV_262
+    0b00000000,         //byte 2    -   CV_263
     0b00000000,         //byte 3    -   CV_264
 //F1 forward
-    0b00000010,         //byte 0    -   CV_265
-    0b00000000,         //byte 1    -   CV_266
+    0b00000000,         //byte 0    -   CV_265
+    0b00000100,         //byte 1    -   CV_266
     0b00000000,         //byte 2    -   CV_267
     0b00000000,         //byte 3    -   CV_268
 //F1 reverse
-    0b00000010,         //byte 0    -   CV_269
-    0b00000000,         //byte 1    -   CV_270
+    0b00000000,         //byte 0    -   CV_269
+    0b00000010,         //byte 1    -   CV_270
     0b00000000,         //byte 2    -   CV_271
     0b00000000,         //byte 3    -   CV_272
 //F2 forward
-    0b00000100,         //byte 0    -   CV_273
+    0b00000000,         //byte 0    -   CV_273
     0b00000000,         //byte 1    -   CV_274
     0b00000000,         //byte 2    -   CV_275
     0b00000000,         //byte 3    -   CV_276
 //F2 reverse
-    0b00000100,         //byte 0    -   CV_277
+    0b00000000,         //byte 0    -   CV_277
     0b00000000,         //byte 1    -   CV_278
     0b00000000,         //byte 2    -   CV_279
     0b00000000,         //byte 3    -   CV_280
 //F3 forward
-    0b00001000,         //byte 0    -   CV_281
+    0b00000000,         //byte 0    -   CV_281
     0b00000000,         //byte 1    -   CV_282
     0b00000000,         //byte 2    -   CV_283
     0b00000000,         //byte 3    -   CV_284
@@ -563,15 +563,15 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
     0b00000000,         //byte 2    -   CV_479
     0b00000000,         //byte 3    -   CV_480
 //F28 forward
-    0b00000000,         //byte 0    -   CV_481
-    0b00000000,         //byte 1    -   CV_482
+    0b11111100,         //byte 0    -   CV_481
+    0b00001111,         //byte 1    -   CV_482
     0b00000000,         //byte 2    -   CV_483
-    0b00010000,         //byte 3    -   CV_484
+    0b00000000,         //byte 3    -   CV_484
 //F28 reverse
-    0b00000000,         //byte 0    -   CV_485
-    0b00000000,         //byte 1    -   CV_486
+    0b11111100,         //byte 0    -   CV_485
+    0b00001111,         //byte 1    -   CV_486
     0b00000000,         //byte 2    -   CV_487
-    0b00010000,         //byte 3    -   CV_488
+    0b00000000,         //byte 3    -   CV_488
 //F29 forward
     0b00000000,         //byte 0    -   CV_489
     0b00000000,         //byte 1    -   CV_490

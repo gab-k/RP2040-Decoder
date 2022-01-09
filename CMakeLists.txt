@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 # Pull in SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(pico_decoder C CXX ASM)
+project(RP2040-Decoder C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -19,14 +19,14 @@ add_compile_options(-Wall
         )
 
 add_executable(
-        hello_multicore
-        decoder.c
-)
+        RP2040-Decoder
+        core0.c
+        core1.c core1.h shared.h)
 
 
 # Add pico_multicore which is required for multicore functionality
 target_link_libraries(
-        hello_multicore
+        RP2040-Decoder
         pico_stdlib
         hardware_pwm
         hardware_adc
@@ -35,8 +35,8 @@ target_link_libraries(
         )
 
 # enable usb output, disable uart output
-pico_enable_stdio_usb(hello_multicore 1)
-pico_enable_stdio_uart(hello_multicore 1)
+pico_enable_stdio_usb(RP2040-Decoder 1)
+pico_enable_stdio_uart(RP2040-Decoder 1)
 
 # create map/bin/hex file etc.
-pico_add_extra_outputs(hello_multicore)
+pico_add_extra_outputs(RP2040-Decoder)
