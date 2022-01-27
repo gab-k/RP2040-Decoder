@@ -4,9 +4,9 @@
 //      core1.c         //
 //////////////////////////
 
-#include "inttypes.h"
 #include "core1.h"
-#include "shared.h"
+int msr_arr[10000] = {0};
+
 uint current_target = 0;
 struct repeating_timer pid_control_timer,speed_helper_timer;
 
@@ -23,6 +23,7 @@ typedef struct pid_params{
     int e_sum;
 }pid_params;
 pid_params pid;
+
 typedef struct measure_params{
     uint8_t delay_in_us;
     uint8_t total_iterations;
@@ -106,22 +107,31 @@ int measure(){
     pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
     adc_select_input(!target_direction);
     busy_wait_us(msr.delay_in_us);
-    gpio_put(9,true);
-    int sum = 0;
+    //gpio_put(9,true);
+    uint32_t sum = 0;
     uint16_t adc_values[msr.total_iterations];
     for (int i = 0; i < msr.total_iterations; ++i) {
         adc_values[i] = adc_read();
     }
-    gpio_put(9,false);
+    //gpio_put(9,false);
     quicksort(adc_values, 0, msr.total_iterations - 1);
     for (uint8_t i = msr.left_side_array_cutoff; i < msr.total_iterations - msr.right_side_array_cutoff ; ++i) {
         sum = sum+adc_values[i];
     }
-    return sum/(msr.total_iterations - 20);
+    float result_f = (float)sum/(float)(msr.total_iterations - 20);
+    if(result_f>MEASURE_CORRECTION_THRESHOLD){
+        result_f = 11*result_f*result_f/(1241*1241) - 43*result_f/1241 + 45;
+    }
+    int result = (int)result_f;
+    return result;
 }
 
 bool pid_control(struct repeating_timer *t){
-    pid.e = (int)current_target - measure();
+    static uint counter;
+    int msr_val = measure();
+    pid.e = (int)current_target - msr_val;
+    msr_arr[counter] = msr_val;
+    counter++;
     pid.e_sum = pid.e_sum + pid.e;
     if (pid.e_sum > pid.sum_limit_max) pid.e_sum = pid.sum_limit_max;
     else if (pid.e_sum < pid.sum_limit_min) pid.e_sum = pid.sum_limit_min;
@@ -141,10 +151,10 @@ void init_pid(){
     //    pid.t_s = ((float)CV_ARRAY_FLASH[47] / 1000);
     //    pid.a_1 = ((float)CV_ARRAY_FLASH[49] / 64)   * pid.t_s ;         //  k_i*t_s
     //    pid.a_2 = ((float)CV_ARRAY_FLASH[50] / 4096) / pid.t_s;          //  k_d/t_s
-    pid.k_p = 0.45f;
+    pid.k_p = 1.0f;
     pid.t_s = 10.0f / 1000;
-    pid.a_1 = 1.6f  * pid.t_s ;         //  k_i*t_s
-    pid.a_2 = 0.03f / pid.t_s;          //  k_d/t_s
+    pid.a_1 = 0.0f  * pid.t_s ;         //  k_i*t_s
+    pid.a_2 = 0.0f / pid.t_s;          //  k_d/t_s
     pid.sum_limit_max = CV_ARRAY_FLASH[51] * 10;
     pid.sum_limit_min = CV_ARRAY_FLASH[52] * (-10);
     msr.total_iterations = 70;/*CV_ARRAY_FLASH[60];*/

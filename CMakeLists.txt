@@ -21,7 +21,10 @@ add_compile_options(-Wall
 add_executable(
         RP2040-Decoder
         core0.c
-        core1.c core1.h shared.h)
+        core0.h
+        core1.c
+        core1.h
+        shared.h)
 
 
 # Add pico_multicore which is required for multicore functionality

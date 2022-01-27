@@ -4,17 +4,9 @@
 //      core0.h         //
 //////////////////////////
 
-
 #pragma once
-#include <stdio.h>
-#include "string.h"
-#include "pico/stdlib.h"
-#include "pico/multicore.h"
-#include "hardware/pwm.h"
-#include "hardware/adc.h"
-#include "hardware/flash.h"
-#include "hardware/irq.h"
-#include "stdint.h"
+#include "shared.h"
+#include "CV.h"
 #define SIZE_BYTE_ARRAY 5
 #define SIZE_ACTIVE_FUNCTIONS 32
 #define DCC_INPUT_PIN 11 //Custom: 11  Default: 14

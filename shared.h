@@ -4,10 +4,16 @@
 //      shared.h        //
 //////////////////////////
 
-
-#ifndef RP2040_DECODER_SHARED_VARS_H
-#define RP2040_DECODER_SHARED_VARS_H
-#endif //RP2040_DECODER_SHARED_VARS_H
+#pragma once
+#include <stdio.h>
+#include "string.h"
+#include "pico/stdlib.h"
+#include "pico/multicore.h"
+#include "hardware/pwm.h"
+#include "hardware/adc.h"
+#include "hardware/flash.h"
+#include "hardware/irq.h"
+#include "stdint.h"
 #define MOTOR_PWM_FORWARD 10 //Custom: 10 Default: 12
 #define MOTOR_PWM_REVERSE 13
 extern repeating_timer_t pid_control_timer;

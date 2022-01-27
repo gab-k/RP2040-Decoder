@@ -4,22 +4,11 @@
 //      core1.h         //
 //////////////////////////
 
-
-#ifndef RP2040_DECODER_CORE1_H
-#define RP2040_DECODER_CORE1_H
-
-#endif //RP2040_DECODER_CORE1_H
+#pragma once
+#include "shared.h"
 #define V_EMF_ADC_PIN_FORWARD 26
 #define V_EMF_ADC_PIN_REVERSE 27
-#include <stdio.h>
-#include "string.h"
-#include "pico/stdlib.h"
-#include "pico/multicore.h"
-#include "hardware/pwm.h"
-#include "hardware/adc.h"
-#include "hardware/flash.h"
-#include "hardware/irq.h"
-#include "stdint.h"
+#define MEASURE_CORRECTION_THRESHOLD 2271
 void quicksort(uint16_t number[], int first, int last);
 uint calc_end_target();
 bool speed_helper();

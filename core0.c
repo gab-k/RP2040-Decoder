@@ -4,10 +4,7 @@
 //      core0.c         //
 //////////////////////////
 
-#include "CV.h"
 #include "core0.h"
-#include "shared.h"
-
 bool target_direction = true;
 uint target_speed_step = 128;
 const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
@@ -71,7 +68,6 @@ void verify_cv_bit(uint16_t cv_address,bool bit_val, uint8_t bit_pos) {
     if (res) {
         acknowledge();
     }
-
 }
 void verify_cv_byte(uint16_t cv_address, uint8_t cv_data){
     if (CV_ARRAY_FLASH[cv_address] == cv_data) acknowledge();
