@@ -4,11 +4,7 @@
     "active_layer_preset": "",
     "auto_track_width": true,
     "hidden_nets": [
-      "GND",
-      "/GPIO10",
-      "/GPIO11",
-      "/GPIO12",
-      "/GPIO13"
+      "GND"
     ],
     "high_contrast_mode": 0,
     "net_color_mode": 1,
