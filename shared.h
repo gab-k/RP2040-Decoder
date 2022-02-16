@@ -14,8 +14,8 @@
 #include "hardware/flash.h"
 #include "hardware/irq.h"
 #include "stdint.h"
-#define MOTOR_PWM_FORWARD 10 //Custom: 10 Default: 12
-#define MOTOR_PWM_REVERSE 13
+#define MOTOR_PWM_FORWARD 22
+#define MOTOR_PWM_REVERSE 23
 extern repeating_timer_t pid_control_timer;
 extern repeating_timer_t speed_helper_timer;
 extern bool target_direction;

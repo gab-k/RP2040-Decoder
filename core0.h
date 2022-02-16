@@ -9,7 +9,7 @@
 #include "CV.h"
 #define SIZE_BYTE_ARRAY 5
 #define SIZE_ACTIVE_FUNCTIONS 32
-#define DCC_INPUT_PIN 11 //Custom: 11  Default: 14
+#define DCC_INPUT_PIN 9
 //Default
 //#define ALLOWED_GPIO_MASK 0b00000000000000000000111111111100      //prevents setting GPIO's that are not allowed (ADC, PWM, ...)
 //Custom
