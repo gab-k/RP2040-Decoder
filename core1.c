@@ -221,8 +221,5 @@ void core1_entry() {
                                       NULL,
                                       &speed_helper_timer);
     printf("core1 done\n");
-    while (1){
-        printf("1\n");
-        printf("-1\n");
-    }
+    while (1);
 }

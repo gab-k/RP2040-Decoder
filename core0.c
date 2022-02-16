@@ -288,21 +288,15 @@ void evaluation(){
 }
 
 int main() {
-    //busy_wait_ms(2000);
     stdio_init_all();
     printf("core0 init...\n");
-    //gpio_init(PICO_DEFAULT_LED_PIN);
-    //gpio_set_dir(PICO_DEFAULT_LED_PIN,GPIO_OUT);
-    //gpio_put(PICO_DEFAULT_LED_PIN,true);
-    gpio_init(DCC_INPUT_PIN);
-    gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     //gpio_init_mask(ALLOWED_GPIO_MASK);
     //gpio_set_dir_out_masked(ALLOWED_GPIO_MASK);
     multicore_launch_core1(core1_entry);
+    gpio_init(DCC_INPUT_PIN);
+    gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
     printf("core0 done\n");
     while (1){
-        printf("0\n");
-        printf("0-\n");
     }
 }

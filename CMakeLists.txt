@@ -26,6 +26,11 @@ add_executable(
         core1.h
         shared.h)
 
+# Multiplier to lengthen XOSC startup delay to accommodate slow-starting oscillator
+target_compile_definitions(
+        RP2040-Decoder PUBLIC
+        PICO_XOSC_STARTUP_DELAY_MULTIPLIER=64
+)
 
 # Add pico_multicore which is required for multicore functionality
 target_link_libraries(
