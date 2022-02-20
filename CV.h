@@ -1,16 +1,20 @@
 #include "inttypes.h"
+#define CV_ARRAY_SIZE 512
 //All CVs are 8-bit numbers (range 0 - 255)
 //Note : CV_1 ≙ index 0, CV_2 ≙ index 1, CV_3 ≙ index 2, ...
-uint8_t CV_ARRAY_DEFAULT [512] = {
+//TODO:
+//      - pwm CV for aux & gpio (duty cycle/freq)
+//      - Packet Timeout
+//      - Motor PWM Clock & Divider
+//      - V_max/V_min & V_emf
+//      -
+uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000011,         //CV_1  -    Basic Address
    0b00000000,         //CV_2  -    Minimum Speed
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // 255 == Fastest dec/acc rate; 0 == slowest;
-   // Note that there is an integer division in play here which will get rid of the fractional part
-   // this means that a value of 254 for example, will result in the same behaviour as an 248.
-   // This does not correspond to the norm and might be changed eventually.
-   0b00000101,         //CV_3  -    Acceleration Rate
-   0b00000101,         //CV_4  -    Deceleration Rate
+   // 0 == Fastest dec/acc rate; 255 == slowest;
+   0b00000000,         //CV_3  -    Acceleration Rate
+   0b00000000,         //CV_4  -    Deceleration Rate
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b11111111,         //CV_5  -    V_max
    0b01111111,         //CV_6  -    V_mid
@@ -18,7 +22,7 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    0b00001101,         //CV_8  -    Manufacturer
    0b00000000,         //CV_9  -    PWM-Period
    0b00000001,         //CV_10  -   PWM Clock Divider
-   0b11111111,         //CV_11  -   Packet Timeout in seconds TODO: not implemented yet
+   0b11111111,         //CV_11  -   Packet Timeout in seconds
    0b00000100,         //CV_12  -   Permitted operating modes
    0b00000000,         //CV_13  -
    0b00000000,         //CV_14  -
@@ -67,14 +71,17 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    0b01111011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/4096     i.e. Default = 123 -> 0.03002 sec  //
    0b00110000,         //CV_52  -   PID Integral Limit positive ≙ CV_52*10         i.e. Default = 48  -> +480         //
    0b00110000,         //CV_53  -   PID Integral Limit negative ≙ CV_53*(-10)      i.e. Default = 48  -> -480         //
+   //This Offset is used to establish a "baseline" motor PWM duty cycle at which the motor starts to move
+   //If CV_54+CV_55+CV_56+CV_57 = 0 (after reset or manual overwrite) there will be a measurement procedure on startup//
+   //alternatively, the measurement can be done by writing a 7 to CV_7 on the programming track.                      //
+   0b00000000,         //CV_54  -   Forward Direction Offset Bits 0-7                   Default = 0                   //
+   0b00000000,         //CV_55  -   Forward Direction Offset Bits 8-15                  Default = 0                   //
+   0b00000000,         //CV_56  -   Reverse Direction Offset Bits 0-7                   Default = 0                   //
+   0b00000000,         //CV_57  -   Reverse Direction Offset Bits 8-15                  Default = 0                   //
+   0b00000110,         //CV_58  -   Offset Measurement Cycles                 Default = 6                             //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000000,         //CV_54  -
-   0b00000000,         //CV_55  -
-   0b00000000,         //CV_56  -
-   0b00000000,         //CV_57  -
-   0b00000000,         //CV_58  -
-   0b00000000,         //CV_59  -
-   0b00010100,         //CV_60  -   PWM scaling factor (target EMF Voltage) -> 126*CV_60 = end_target|max
+   0b00000111,         //CV_59  -   speed_helper timer delay -  can be used to adjust accel/decel rate                //
+   0b00010100,         //CV_60  -   PWM scaling factor (target EMF Voltage) -> 126*CV_60 = end_target|max             //
    // V_EMF Measurement Configuration //////////////////////////////////////////////////////////////////////////////////
    0b01000110,         //CV_61  -   V_EMF Total amount of Measurement Iterations    -   Default = 70 iterations       //
    0b01100100,         //CV_62  -   V_EMF Delay before Measuring                    -   Default = 100us               //
@@ -83,8 +90,8 @@ uint8_t CV_ARRAY_DEFAULT [512] = {
    // For Example: CV_63 = x and CV_64 = y                                                                            //
    // -> The x smallest values will be discarded.                                                                     //
    // -> The y largest values will be discarded.                                                                      //
-   0b00001111,         //CV_63  -   left_side_array_cutoff      -   Default = 15                                       //
-   0b00001111,         //CV_64  -   right_side_array_cutoff     -   Default = 15                                       //                                                  //
+   0b00001111,         //CV_63  -   left_side_array_cutoff      -   Default = 15                                      //
+   0b00001111,         //CV_64  -   right_side_array_cutoff     -   Default = 15                                      //                                                  //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000000,         //CV_65  -
    0b00000000,         //CV_66  -

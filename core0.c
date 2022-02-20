@@ -5,63 +5,79 @@
 //////////////////////////
 
 #include "core0.h"
-bool target_direction = true;
-uint target_speed_step = 128;
+bool target_direction = true;   //Forward = true  -  Reverse = false
+uint target_speed_step = 128;   //128 = Stop (Forward Direction)
 const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
 bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
 uint64_t last_bits = 0;
 bool reset_package_flag = false;
+absolute_time_t falling_edge_time,rising_edge_time;
 
-
-int8_t check_for_package() {  //returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned.
-    uint64_t package3Masked = last_bits & PACKAGE_MASK_3_BYTES;
-    if (package3Masked == PACKAGE_3_BYTES) {
-        return 3;
+uint find_offset(uint level,uint step,uint delay,float threshold, bool direction){
+    pwm_set_gpio_level(!direction,0);
+    uint gpio = MOTOR_PWM_FORWARD*direction + MOTOR_PWM_REVERSE*!direction;
+    while((measure(direction)-ADC_OFFSET)<threshold){
+        pwm_set_gpio_level(gpio,level);
+        busy_wait_ms(delay);
+        level += step;
     }
-    uint64_t package4Masked = last_bits & PACKAGE_MASK_4_BYTES;
-    if (package4Masked == PACKAGE_4_BYTES) {
-        return 4;
-    }
-    uint64_t package5Masked = last_bits & PACKAGE_MASK_5_BYTES;
-    if (package5Masked == PACKAGE_5_BYTES) {
-        return 5;
-    }
-    return -1;
+    pwm_set_gpio_level(direction,0);
+    return level;
 }
-void writeLastBit(bool bit) {
-    last_bits <<= 1;
-    last_bits |= bit;
-}
-int64_t readBit_alarm_callback(alarm_id_t id, void *user_data) {
-    writeLastBit(!gpio_get(DCC_INPUT_PIN));
-    evaluation();
-    return 0;
-}
-
-//start of transmission -> byte_n(address byte) -> ... -> byte_0(error detection byte) -> end of transmission
-void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
-    for (uint8_t i = 0; i < number_of_bytes; i++) {
-        byte_array[i] = last_bits >> (i * 9 + 1);
+uint two_sigma(const uint arr[], uint length){
+    //Calculate arithmetic average
+    uint sum = 0;
+    for (uint i = 0; i < length; ++i) {
+        sum += arr[i];
     }
+    uint x_avg = sum / length;
+    //Calculate variance
+    sum = 0;
+    for (uint i = 0; i < length; ++i) {
+        sum += (arr[i]-x_avg)*(arr[i]-x_avg);
+    }
+    float variance = (float) sum/ (float)(length-1);
+    //Calculate standard deviation
+    uint std_dev = (uint)sqrtf(variance);
+    //"Filter" every array element that deviates more than 2*(std_dev)
+    sum = 0;
+    uint counter = 0;
+    for (uint i = 0; i < length; ++i) {
+        uint val = arr[i]-x_avg;
+        if ( val < 2*std_dev || val > (0-2*std_dev) ){
+            sum += arr[i];
+            counter++;
+        }
+    }
+    //Calculate and return "new" arithmetic average
+    return sum / counter;
 }
-void adjust_pwm_level(uint16_t level) {
-    if (target_direction) {
-        pwm_set_gpio_level(MOTOR_PWM_REVERSE,0);
-        pwm_set_gpio_level(MOTOR_PWM_FORWARD,level);
+void setup_offsets(uint length){
+    uint offsets_fwd[length];
+    uint offsets_rev[length];
+    for (int i = 0; i < length; ++i) {
+        offsets_fwd[i] = find_offset(0,1,1,0.05f,true);
+        busy_wait_ms(500);
+        offsets_rev[i] = find_offset(0,1,1,0.05f,false);
+        busy_wait_ms(500);
     }
-    //Reverse
-    else {
-        pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
-        pwm_set_gpio_level(MOTOR_PWM_REVERSE,level);
-    }
+    uint offsets_fwd_avg = two_sigma(offsets_fwd, length);
+    uint offsets_rev_avg = two_sigma(offsets_rev, length);
+    uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
+    memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
+    CV_ARRAY_TEMP[53] = offsets_fwd_avg;
+    CV_ARRAY_TEMP[54] = offsets_fwd_avg>>8;
+    CV_ARRAY_TEMP[55] = offsets_rev_avg;
+    CV_ARRAY_TEMP[56] = offsets_rev_avg>>8;
+    flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+    flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
+    acknowledge();
 }
 void acknowledge() {
-    target_direction = false;
-    adjust_pwm_level(5000);
+    pwm_set_gpio_level(MOTOR_PWM_FORWARD,5000);
     busy_wait_ms(6);
-    adjust_pwm_level(0);
+    pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
 }
-
 void verify_cv_bit(uint16_t cv_address,bool bit_val, uint8_t bit_pos) {
     uint8_t mask = 0b00000001;
     bool res = ( (CV_ARRAY_FLASH[cv_address] >> bit_pos) &mask ) == bit_val;
@@ -74,36 +90,30 @@ void verify_cv_byte(uint16_t cv_address, uint8_t cv_data){
 }
 void write_cv_byte(uint16_t cv_index, uint8_t cv_data){
     //CV_7 & CV_8 are read-only
-    if (cv_index == 6 || cv_index == 7){
-        //Reset all CVs to Default (CV_8; Value = 8)
-        if (cv_data == 8){
-            flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-            flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
-            acknowledge();
-        }
+    //Reset all CVs to Default (CV_8; Value = 8)
+    if(cv_index == 7 && cv_data == 8){
+        flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+        flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
+        acknowledge();
     }
-    else if(cv_index == 0 && cv_data == 0); //CV_1 = 0 is not permitted
+    //Re-setup offset Adjustment (CV_7; Value = 7);
+    else if(cv_index == 6 && cv_data == 7){
+        setup_offsets(CV_ARRAY_FLASH[57]);
+    }
+    //CV_1 = 0 is not permitted
+    else if(!cv_index && !cv_data);
     else{
-            uint8_t CV_ARRAY_TEMP[512] = {0};
-            memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
-            CV_ARRAY_TEMP[cv_index] = cv_data;
-            flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-            flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
-            acknowledge();
+        uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
+        memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
+        CV_ARRAY_TEMP[cv_index] = cv_data;
+        flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+        flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
+        acknowledge();
     }
 }
-
-bool reset_package_check(uint8_t number_of_bytes,const uint8_t byte_array[]){
-    if (byte_array[number_of_bytes-1] == 0b00000000 && byte_array[number_of_bytes-2] == 0b00000000){
-        target_speed_step = 1;
-        //update_active_functions(0,0,37);
-        return true;
-    }else {
-        return false;
-    }
-}
-
 void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
+    if( !((CV_ARRAY_FLASH[53])+(CV_ARRAY_FLASH[54]<<8)) || !((CV_ARRAY_FLASH[55])+(CV_ARRAY_FLASH[56]<<8)) ){
+    }
     //Check for valid programming command ("address" 112-127)
     if (byte_array[number_of_bytes - 1]<128 && byte_array[number_of_bytes - 1]>111){
             uint8_t instruction_type_mask = 0b00001100;
@@ -135,7 +145,6 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
             multicore_launch_core1(core1_entry);
     }
 }
-
 void set_outputs() {
     uint32_t GPIO_to_be_set = 0;
     for (uint8_t i = 0; i < 32; i++) {
@@ -151,7 +160,6 @@ void set_outputs() {
     GPIO_to_be_set &= ALLOWED_GPIO_MASK;
     gpio_put_masked(ALLOWED_GPIO_MASK,GPIO_to_be_set);
 }
-
 void update_active_functions(uint8_t function_number, uint8_t input_byte, uint8_t count) {
     uint8_t mask = 0b00000001;
     for (uint8_t i = 0; i < count; i++) {
@@ -159,7 +167,6 @@ void update_active_functions(uint8_t function_number, uint8_t input_byte, uint8_
         mask = mask << 1;
     }
 }
-
 bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]) {
     //Bitwise XOR for all Bytes -> Successful result is: "0000 0000"
     uint8_t xor_byte = 0;
@@ -168,13 +175,11 @@ bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]) {
     }
     return (0 == xor_byte);
 }
-
 // Returns true for long address
 bool is_long_address(uint8_t number_of_bytes, const uint8_t byte_array[]) {
     if ((byte_array[number_of_bytes - 1]>>6) == 0b00000011) return true;
     return false;
 }
-
 bool address_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
     //Check for Idle Package
     if (byte_array[number_of_bytes - 1] == 255)
@@ -201,7 +206,6 @@ bool address_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
         return (CV_ARRAY_FLASH[0] == read_address);
     }
 }
-
 void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
     uint8_t command_byte_n;
     uint8_t command_byte_start_index;
@@ -216,10 +220,10 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     if (command_byte_n == 0b00111111){
         target_speed_step = byte_array[command_byte_start_index - 1];
         if(target_speed_step>127) {
-            target_direction = true;
+            target_direction = true;        //Forward
         }
         else {
-            target_direction = false;
+            target_direction = false;       //Reverse
         }
     }
     // 10XX-XXXX (Function Group Instruction)
@@ -260,11 +264,40 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     }
     set_outputs();
 }
-//Interrupt handler for DCC Logic Signal
-void gpio_callback_rise(unsigned int gpio, long unsigned int events) {
-    add_alarm_in_us(87, &readBit_alarm_callback, NULL, false);
+bool reset_package_check(uint8_t number_of_bytes,const uint8_t byte_array[]){
+    if (byte_array[number_of_bytes-1] == 0b00000000 && byte_array[number_of_bytes-2] == 0b00000000){
+        target_speed_step = 1;
+        //update_active_functions(0,0,37);
+        return true;
+    }else {
+        return false;
+    }
 }
-
+int8_t check_for_package() {  //returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned.
+    uint64_t package3Masked = last_bits & PACKAGE_MASK_3_BYTES;
+    if (package3Masked == PACKAGE_3_BYTES) {
+        return 3;
+    }
+    uint64_t package4Masked = last_bits & PACKAGE_MASK_4_BYTES;
+    if (package4Masked == PACKAGE_4_BYTES) {
+        return 4;
+    }
+    uint64_t package5Masked = last_bits & PACKAGE_MASK_5_BYTES;
+    if (package5Masked == PACKAGE_5_BYTES) {
+        return 5;
+    }
+    return -1;
+}
+void writeLastBit(bool bit) {
+    last_bits <<= 1;
+    last_bits |= bit;
+}
+//start of transmission -> byte_n(address byte) -> ... -> byte_0(error detection byte) -> end of transmission
+void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
+    for (uint8_t i = 0; i < number_of_bytes; i++) {
+        byte_array[i] = last_bits >> (i * 9 + 1);
+    }
+}
 void evaluation(){
     int8_t number_of_bytes = check_for_package();
     if (number_of_bytes != -1) {
@@ -274,9 +307,9 @@ void evaluation(){
         }
         if (error_detection(number_of_bytes,byte_array)) {
             if (address_evaluation(number_of_bytes,byte_array)) {
-                    reset_package_flag = false;
-                    instruction_evaluation(number_of_bytes,byte_array);
-                }
+                reset_package_flag = false;
+                instruction_evaluation(number_of_bytes,byte_array);
+            }
             else if (reset_package_flag){
                 program_mode(number_of_bytes,byte_array);
             }
@@ -286,7 +319,24 @@ void evaluation(){
         }
     }
 }
-
+void track_signal_rise(unsigned int gpio, long unsigned int events) {
+    rising_edge_time = get_absolute_time();
+    gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, false, &track_signal_rise);
+    gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_FALL, true, &track_signal_fall);
+}
+void track_signal_fall(unsigned int gpio, long unsigned int events) {
+    falling_edge_time = get_absolute_time();
+    int64_t time_logical_high  = absolute_time_diff_us(rising_edge_time,falling_edge_time);
+    if(time_logical_high > 87){
+        writeLastBit(0);
+    }
+    else{
+        writeLastBit(1);
+    }
+    evaluation();
+    gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_FALL, false, &track_signal_fall);
+    gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
+}
 int main() {
     stdio_init_all();
     printf("core0 init...\n");
@@ -295,8 +345,13 @@ int main() {
     multicore_launch_core1(core1_entry);
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
-    gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &gpio_callback_rise);
-    printf("core0 done\n");
-    while (1){
+    busy_wait_ms(100);
+    //Check for offset setup
+    if( !( (CV_ARRAY_FLASH[53]) + (CV_ARRAY_FLASH[54]<<8) + (CV_ARRAY_FLASH[55]) + (CV_ARRAY_FLASH[56]<<8) ) ){
+        uint8_t arr[4] = {125,7,6,124};
+        program_mode(4,arr);
     }
+    gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
+    printf("core0 done\n");
+    while (1);
 }

@@ -7,6 +7,7 @@
 #pragma once
 #include "shared.h"
 #include "CV.h"
+#include "pico/float.h"
 #define SIZE_BYTE_ARRAY 5
 #define SIZE_ACTIVE_FUNCTIONS 32
 #define DCC_INPUT_PIN 9
@@ -20,7 +21,6 @@
 #define PACKAGE_MASK_4_BYTES 0b11111111111000000001000000001000000001000000001
 #define PACKAGE_5_BYTES 0b11111111110000000000000000000000000000000000000000000001
 #define PACKAGE_MASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
-#define FLASH_TARGET_OFFSET (PICO_FLASH_SIZE_BYTES-FLASH_SECTOR_SIZE) //This Offset should be far enough away from program data
 int8_t check_for_package();
 void writeLastBit(bool bit) ;
 int64_t readBit_alarm_callback(alarm_id_t id, void *user_data);
@@ -37,5 +37,9 @@ bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]) ;
 bool is_long_address(uint8_t number_of_bytes, const uint8_t byte_array[]) ;
 bool address_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) ;
 void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]);
-void gpio_callback_rise(unsigned int gpio, long unsigned int events) ;
+void track_signal_rise(unsigned int gpio, long unsigned int events);
+void track_signal_fall(unsigned int gpio, long unsigned int events);
 void evaluation();
+uint find_offset(uint level,uint step,uint delay,float threshold, bool direction);
+uint two_sigma(const uint arr[], uint length);
+void setup_offsets(uint length);
