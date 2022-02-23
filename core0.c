@@ -13,10 +13,10 @@ uint64_t last_bits = 0;
 bool reset_package_flag = false;
 absolute_time_t falling_edge_time,rising_edge_time;
 
-uint find_offset(uint level,uint step,uint delay,float threshold, bool direction){
+uint16_t find_offset(uint16_t level, uint8_t step, uint8_t delay, uint32_t threshold, bool direction){
     pwm_set_gpio_level(!direction,0);
-    uint gpio = MOTOR_PWM_FORWARD*direction + MOTOR_PWM_REVERSE*!direction;
-    while((measure(direction)-ADC_OFFSET)<threshold){
+    uint8_t gpio = MOTOR_FWD_PIN * direction + MOTOR_REV_PIN * !direction;
+    while( measure(direction) < threshold ){
         pwm_set_gpio_level(gpio,level);
         busy_wait_ms(delay);
         level += step;
@@ -24,45 +24,46 @@ uint find_offset(uint level,uint step,uint delay,float threshold, bool direction
     pwm_set_gpio_level(direction,0);
     return level;
 }
-uint two_sigma(const uint arr[], uint length){
+uint16_t two_sigma(const uint16_t arr[], uint8_t length){
     //Calculate arithmetic average
-    uint sum = 0;
+    uint32_t sum = 0;
     for (uint i = 0; i < length; ++i) {
         sum += arr[i];
     }
-    uint x_avg = sum / length;
+    uint16_t x_avg = sum / length;
     //Calculate variance
     sum = 0;
-    for (uint i = 0; i < length; ++i) {
+    for (uint8_t i = 0; i < length; ++i) {
         sum += (arr[i]-x_avg)*(arr[i]-x_avg);
     }
     float variance = (float) sum/ (float)(length-1);
     //Calculate standard deviation
-    uint std_dev = (uint)sqrtf(variance);
+    uint16_t std_dev = (uint16_t)sqrtf(variance);
     //"Filter" every array element that deviates more than 2*(std_dev)
     sum = 0;
-    uint counter = 0;
-    for (uint i = 0; i < length; ++i) {
-        uint val = arr[i]-x_avg;
+    uint8_t counter = 0;
+    for (uint8_t i = 0; i < length; ++i) {
+        uint16_t val = arr[i]-x_avg;
         if ( val < 2*std_dev || val > (0-2*std_dev) ){
             sum += arr[i];
             counter++;
         }
     }
-    //Calculate and return "new" arithmetic average
+    //Calculate and return "new" arithmetic average from "filtered" array
     return sum / counter;
 }
-void setup_offsets(uint length){
-    uint offsets_fwd[length];
-    uint offsets_rev[length];
-    for (int i = 0; i < length; ++i) {
-        offsets_fwd[i] = find_offset(0,1,1,0.05f,true);
+void setup_offsets(uint8_t length){
+    uint16_t offsets_fwd[length];
+    uint16_t offsets_rev[length];
+    uint16_t max_lvl = _125M/(CV_ARRAY_FLASH[8]*100+10000);
+    for (uint8_t i = 0; i < length; ++i) {
+        offsets_fwd[i] = find_offset(0,max_lvl/3000,1,30,true);
         busy_wait_ms(500);
-        offsets_rev[i] = find_offset(0,1,1,0.05f,false);
+        offsets_rev[i] = find_offset(0,max_lvl/3000,1,30,false);
         busy_wait_ms(500);
     }
-    uint offsets_fwd_avg = two_sigma(offsets_fwd, length);
-    uint offsets_rev_avg = two_sigma(offsets_rev, length);
+    uint16_t offsets_fwd_avg = two_sigma(offsets_fwd, length);
+    uint16_t offsets_rev_avg = two_sigma(offsets_rev, length);
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
     CV_ARRAY_TEMP[53] = offsets_fwd_avg;
@@ -74,9 +75,13 @@ void setup_offsets(uint length){
     acknowledge();
 }
 void acknowledge() {
-    pwm_set_gpio_level(MOTOR_PWM_FORWARD,5000);
-    busy_wait_ms(6);
-    pwm_set_gpio_level(MOTOR_PWM_FORWARD,0);
+    uint16_t max_lvl = _125M/(CV_ARRAY_FLASH[8]*100+10000);
+    pwm_set_gpio_level(MOTOR_FWD_PIN, max_lvl);
+    busy_wait_ms(3);
+    pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
+    pwm_set_gpio_level(MOTOR_REV_PIN, max_lvl);
+    busy_wait_ms(3);
+    pwm_set_gpio_level(MOTOR_REV_PIN, 0);
 }
 void verify_cv_bit(uint16_t cv_address,bool bit_val, uint8_t bit_pos) {
     uint8_t mask = 0b00000001;
@@ -219,6 +224,12 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     //0011-1111 (128 Speed Step Control) - 2 Byte length
     if (command_byte_n == 0b00111111){
         target_speed_step = byte_array[command_byte_start_index - 1];
+        //Check for offset setup
+        uint sum = (CV_ARRAY_FLASH[53]) + (CV_ARRAY_FLASH[54]) + (CV_ARRAY_FLASH[55]) + (CV_ARRAY_FLASH[56]);
+        if( !sum && target_speed_step != 128 && target_speed_step) {
+            uint8_t arr[4] = {125,7,6,124};
+            program_mode(4,arr);
+        }
         if(target_speed_step>127) {
             target_direction = true;        //Forward
         }
@@ -345,12 +356,6 @@ int main() {
     multicore_launch_core1(core1_entry);
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
-    busy_wait_ms(100);
-    //Check for offset setup
-    if( !( (CV_ARRAY_FLASH[53]) + (CV_ARRAY_FLASH[54]<<8) + (CV_ARRAY_FLASH[55]) + (CV_ARRAY_FLASH[56]<<8) ) ){
-        uint8_t arr[4] = {125,7,6,124};
-        program_mode(4,arr);
-    }
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
     printf("core0 done\n");
     while (1);

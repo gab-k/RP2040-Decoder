@@ -23,7 +23,6 @@
 #define PACKAGE_MASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
 int8_t check_for_package();
 void writeLastBit(bool bit) ;
-int64_t readBit_alarm_callback(alarm_id_t id, void *user_data);
 void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) ;
 void acknowledge();
 void verify_cv_bit(uint16_t cv_address,bool bit_val, uint8_t bit_pos);
@@ -40,6 +39,6 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]);
 void track_signal_rise(unsigned int gpio, long unsigned int events);
 void track_signal_fall(unsigned int gpio, long unsigned int events);
 void evaluation();
-uint find_offset(uint level,uint step,uint delay,float threshold, bool direction);
-uint two_sigma(const uint arr[], uint length);
-void setup_offsets(uint length);
+uint16_t find_offset(uint16_t level, uint8_t step, uint8_t delay, uint32_t threshold, bool direction);
+uint16_t two_sigma(const uint16_t arr[], uint8_t length);
+void setup_offsets(uint8_t length);

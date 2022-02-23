@@ -13,15 +13,15 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_2  -    Minimum Speed
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 0 == Fastest dec/acc rate; 255 == slowest;
-   0b00000000,         //CV_3  -    Acceleration Rate
-   0b00000000,         //CV_4  -    Deceleration Rate
+   0b00000000,         //CV_3  -    Acceleration Rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
+   0b00000000,         //CV_4  -    Deceleration Rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b11111111,         //CV_5  -    V_max
    0b01111111,         //CV_6  -    V_mid
    0b00000001,         //CV_7  -    Version No.
-   0b00001101,         //CV_8  -    Manufacturer
-   0b00000000,         //CV_9  -    PWM-Period
-   0b00000001,         //CV_10  -   PWM Clock Divider
+   0b00001101,         //CV_8  -    Manufacturer (13 = Public Domain & Do-It-Yourself Decoders)
+   0b10010110,         //CV_9  -    PWM Frequency in Hz = CV_9*100+10000    - Default = (150*100+10000)Hz = 25kHz
+   0b00000001,         //CV_10  -
    0b11111111,         //CV_11  -   Packet Timeout in seconds
    0b00000100,         //CV_12  -   Permitted operating modes
    0b00000000,         //CV_13  -
@@ -65,20 +65,21 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_46  -
    0b00000000,         //CV_47  -
    // PID - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
-   0b00001111,         //CV_48  -   PID Control Sampling Time t_s  in ms ≙ Duration of 1 PID-Cycle                    //
+   0b00000101,         //CV_48  -   PID Control Sampling Time t_s  in ms ≙ Duration of 1 PID-Cycle                    //
    0b01110011,         //CV_49  -   PID Control P_Factor        ≙   CV_49/256      i.e. Default = 115 -> 0.4492       //
    0b01100110,         //CV_50  -   PID Control I_Factor        ≙   CV_50/64       i.e. Default = 102 -> 1.594 (1/sec)//
    0b01111011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/4096     i.e. Default = 123 -> 0.03002 sec  //
    0b00110000,         //CV_52  -   PID Integral Limit positive ≙ CV_52*10         i.e. Default = 48  -> +480         //
    0b00110000,         //CV_53  -   PID Integral Limit negative ≙ CV_53*(-10)      i.e. Default = 48  -> -480         //
-   //This Offset is used to establish a "baseline" motor PWM duty cycle at which the motor starts to move
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   //This Offset is used to establish a "baseline" motor PWM duty cycle at which the motor starts to move             //
    //If CV_54+CV_55+CV_56+CV_57 = 0 (after reset or manual overwrite) there will be a measurement procedure on startup//
    //alternatively, the measurement can be done by writing a 7 to CV_7 on the programming track.                      //
    0b00000000,         //CV_54  -   Forward Direction Offset Bits 0-7                   Default = 0                   //
    0b00000000,         //CV_55  -   Forward Direction Offset Bits 8-15                  Default = 0                   //
    0b00000000,         //CV_56  -   Reverse Direction Offset Bits 0-7                   Default = 0                   //
    0b00000000,         //CV_57  -   Reverse Direction Offset Bits 8-15                  Default = 0                   //
-   0b00000110,         //CV_58  -   Offset Measurement Cycles                 Default = 6                             //
+   0b00001000,         //CV_58  -   Offset Measurement Cycles                           Default = 8                   //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000111,         //CV_59  -   speed_helper timer delay -  can be used to adjust accel/decel rate                //
    0b00010100,         //CV_60  -   PWM scaling factor (target EMF Voltage) -> 126*CV_60 = end_target|max             //
@@ -86,7 +87,6 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b01000110,         //CV_61  -   V_EMF Total amount of Measurement Iterations    -   Default = 70 iterations       //
    0b01100100,         //CV_62  -   V_EMF Delay before Measuring                    -   Default = 100us               //
    // CV_63 and CV_64 are used to determine how many elements of the sorted measurement array will be discarded       //
-   // This is used to filter out data.                                                                                //
    // For Example: CV_63 = x and CV_64 = y                                                                            //
    // -> The x smallest values will be discarded.                                                                     //
    // -> The y largest values will be discarded.                                                                      //
