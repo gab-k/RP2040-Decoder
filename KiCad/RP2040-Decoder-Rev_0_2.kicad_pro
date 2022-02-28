@@ -33,9 +33,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.762,
-          "height": 1.524,
-          "width": 1.524
+          "drill": 0.0,
+          "height": 2.0,
+          "width": 2.0
         },
         "silk_line_width": 0.15,
         "silk_text_italic": false,
@@ -45,7 +45,7 @@
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.508
+          "min_clearance": 0.19999999999999998
         }
       },
       "diff_pair_dimensions": [
@@ -63,7 +63,7 @@
         "annular_width": "error",
         "clearance": "error",
         "copper_edge_clearance": "error",
-        "courtyards_overlap": "error",
+        "courtyards_overlap": "warning",
         "diff_pair_gap_out_of_range": "error",
         "diff_pair_uncoupled_length_too_long": "error",
         "drill_out_of_range": "error",
@@ -123,9 +123,11 @@
         0.127,
         0.2,
         0.25,
+        0.4,
         0.5,
         0.6,
-        0.75
+        0.75,
+        0.8
       ],
       "via_dimensions": [
         {
@@ -133,8 +135,8 @@
           "drill": 0.0
         },
         {
-          "diameter": 0.4,
-          "drill": 0.2
+          "diameter": 0.56,
+          "drill": 0.3
         },
         {
           "diameter": 0.6,
@@ -143,6 +145,10 @@
         {
           "diameter": 0.75,
           "drill": 0.375
+        },
+        {
+          "diameter": 0.8,
+          "drill": 0.4
         }
       ],
       "zones_allow_external_fillets": false,

@@ -356,6 +356,7 @@ int main() {
     multicore_launch_core1(core1_entry);
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
+    gpio_pull_up(DCC_INPUT_PIN);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
     printf("core0 done\n");
     while (1);
