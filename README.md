@@ -8,15 +8,15 @@ Features
 
 - DCC digital signal decoding
 - Motor load/speed control
-- 4 Outputs to drive loads up to 700mA each
-- 6 GPIO for lighter loads or even custom applications
+- 4 Outputs to drive loads up to 400mA each
+- 6 GPIO for lighter loads or custom applications
 - Programmable on programming track
 - CV Function Mapping
 
-Installation
+Getting Started
 ------------
 
-A detailed Installation guide is work in progress
+A step-by-step explanation on how to make use of this is work in progress.
 
 
 License
@@ -26,12 +26,14 @@ License
 - [LICENSE](https://github.com/1nct/RP2040-Decoder/blob/main/LICENSE)
 
 ------------
-Note: The decoder is still in early development, the Wiki is also work in progress and will be updated to be as comprehensive as possible.
 Further details about the project can be found here:  [RP2040-Decoder Wiki](https://github.com/GabrielKoppenstein/pico-decoder/wiki)
 
+Note: The decoder is still in early development, there might (will) be bugs as its not tested that much yet.
+The wiki is also work in progress and will be updated to be as comprehensive as possible.
 
+------------
 <p float="left">
-<img src="https://user-images.githubusercontent.com/82903393/141682454-37e5eb27-441a-4b72-bfd2-aa3c5bd911c7.png" alt="Top View Image" title="Top View Image" width="400"/>
-<img src="https://user-images.githubusercontent.com/82903393/141682455-d829b00d-ffff-487e-a901-82d6fb121bdd.png" alt="Bottom View Image" title="Bottom View Image" width="400"/>
+<img src="/docs/png/RP2040-Decoder-Rev_0_2_front.png" alt="PCB Front Side Image" title="Front" width="500"/>
+<img src="/docs/png/RP2040-Decoder-Rev_0_2_back.png" alt="PCB Back Side Image" title="Back" width="500"/>
 </p>
 
