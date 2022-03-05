@@ -149,8 +149,8 @@ bool pid_control(struct repeating_timer *t){
     if (pid.output < 0 || !latest_target) pid.output = 0;
     else if (pid.output > pid.max_output) pid.output = pid.max_output;
     adjust_pwm_level(pid.output);
-    printf("o: %d\n",pid.output);
-    printf("e: %d\n",pid.e);
+    //printf("o: %d\n",pid.output);
+    //printf("e: %d\n",pid.e);
     adc_fifo_drain();
     pid.direction_prev = target_direction;
     pid.e_prev = pid.e;
@@ -172,10 +172,11 @@ void init_pid(){
     pid.direction_prev = target_direction;
     pid.max_output = _125M/(CV_ARRAY_FLASH[8]*100+10000);
 }
-void init_pwm(uint8_t gpio) {
-    uint16_t wrap_counter = _125M/(CV_ARRAY_FLASH[8]*100+10000);
+void init_motor_pwm(uint8_t gpio) {
+    uint16_t wrap_counter = _125M/(CV_ARRAY_FLASH[8]*100+10000);        //  125MHz / f_pwm
     init_offsets(wrap_counter);
     uint32_t slice_num = pwm_gpio_to_slice_num(gpio);
+    pwm_set_clkdiv_int_frac(slice_num,CV_ARRAY_FLASH[46],0);
     pwm_set_wrap(slice_num, wrap_counter);
     pwm_set_gpio_level(gpio,0);
     pwm_set_enabled(slice_num, true);
@@ -189,8 +190,8 @@ void core1_entry() {
         adc_gpio_init(FWD_V_EMF_ADC_PIN);
         adc_gpio_init(REV_V_EMF_ADC_PIN);
         adc_fifo_setup(true,false,0,false,false);
-        init_pwm(MOTOR_FWD_PIN);
-        init_pwm(MOTOR_REV_PIN);
+        init_motor_pwm(MOTOR_FWD_PIN);
+        init_motor_pwm(MOTOR_REV_PIN);
     }
     init_pid();
     alarm_pool_add_repeating_timer_ms(alarm_pool_create(0,1),

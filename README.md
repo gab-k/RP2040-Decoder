@@ -12,6 +12,7 @@ Features
 - 6 GPIO for lighter loads or custom applications
 - Programmable on programming track
 - CV Function Mapping
+- Board size of 25x20 mm
 
 Getting Started
 ------------
@@ -29,11 +30,12 @@ License
 Further details about the project can be found here:  [RP2040-Decoder Wiki](https://github.com/GabrielKoppenstein/pico-decoder/wiki)
 
 Note: The decoder is still in early development, there might (will) be bugs as its not tested that much yet.
+So suggestions on how to improve things and bug reports are always much appreciated.
 The wiki is also work in progress and will be updated to be as comprehensive as possible.
 
 ------------
 <p float="left">
-<img src="/docs/png/RP2040-Decoder-Rev_0_2_front.png" alt="PCB Front Side Image" title="Front" width="500"/>
-<img src="/docs/png/RP2040-Decoder-Rev_0_2_back.png" alt="PCB Back Side Image" title="Back" width="500"/>
+<img src="/docs/png/RP2040-Decoder-Rev_0_2_front.png" alt="PCB Front Side Image" title="Front" width="400"/>
+<img src="/docs/png/RP2040-Decoder-Rev_0_2_back.png" alt="PCB Back Side Image" title="Back" width="400"/>
 </p>
 

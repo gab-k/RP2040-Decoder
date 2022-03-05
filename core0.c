@@ -8,7 +8,6 @@
 bool target_direction = true;   //Forward = true  -  Reverse = false
 uint target_speed_step = 128;   //128 = Stop (Forward Direction)
 const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
-bool active_functions[SIZE_ACTIVE_FUNCTIONS] = {false};
 uint64_t last_bits = 0;
 bool reset_package_flag = false;
 absolute_time_t falling_edge_time,rising_edge_time;
@@ -150,27 +149,50 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
             multicore_launch_core1(core1_entry);
     }
 }
-void set_outputs() {
-    uint32_t GPIO_to_be_set = 0;
+uint32_t get_32bit_CV (uint16_t CV_start_index){
+    uint8_t byte_0 = CV_ARRAY_FLASH[CV_start_index];
+    uint8_t byte_1 = CV_ARRAY_FLASH[CV_start_index+1];
+    uint8_t byte_2 = CV_ARRAY_FLASH[CV_start_index+2];
+    uint8_t byte_3 = CV_ARRAY_FLASH[CV_start_index+3];
+    return (byte_0) + (byte_1<<8) + (byte_2<<16) + (byte_3<<24);
+}
+uint16_t get_16bit_CV (uint16_t CV_start_index){
+    uint8_t byte_0 = CV_ARRAY_FLASH[CV_start_index];
+    uint8_t byte_1 = CV_ARRAY_FLASH[CV_start_index+1];
+    return (byte_0) + (byte_1<<8);
+}
+void set_outputs(uint32_t active_functions) {
+    uint32_t slice_mask = 0;
+    uint32_t outputs_to_enable = 0;
+    uint32_t outputs_to_enable_PWM = get_32bit_CV(111);
     for (uint8_t i = 0; i < 32; i++) {
-        if (active_functions[i]) {
-            uint8_t func_cv_0 = CV_ARRAY_FLASH[260 + i * 8 - 4 * target_direction];
-            uint8_t func_cv_1 = CV_ARRAY_FLASH[261 + i * 8 - 4 * target_direction];
-            uint8_t func_cv_2 = CV_ARRAY_FLASH[262 + i * 8 - 4 * target_direction];
-            uint8_t func_cv_3 = CV_ARRAY_FLASH[263 + i * 8 - 4 * target_direction];
-            uint32_t func_cv = (func_cv_0) + (func_cv_1 << 8) + (func_cv_2 << 16) + (func_cv_3 << 24);
-            GPIO_to_be_set |= func_cv;
+        if ( (active_functions>>i) & 1 ){
+            outputs_to_enable |= get_32bit_CV(i * 8 + 260 - 4 * target_direction);
         }
     }
-    GPIO_to_be_set &= ALLOWED_GPIO_MASK;
-    gpio_put_masked(ALLOWED_GPIO_MASK,GPIO_to_be_set);
-}
-void update_active_functions(uint8_t function_number, uint8_t input_byte, uint8_t count) {
-    uint8_t mask = 0b00000001;
-    for (uint8_t i = 0; i < count; i++) {
-        active_functions[i + function_number] = (input_byte & mask) == 0 ? 0 : 1;
-        mask = mask << 1;
+    outputs_to_enable &= GPIO_ALLOWED;                              // Prevent illegal GPIO
+    outputs_to_enable_PWM &= outputs_to_enable;                     // Outputs with PWM to be enabled
+    outputs_to_enable &= ~outputs_to_enable_PWM;                    // Outputs without PWM to be enabled
+    gpio_put_masked(GPIO_ALLOWED, outputs_to_enable);
+    uint32_t temp_mask = 1;
+    for (uint8_t i = 0; i < 32; ++i) {
+        if(temp_mask & outputs_to_enable_PWM){
+            uint32_t slice_num = pwm_gpio_to_slice_num(i);
+            slice_mask |= (1<<slice_num);
+        }
+        temp_mask<<=1;
     }
+    pwm_set_mask_enabled(slice_mask);
+}
+void update_active_functions(uint32_t function_byte, uint8_t clr_bit_ind) {
+    static uint32_t active_functions;
+    static uint32_t prev_active_func;
+    function_byte &= ~(clr_bit_arr[clr_bit_ind]);
+    active_functions &= clr_bit_arr[clr_bit_ind];
+    active_functions |= function_byte;
+    uint32_t changes = active_functions ^ prev_active_func;
+    if(changes)set_outputs(active_functions);
+    prev_active_func = active_functions;
 }
 bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]) {
     //Bitwise XOR for all Bytes -> Successful result is: "0000 0000"
@@ -217,19 +239,14 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     // start of transmission -> ... -> command_byte_n -> ... -> command_byte_0 -> ... -> end of transmission
     if (is_long_address(number_of_bytes,byte_array)) {
         command_byte_start_index = number_of_bytes - 3;
-    } else {
+    }
+    else {
         command_byte_start_index = number_of_bytes - 2;
     }
     command_byte_n = byte_array[command_byte_start_index];
     //0011-1111 (128 Speed Step Control) - 2 Byte length
     if (command_byte_n == 0b00111111){
         target_speed_step = byte_array[command_byte_start_index - 1];
-        //Check for offset setup
-        uint sum = (CV_ARRAY_FLASH[53]) + (CV_ARRAY_FLASH[54]) + (CV_ARRAY_FLASH[55]) + (CV_ARRAY_FLASH[56]);
-        if( !sum && target_speed_step != 128 && target_speed_step) {
-            uint8_t arr[4] = {125,7,6,124};
-            program_mode(4,arr);
-        }
         if(target_speed_step>127) {
             target_direction = true;        //Forward
         }
@@ -239,48 +256,42 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     }
     // 10XX-XXXX (Function Group Instruction)
     else if (command_byte_n >> 6 == 0b00000010){
-        if (command_byte_n >> 5 == 0b00000100) // Functions F0-F4
-        {
-            update_active_functions(0, command_byte_n >> 4, 1);             //F0
-            update_active_functions(1, command_byte_n, 4);                           //F1-F4
-        } else {
-            switch (command_byte_n >> 4) {
-                case 0b00001011: // F5-F8
-                    update_active_functions(5, command_byte_n, 4);
-                    break;
-                case 0b00001010: // F9-F12
-                    update_active_functions(9, command_byte_n, 4);
-                    break;
-                default:
-                    break;
-            }
+        switch (command_byte_n >> 4) {
+            case 0b00001011:    // F5-F8
+                update_active_functions((command_byte_n << 5),1);
+                break;
+            case 0b00001010:    // F9-F12
+                update_active_functions((command_byte_n << 9),2);
+                break;
+            default:            // F0-F4
+                update_active_functions(((command_byte_n << 1) + (command_byte_n >> 4)),0);
+                break;
         }
     }
     //Feature Expansion Instruction 110X-XXXX
-    else if (command_byte_n >> 5 == 0b00000110)
-    {
+    else if (command_byte_n >> 5 == 0b00000110) {
         switch (command_byte_n) {
             case 0b11011110: // F13-F20
-                update_active_functions(13, byte_array[command_byte_start_index - 1], 8);
+                update_active_functions((byte_array[command_byte_start_index - 1] << 13),3);
                 break;
             case 0b11011111: // F21-F28
-                update_active_functions(21, byte_array[command_byte_start_index - 1], 8);
+                update_active_functions((byte_array[command_byte_start_index - 1] << 21),4);
                 break;
             case 0b11011000: // F29-F31
-                update_active_functions(29, byte_array[command_byte_start_index - 1], 3);
+                update_active_functions((byte_array[command_byte_start_index - 1] << 29),5);
                 break;
             default:
                 break;
         }
     }
-    set_outputs();
 }
 bool reset_package_check(uint8_t number_of_bytes,const uint8_t byte_array[]){
     if (byte_array[number_of_bytes-1] == 0b00000000 && byte_array[number_of_bytes-2] == 0b00000000){
         target_speed_step = 1;
         //update_active_functions(0,0,37);
         return true;
-    }else {
+    }
+    else {
         return false;
     }
 }
@@ -321,10 +332,10 @@ void evaluation(){
                 reset_package_flag = false;
                 instruction_evaluation(number_of_bytes,byte_array);
             }
-            else if (reset_package_flag){
+            else if (reset_package_flag) {
                 program_mode(number_of_bytes,byte_array);
             }
-            else{
+            else {
                 reset_package_flag = reset_package_check(number_of_bytes,byte_array);
             }
         }
@@ -338,21 +349,45 @@ void track_signal_rise(unsigned int gpio, long unsigned int events) {
 void track_signal_fall(unsigned int gpio, long unsigned int events) {
     falling_edge_time = get_absolute_time();
     int64_t time_logical_high  = absolute_time_diff_us(rising_edge_time,falling_edge_time);
-    if(time_logical_high > 87){
+    if(time_logical_high > 87) {
         writeLastBit(0);
     }
-    else{
+    else {
         writeLastBit(1);
     }
     evaluation();
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_FALL, false, &track_signal_fall);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
 }
+void init_outputs(){
+    gpio_init_mask(GPIO_ALLOWED);
+    gpio_set_dir_out_masked(GPIO_ALLOWED);
+    uint32_t Outputs_with_PWM_enabled = get_32bit_CV(111);
+    uint32_t slice, channel;
+    uint16_t wrap, level;
+    for (uint8_t i = 0; i < 32; ++i) {
+        if ( (Outputs_with_PWM_enabled>>i) & 1 ){
+            slice = pwm_gpio_to_slice_num(i);
+            channel = pwm_gpio_to_channel(i);   //0 for A, 1 for B ?
+            wrap = get_16bit_CV(115 + slice*7);
+            level = get_16bit_CV(118 + 7*slice+ 2*channel);
+            gpio_set_function(i,GPIO_FUNC_PWM);
+            pwm_set_wrap(slice,wrap);
+            pwm_set_gpio_level(i,level);
+            pwm_set_clkdiv_int_frac(slice,CV_ARRAY_FLASH[117+7*slice],0);
+        }
+    }
+}
 int main() {
     stdio_init_all();
     printf("core0 init...\n");
-    //gpio_init_mask(ALLOWED_GPIO_MASK);
-    //gpio_set_dir_out_masked(ALLOWED_GPIO_MASK);
+    init_outputs();
+    //Check for offset setup
+    uint sum = (CV_ARRAY_FLASH[53]) + (CV_ARRAY_FLASH[54]) + (CV_ARRAY_FLASH[55]) + (CV_ARRAY_FLASH[56]);
+    if( !sum && target_speed_step != 128 && target_speed_step) {
+        uint8_t arr[4] = {125,7,6,124};
+        program_mode(4,arr);
+    }
     multicore_launch_core1(core1_entry);
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
