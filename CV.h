@@ -9,27 +9,27 @@
 //      - V_max/V_min & V_emf
 //      -
 uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
-   0b00000011,         //CV_1  -    Basic Address
-   0b00000000,         //CV_2  -    Minimum Speed
+   0b00000011,         //CV_1  -    Basic address  CV_1 = 0 is not allowed and used for initiating ADC offset adjustment
+   0b00000000,         //CV_2  -    Minimum speed
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 0 == Fastest dec/acc rate; 255 == slowest;
-   0b00000000,         //CV_3  -    Acceleration Rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
-   0b00000000,         //CV_4  -    Deceleration Rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
+   0b00000000,         //CV_3  -    Acceleration rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
+   0b00000000,         //CV_4  -    Deceleration rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b11111111,         //CV_5  -    V_max
    0b01111111,         //CV_6  -    V_mid
-   0b00000001,         //CV_7  -    Version No.
-   0b00001101,         //CV_8  -    Manufacturer (13 = Public Domain & Do-It-Yourself Decoders)
-   0b10010110,         //CV_9  -    PWM Frequency in Hz = CV_9*100+10000    - Default = (150*100+10000)Hz = 25kHz
+   0b00000001,         //CV_7  -    Version no.                                                         (read-only)
+   0b00001101,         //CV_8  -    Manufacturer (13 = Public Domain & Do-It-Yourself Decoders)         (read-only)
+   0b10010110,         //CV_9  -    PWM frequency in Hz = CV_9*100+10000    - Default = (150*100+10000)Hz = 25kHz
    0b00000001,         //CV_10  -
-   0b11111111,         //CV_11  -   Packet Timeout in seconds
+   0b11111111,         //CV_11  -   Packet timeout in seconds
    0b00000100,         //CV_12  -   Permitted operating modes
    0b00000000,         //CV_13  -
    0b00000000,         //CV_14  -
    0b00000000,         //CV_15  -
    0b00000000,         //CV_16  -
-   0b11000011,         //CV_17  -   Extended/Long 14-Bit Address    (Bits 8 to 13)
-   0b11101000,         //CV_18  -   Extended/Long 14-Bit Address    (Bits 0 to 7)
+   0b11000011,         //CV_17  -   Extended/Long 14-Bit address    (Bits 8 to 13)
+   0b11101000,         //CV_18  -   Extended/Long 14-Bit address    (Bits 0 to 7)
    0b00000000,         //CV_19  -
    0b00000000,         //CV_20  -
    0b00000000,         //CV_21  -
@@ -47,8 +47,8 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_29  -   Decoder Configuration
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000000,         //CV_30  -
-   0b00010000,         //CV_31  -   Extended CV Pointer Bits 8-15
-   0b00000000,         //CV_32  -   Extended CV Pointer Bits 0-7
+   0b00010000,         //CV_31  -   Extended CV pointer Bits 8-15
+   0b00000000,         //CV_32  -   Extended CV pointer Bits 0-7
    0b00000000,         //CV_33  -
    0b00000000,         //CV_34  -
    0b00000000,         //CV_35  -
@@ -63,7 +63,7 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_44  -
    0b00000000,         //CV_45  -
    0b00000000,         //CV_46  -
-   0b00000001,         //CV_47  -   Additional Motor-PWM Clock Divider.
+   0b00000001,         //CV_47  -   Additional motor-PWM clock divider.
    // PID - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
    0b00000101,         //CV_48  -   PID Control Sampling Time t_s  in ms ≙ Duration of 1 PID-Cycle                    //
    0b01110011,         //CV_49  -   PID Control P_Factor        ≙   CV_49/256      i.e. Default = 115 -> 0.4492       //
@@ -74,12 +74,13 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    //This Offset is used to establish a "baseline" motor PWM duty cycle at which the motor starts to move             //
    //If CV_54+CV_55+CV_56+CV_57 = 0 (after reset or manual overwrite) there will be a measurement procedure on startup//
-   //alternatively, the measurement can be done by writing a 7 to CV_7 on the programming track.                      //
-   0b00000000,         //CV_54  -   Forward Direction Offset Bits 0-7                   Default = 0                   //
-   0b00000000,         //CV_55  -   Forward Direction Offset Bits 8-15                  Default = 0                   //
-   0b00000000,         //CV_56  -   Reverse Direction Offset Bits 0-7                   Default = 0                   //
-   0b00000000,         //CV_57  -   Reverse Direction Offset Bits 8-15                  Default = 0                   //
-   0b00001000,         //CV_58  -   Offset Measurement Cycles                           Default = 8                   //
+   //alternatively, the measurement can be done by writing a 7 to CV_7 on the programming track, although you should  //
+   //keep in mind, that the programming track might limit current.                                                    //
+   0b00000000,         //CV_54  -   Forward direction offset bits 0-7                   Default = 0                   //
+   0b00000000,         //CV_55  -   Forward direction offset bits 8-15                  Default = 0                   //
+   0b00000000,         //CV_56  -   Reverse direction offset bits 0-7                   Default = 0                   //
+   0b00000000,         //CV_57  -   Reverse direction offset bits 8-15                  Default = 0                   //
+   0b00001000,         //CV_58  -   Offset measurement cycles                           Default = 8                   //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000111,         //CV_59  -   speed_helper timer delay -  can be used to adjust accel/decel rate                //
    0b00010100,         //CV_60  -   PWM scaling factor (target EMF Voltage) -> 126*CV_60 = end_target|max             //
@@ -93,7 +94,7 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00001111,         //CV_63  -   left_side_array_cutoff      -   Default = 15                                      //
    0b00001111,         //CV_64  -   right_side_array_cutoff     -   Default = 15                                      //                                                  //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000000,         //CV_65  -
+   0b00000000,         //CV_65  -   Values > 0 indicate that flash is still in factory condition
    0b00000000,         //CV_66  -
    0b00000000,         //CV_67  -
    0b00000000,         //CV_68  -
@@ -210,9 +211,13 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_170  -  Channel B Level Bits 0-7
    0b00000000,         //CV_171  -  Channel B Level Bits 8-15
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000000,         //CV_172  -
-   0b00000000,         //CV_173  -
-   0b00000000,         //CV_174  -
+//Offset adjustment for ADC                                                                                           //
+//If CV_172&CV_173 = 255 there will be a measurement procedure on startup                           (Note: Bitwise &) //
+//alternatively, the measurement can be done by writing a 0 to CV_1 on the programming track                          //
+   0b11111111,         //CV_172  -  ADC offset - forward direction (FWD_V_EMF_ADC_PIN)  Default: 255                 //
+   0b11111111,         //CV_173  -  ADC offset - reverse direction (REV_V_EMF_ADC_PIN)  Default: 255                 //
+   0b01111111,         //CV_174  -  ADC offset measurement cycles                       Default: 127                 //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000000,         //CV_175  -
    0b00000000,         //CV_176  -
    0b00000000,         //CV_177  -

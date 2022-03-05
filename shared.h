@@ -21,9 +21,16 @@
 #define MOTOR_REV_PIN 23u
 #define FWD_V_EMF_ADC_PIN 26u
 #define REV_V_EMF_ADC_PIN 27u
-#define GPIO_USED 0b00001100110000000011111000011111u
-#define GPIO_ILLEGAL (DCC_INPUT_PIN | MOTOR_FWD_PIN | MOTOR_REV_PIN | FWD_V_EMF_ADC_PIN | REV_V_EMF_ADC_PIN)
-#define GPIO_ALLOWED GPIO_USED & ~GPIO_ILLEGAL  //GPIO mask to prevent setting illegal GPIOs (ADC, Motor, DCC Input Pin)
+//Aux output pins
+#define AUX_PIN_MASK 0b00000000000000000011110000000000
+//GPIO pins configured as inputs (Input functionality not implemented yet)
+#define GPIO_INPUT_MASK 0b00000000000000000000000000000000
+//GPIO pins configured as outputs
+#define GPIO_OUTPUT_MASK 0b00000000000000000000000000111111
+//GPIO pin mask to prevent setting illegal GPIOs (ADC, Motor, DCC Input Pin)
+#define GPIO_ILLEGAL_MASK (1u<<DCC_INPUT_PIN) | (1u<<MOTOR_FWD_PIN) | (1u<<MOTOR_REV_PIN) | (1u<<FWD_V_EMF_ADC_PIN) | (1u<<REV_V_EMF_ADC_PIN)
+//GPIO pin mask with allowed outputs (AUX & GPIO (configured as outputs))
+#define GPIO_ALLOWED_OUTPUTS (GPIO_OUTPUT_MASK|AUX_PIN_MASK) & ~(GPIO_ILLEGAL_MASK)
 #define FLASH_TARGET_OFFSET (PICO_FLASH_SIZE_BYTES-FLASH_SECTOR_SIZE) //This Offset should be far enough away from program data
 extern repeating_timer_t pid_control_timer;
 extern repeating_timer_t speed_helper_timer;
