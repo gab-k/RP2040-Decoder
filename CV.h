@@ -142,8 +142,9 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_110  -
    0b00000000,         //CV_111  -
 ///// PWM - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
+// This Config can cause conflicts when GPIOs controlled by the same slice are enabled at the same time.
    0b00000000,         //CV_112  -  GPIO 0-7   enable PWM
-   0b00000100,         //CV_113  -  GPIO 8-15  enable PWM
+   0b00111100,         //CV_113  -  GPIO 8-15  enable PWM
    0b00000000,         //CV_114  -  GPIO 16-23 enable PWM
    0b00000000,         //CV_115  -  GPIO 24-31 enable PWM
 //Slice 0
@@ -187,21 +188,21 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_149  -  Channel B Level Bits 0-7
    0b00000000,         //CV_150  -  Channel B Level Bits 8-15
 //Slice 5
-   0b11111111,         //CV_151  -  Wrap Bits 0-7
-   0b11111111,         //CV_152  -  Wrap Bits 8-15
+   0b10001000,         //CV_151  -  Wrap Bits 0-7
+   0b00010011,         //CV_152  -  Wrap Bits 8-15
    0b00000001,         //CV_153  -  Clock Divider
-   0b11111111,         //CV_154  -  Channel A Level Bits 0-7
-   0b01111111,         //CV_155  -  Channel A Level Bits 8-15
-   0b00000000,         //CV_156  -  Channel B Level Bits 0-7
-   0b00000000,         //CV_157  -  Channel B Level Bits 8-15
+   0b11000100,         //CV_154  -  Channel A Level Bits 0-7
+   0b00001001,         //CV_155  -  Channel A Level Bits 8-15
+   0b11101000,         //CV_156  -  Channel B Level Bits 0-7
+   0b00000011,         //CV_157  -  Channel B Level Bits 8-15
 //Slice 6
-   0b00000000,         //CV_158  -  Wrap Bits 0-7
-   0b00000000,         //CV_159  -  Wrap Bits 8-15
+   0b11000100,         //CV_158  -  Wrap Bits 0-7
+   0b00001001,         //CV_159  -  Wrap Bits 8-15
    0b00000001,         //CV_160  -  Clock Divider
-   0b00000000,         //CV_161  -  Channel A Level Bits 0-7
-   0b00000000,         //CV_162  -  Channel A Level Bits 8-15
-   0b00000000,         //CV_163  -  Channel B Level Bits 0-7
-   0b00000000,         //CV_164  -  Channel B Level Bits 8-15
+   0b11100010,         //CV_161  -  Channel A Level Bits 0-7
+   0b00000100,         //CV_162  -  Channel A Level Bits 8-15
+   0b11100010,         //CV_163  -  Channel B Level Bits 0-7
+   0b00000100,         //CV_164  -  Channel B Level Bits 8-15
 //Slice 7
    0b00000000,         //CV_165  -  Wrap Bits 0-7
    0b00000000,         //CV_166  -  Wrap Bits 8-15
@@ -212,12 +213,12 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_171  -  Channel B Level Bits 8-15
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Offset adjustment for ADC                                                                                           //
-//If CV_172&CV_173 = 255 there will be a measurement procedure on startup                           (Note: Bitwise &) //
+//If CV_172&CV_173 = 0xFF = 255 there will be a measurement procedure on startup                    (Note: Bitwise &) //
 //alternatively, the measurement can be done by writing a 0 to CV_1 on the programming track                          //
-   0b11111111,         //CV_172  -  ADC offset - forward direction (FWD_V_EMF_ADC_PIN)  Default: 255                 //
-   0b11111111,         //CV_173  -  ADC offset - reverse direction (REV_V_EMF_ADC_PIN)  Default: 255                 //
-   0b01111111,         //CV_174  -  ADC offset measurement cycles                       Default: 127                 //
+   0b11111111,         //CV_172  -  ADC offset                                          Default: 255                 //
+   0b11111111,         //CV_173  -  ADC offset measurement cycles                       Default: 127                 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   0b01111111,         //CV_174  -
    0b00000000,         //CV_175  -
    0b00000000,         //CV_176  -
    0b00000000,         //CV_177  -
@@ -416,7 +417,7 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
     0b00000000,         //byte 3    -   CV_344
 //F11 forward
     0b00000000,         //byte 0    -   CV_345
-    0b00000000,         //byte 1    -   CV_346
+    0b00111100,         //byte 1    -   CV_346
     0b00000000,         //byte 2    -   CV_347
     0b00000000,         //byte 3    -   CV_348
 //F11 reverse

@@ -35,6 +35,7 @@ typedef struct measure_params{
     uint8_t total_iterations;
     uint8_t left_side_array_cutoff;
     uint8_t right_side_array_cutoff;
+    uint8_t adc_offset;
 }measure_params;
 measure_params msr;
 
@@ -140,7 +141,7 @@ uint32_t offset(){
 bool pid_control(struct repeating_timer *t){
     if(target_direction != pid.direction_prev || !latest_target) pid.e_sum = 0;
     msr.val = measure(target_direction);
-    pid.e = (int32_t)latest_target - (int32_t)msr.val + ADC_OFFSET;
+    pid.e = (int32_t)latest_target - (int32_t)msr.val + msr.adc_offset;
     pid.e_sum += pid.e;
     if (pid.e_sum > pid.sum_limit_max) pid.e_sum = pid.sum_limit_max;
     else if (pid.e_sum < pid.sum_limit_min) pid.e_sum = pid.sum_limit_min;
@@ -149,8 +150,8 @@ bool pid_control(struct repeating_timer *t){
     if (pid.output < 0 || !latest_target) pid.output = 0;
     else if (pid.output > pid.max_output) pid.output = pid.max_output;
     adjust_pwm_level(pid.output);
-    //printf("o: %d\n",pid.output);
-    //printf("e: %d\n",pid.e);
+    printf("o: %d\n",pid.output);
+    printf("e: %d\n",pid.e);
     adc_fifo_drain();
     pid.direction_prev = target_direction;
     pid.e_prev = pid.e;
@@ -161,6 +162,7 @@ void init_pid(){
     msr.delay_in_us = 100; /*CV_ARRAY_FLASH[61];*/
     msr.left_side_array_cutoff = 15;/*CV_ARRAY_FLASH[62];*/
     msr.right_side_array_cutoff = 15;/*CV_ARRAY_FLASH[63];*/
+    msr.adc_offset = CV_ARRAY_FLASH[171];;
     pid.e_sum = 0;
     pid.e_prev = 0;
     pid.k_p = 2500;
@@ -205,6 +207,6 @@ void core1_entry() {
                                       speed_helper,
                                       NULL,
                                       &speed_helper_timer);
-    printf("core1 done\n");
+    multicore_fifo_push_blocking(20); //send some data to let core0 know that core1 is done
     while (1);
 }

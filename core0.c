@@ -11,6 +11,7 @@ const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSE
 uint64_t last_bits = 0;
 bool reset_package_flag = false;
 absolute_time_t falling_edge_time,rising_edge_time;
+uint16_t level_table[32] = {0};
 
 uint16_t two_sigma(const uint16_t arr[], uint8_t length){
     //Calculate arithmetic average
@@ -41,26 +42,22 @@ uint16_t two_sigma(const uint16_t arr[], uint8_t length){
     return sum / counter;
 }
 void adc_offset_adjustment(uint8_t length){
-    uint16_t offsets_fwd[length];
-    uint16_t offsets_rev[length];
-    //Set Motor PWM level to 0 just for good measure
+    length = 100;
+    uint16_t offsets[length];
+    //Set PWM level to 0 just for good measure
     pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
     pwm_set_gpio_level(MOTOR_REV_PIN, 0);
-    for (uint8_t i  = 0;  i < 100; i++) {
-        offsets_fwd[i] = measure(true);
+    for (uint8_t i  = 0;  i < length; i++) {
+        uint16_t fwd = measure(true);
+        uint16_t rev = measure(false);
+        offsets[i] = (fwd+rev)/2;
     }
-    for (uint8_t i  = 0;  i < 100; i++) {
-        offsets_rev[i] = measure(false);
-    }
-    uint8_t offsets_fwd_avg = two_sigma(offsets_fwd, length);
-    uint8_t offsets_rev_avg = two_sigma(offsets_rev, length);
+    uint8_t offsets_fwd_avg = two_sigma(offsets, length);
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
     CV_ARRAY_TEMP[171] = offsets_fwd_avg;
-    CV_ARRAY_TEMP[172] = offsets_rev_avg;
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
     flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
-    acknowledge();
 }
 uint16_t m_pwm_find_offset(uint16_t level, uint8_t step, uint8_t delay, uint32_t threshold, bool direction){
     uint8_t gpio = MOTOR_FWD_PIN * direction + MOTOR_REV_PIN * !direction;
@@ -95,7 +92,6 @@ void m_pwm_offset_adjustment(uint8_t length){
     CV_ARRAY_TEMP[56] = offsets_rev_avg>>8;
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
     flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
-    acknowledge();
 }
 void acknowledge() {
     uint16_t max_lvl = _125M/(CV_ARRAY_FLASH[8]*100+10000);
@@ -122,7 +118,6 @@ void write_cv_byte(uint16_t cv_index, uint8_t cv_data){
     if(cv_index == 7 && cv_data == 8){
         flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
         flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
-        acknowledge();
     }
     //Motor PWM offset Adjustment (CV_7; Value = 7);
     else if(cv_index == 6 && cv_data == 7){
@@ -130,7 +125,7 @@ void write_cv_byte(uint16_t cv_index, uint8_t cv_data){
     }
     //CV_1 = 0 is not permitted, therefore this is used to start the ADC offset adjustment routine
     else if( !( cv_index&cv_data) ){
-        adc_offset_adjustment(CV_ARRAY_FLASH[173]);
+        adc_offset_adjustment(100/*CV_ARRAY_FLASH[173]*/);
     }
     else{
         uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
@@ -142,8 +137,6 @@ void write_cv_byte(uint16_t cv_index, uint8_t cv_data){
     }
 }
 void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
-    if( !((CV_ARRAY_FLASH[53])+(CV_ARRAY_FLASH[54]<<8)) || !((CV_ARRAY_FLASH[55])+(CV_ARRAY_FLASH[56]<<8)) ){
-    }
     //Check for valid programming command ("address" 112-127)
     if (byte_array[number_of_bytes - 1]<128 && byte_array[number_of_bytes - 1]>111){
             uint8_t instruction_type_mask = 0b00001100;
@@ -173,6 +166,7 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
             }
             restore_interrupts(saved_interrupts);
             multicore_launch_core1(core1_entry);
+            multicore_fifo_pop_blocking();                      //wait for core1 launch before proceeding
     }
 }
 uint32_t get_32bit_CV (uint16_t CV_start_index){
@@ -188,9 +182,9 @@ uint16_t get_16bit_CV (uint16_t CV_start_index){
     return (byte_0) + (byte_1<<8);
 }
 void set_outputs(uint32_t active_functions) {
-    uint32_t slice_mask = 0;
     uint32_t outputs_to_set = 0;
-    uint32_t outputs_to_set_PWM = get_32bit_CV(111);
+    uint32_t outputs_with_PWM_enabled = get_32bit_CV(111);                //get outputs with pwm enabled (bitmask)
+    uint32_t outputs_to_set_PWM = outputs_with_PWM_enabled;
     for (uint8_t i = 0; i < 32; i++) {
         if ( (active_functions>>i) & 1 ){
             outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * target_direction);
@@ -203,12 +197,15 @@ void set_outputs(uint32_t active_functions) {
     uint32_t temp_mask = 1;
     for (uint8_t i = 0; i < 32; ++i) {
         if(temp_mask & outputs_to_set_PWM){
-            uint32_t slice_num = pwm_gpio_to_slice_num(i);
-            slice_mask |= (1<<slice_num);
+            pwm_set_gpio_level(i, level_table[i]);
+            pwm_gpio_to_channel(i);
+            pwm_gpio_to_slice_num(i);
+        }
+        else if (temp_mask & outputs_with_PWM_enabled){
+            pwm_set_gpio_level(i,0);
         }
         temp_mask<<=1;
     }
-    pwm_set_mask_enabled(slice_mask);
 }
 void update_active_functions(uint32_t function_byte, uint8_t clr_bit_ind) {
     static uint32_t active_functions;
@@ -387,7 +384,7 @@ void track_signal_fall(unsigned int gpio, long unsigned int events) {
 }
 void init_outputs(){
     gpio_init_mask(GPIO_ALLOWED_OUTPUTS);
-    gpio_set_dir_out_masked(GPIO_ALLOWED_OUTPUTS);
+    gpio_set_dir_out_masked(GPIO_ALLOWED_OUTPUTS);          //note: This also disables UART on GPIO0 & GPIO1
     uint32_t Outputs_with_PWM_enabled = get_32bit_CV(111);
     uint32_t slice, channel;
     uint16_t wrap, level;
@@ -400,37 +397,39 @@ void init_outputs(){
             level = get_16bit_CV(118 + 7*slice+ 2*channel);
             gpio_set_function(i,GPIO_FUNC_PWM);
             pwm_set_wrap(slice,wrap);
-            pwm_set_gpio_level(i,level);
+            pwm_set_gpio_level(i,0);
+            level_table[i] = level;
             pwm_set_clkdiv_int_frac(slice,CV_ARRAY_FLASH[117+7*slice],0);
+            pwm_set_enabled(slice,true);
         }
         temp_mask<<=1;
     }
 }
 void cv_setup_check(){
     //Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition is found.
+    multicore_fifo_pop_blocking();                      //wait for core1 launch before proceeding
     if (CV_ARRAY_FLASH[64]){
-        uint8_t arr[4] = {125,8,7,114};
+        uint8_t arr[4] = {125,8,7,124};
         program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (CV_8; Value = 8)
     }
     //Check for adc offset setup
-    if ( (CV_ARRAY_FLASH[171] & CV_ARRAY_FLASH[172]) == 0xFF ){
-        //adc offset routine...
-        uint8_t arr[4] = {125,0,0,125};
-        program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (CV_1; Value = 0)
+    if ( CV_ARRAY_FLASH[171]  == 0xFF ){
+        uint8_t arr[4] = {125,0,0,124};
+        program_mode(4,arr);        //ADC offset adjustment  (CV_1; Value = 0)
     }
     //Check for motor duty cycle offset setup
     uint sum = (CV_ARRAY_FLASH[53]) + (CV_ARRAY_FLASH[54]) + (CV_ARRAY_FLASH[55]) + (CV_ARRAY_FLASH[56]);
-    if( !sum && target_speed_step != 128 && target_speed_step) {
+    if(!sum) {
         uint8_t arr[4] = {125,7,6,124};
-        program_mode(4,arr);        //Re-setup offset Adjustment (CV_7; Value = 7);
+        program_mode(4,arr);        //Motor PWM offset adjustment (CV_7; Value = 7);
     }
 }
 int main() {
     stdio_init_all();
     printf("core0 init...\n");
+    multicore_launch_core1(core1_entry);
     cv_setup_check();
     init_outputs();
-    multicore_launch_core1(core1_entry);
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     gpio_pull_up(DCC_INPUT_PIN);
