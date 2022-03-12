@@ -9,14 +9,12 @@
 #include "string.h"
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
-#include "pico/util/queue.h"
 #include "hardware/pwm.h"
 #include "hardware/adc.h"
 #include "hardware/flash.h"
 #include "hardware/irq.h"
 #define _125M 125000000
-#define ADC_OFFSET 13
-#define DCC_INPUT_PIN 4u
+#define DCC_INPUT_PIN 9u
 #define MOTOR_FWD_PIN 22u
 #define MOTOR_REV_PIN 23u
 #define FWD_V_EMF_ADC_PIN 26u

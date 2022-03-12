@@ -7,6 +7,8 @@
 #include "core1.h"
 
 uint32_t latest_target = 0;
+uint8_t latest_target_index = 0;
+uint16_t speed_table[127] = {0};
 struct repeating_timer pid_control_timer,speed_helper_timer;
 
 typedef struct pid_params{
@@ -20,10 +22,8 @@ typedef struct pid_params{
     int32_t e;
     int32_t e_prev;
     int32_t e_sum;
-    uint32_t m_fwd_scaled;
-    uint32_t m_rev_scaled;
-    uint32_t b_fwd;
-    uint32_t b_rev;
+    int32_t offset;
+    int32_t offset_base;
     uint16_t max_output;
     bool direction_prev;
 }pid_params;
@@ -40,46 +40,47 @@ typedef struct measure_params{
 measure_params msr;
 
 
-uint8_t target_factor = 10; /*CV_ARRAY_FLASH[59];*/ // One Discrete Step
-
 uint16_t calc_end_target(){
     //Forward
     if(target_direction){
         if (target_speed_step == 128) return 0;
-        else return (target_speed_step-129) * target_factor ; /* (float) CV_ARRAY_FLASH[59]*/
+        else return (target_speed_step-129);
     }
     //Reverse
     else {
         if (target_speed_step == 0) return 0;
-        else return (target_speed_step-1) * target_factor; /*(float)CV_ARRAY_FLASH[59]*/
+        else return (target_speed_step-1);
     }
 }
 bool speed_helper() {
     uint8_t accel_rate = CV_ARRAY_FLASH[2];
     uint8_t decel_rate = CV_ARRAY_FLASH[3];
-    uint16_t end_target = calc_end_target();
+    uint16_t end_target_index = calc_end_target();
+    static uint8_t speed_helper_counter;
     //latest_target only gets adjusted when the counter equals the acc/dec rate
     //-> Time for 1 Speed Step := (speed_helper timer delay)*(accel_rate)
-    static uint8_t speed_helper_counter;
     //Emergency Stop
     if (target_speed_step == 129 || target_speed_step==1) {
-        latest_target = 0;
+        latest_target_index = 0;
         speed_helper_counter = 0;
+        latest_target = speed_table[latest_target_index];
     }
     //Acceleration
-    else if (end_target > latest_target && speed_helper_counter == accel_rate) {
-        if(!accel_rate) latest_target = end_target;    // directly accelerate to end target speed
-        else latest_target += target_factor;
+    else if (end_target_index > latest_target_index && speed_helper_counter == accel_rate) {
+        if(!accel_rate) latest_target_index = end_target_index;  // directly accelerate to end target speed
+        else latest_target_index++;
+        latest_target = speed_table[latest_target_index];
         speed_helper_counter = 0;
     }
     //Deceleration
-    else if (end_target < latest_target && speed_helper_counter == decel_rate) {
-        if(!decel_rate) latest_target = end_target;    // directly decelerate to end target speed
-        else latest_target -= target_factor;
+    else if (end_target_index < latest_target_index && speed_helper_counter == decel_rate) {
+        if(!decel_rate) latest_target_index = end_target_index;    // directly decelerate to end target speed
+        else latest_target_index--;
+        latest_target = speed_table[latest_target_index];
         speed_helper_counter = 0;
     }
     //Acceleration/Deceleration "scheduled"
-    else if (end_target != latest_target) speed_helper_counter++;
+    else if (end_target_index != latest_target_index) speed_helper_counter++;
     //Target reached -> Reset Counter
     else speed_helper_counter = 0;
     return true;
@@ -87,14 +88,14 @@ bool speed_helper() {
 uint32_t measure(bool direction){
     uint32_t sum = 0;
     uint16_t adc_val[100 /*msr.total_iterations*/];
-    int16_t j = 0;
+    int32_t j = 0;
     uint16_t key;
     pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
     pwm_set_gpio_level(MOTOR_REV_PIN, 0);
     adc_select_input(!direction);
     busy_wait_us(msr.delay_in_us);
     adc_run(true);
-    for (int16_t i = 0; i < msr.total_iterations; ++i) {
+    for (int32_t i = 0; i < msr.total_iterations; ++i) {
         //Take adc value out of fifo when available, then do one step of insertion sort.
         adc_val[i] = adc_fifo_get_blocking();
         key = adc_val[i];
@@ -108,7 +109,7 @@ uint32_t measure(bool direction){
     adc_run(false);
     //discard x entries beginning from the lowest entry of the array (counting up); x = msr.left_side_array_cutoff
     //discard y entries beginning from the highest index of the array (counting down); y = msr.right_side_array_cutoff
-    for (uint8_t i = msr.left_side_array_cutoff; i < msr.total_iterations - msr.right_side_array_cutoff ; ++i) {
+    for (int32_t i = msr.left_side_array_cutoff; i < msr.total_iterations - msr.right_side_array_cutoff ; ++i) {
         sum += adc_val[i];
     }
     uint32_t res = sum / ( msr.total_iterations - (msr.left_side_array_cutoff+msr.right_side_array_cutoff) );
@@ -125,60 +126,76 @@ void adjust_pwm_level(uint16_t level) {
         pwm_set_gpio_level(MOTOR_REV_PIN, level);
     }
 }
-void init_offsets(uint16_t lvl_max){
-    uint16_t lvl_min_fwd = (CV_ARRAY_FLASH[53]) + (CV_ARRAY_FLASH[54]<<8);
-    uint16_t lvl_min_rev = (CV_ARRAY_FLASH[55]) + (CV_ARRAY_FLASH[56]<<8);
-    pid.m_fwd_scaled = ((lvl_max-lvl_min_fwd)*1000) / (125*target_factor);  //scaled with 1000 due to integer division
-    pid.m_rev_scaled = ((lvl_max-lvl_min_rev)*1000) / (125*target_factor);  //scaled with 1000 due to integer division
-    pid.b_fwd = lvl_min_fwd - ((pid.m_fwd_scaled*target_factor) / 1000) - 200;
-    pid.b_rev = lvl_min_rev - ((pid.m_rev_scaled*target_factor) / 1000) - 200;
-}
-uint32_t offset(){
-    // f(x) = mx+b   -   with x = latest_target
-    if (target_direction)   return (pid.m_fwd_scaled*latest_target)/1000 + pid.b_fwd;
-    else                    return (pid.m_rev_scaled*latest_target)/1000 + pid.b_rev;
-}
 bool pid_control(struct repeating_timer *t){
-    if(target_direction != pid.direction_prev || !latest_target) pid.e_sum = 0;
+    if(target_direction != pid.direction_prev || !latest_target) {
+        pid.e_sum = 0;
+        pid.offset = pid.offset_base;
+    }
     msr.val = measure(target_direction);
     pid.e = (int32_t)latest_target - (int32_t)msr.val + msr.adc_offset;
-    pid.e_sum += pid.e;
     if (pid.e_sum > pid.sum_limit_max) pid.e_sum = pid.sum_limit_max;
     else if (pid.e_sum < pid.sum_limit_min) pid.e_sum = pid.sum_limit_min;
-    pid.output = ( pid.k_p*pid.e + pid.k_i*pid.t_s*pid.e_sum + (pid.k_d/pid.t_s)*(pid.e-pid.e_prev) ) / 1000;
-    pid.output += (int32_t)offset();
+    pid.output = ( pid.k_p*pid.e + pid.k_i*pid.t_s*pid.e_sum + ( pid.k_d*(pid.e-pid.e_prev) / pid.t_s ) ) / 1000;
+    pid.output += pid.offset;
+    if (latest_target_index < 5){
+        pid.output += 20*pid.e;                 //"compensate" friction
+        pid.offset_base = pid.offset;           //"baseline" pwm offset level
+    }
     if (pid.output < 0 || !latest_target) pid.output = 0;
     else if (pid.output > pid.max_output) pid.output = pid.max_output;
     adjust_pwm_level(pid.output);
-    printf("o: %d\n",pid.output);
-    printf("e: %d\n",pid.e);
     adc_fifo_drain();
     pid.direction_prev = target_direction;
+    pid.e_sum += pid.e;
     pid.e_prev = pid.e;
+    // Adjust offset when the absolute value of e_sum is half of max
+    if (pid.e_sum > pid.sum_limit_max/2 || pid.e_sum < pid.sum_limit_min/2){
+        pid.offset += 3*(pid.e_sum/pid.sum_limit_max);
+    }
+    if (pid.offset > 5000) pid.offset = 5000;
+    else if (pid.offset < 1) pid.offset = 1;
+    // Increase sampling time for higher speed steps - Decrease for lower speed steps
+    pid_control_timer.delay_us = (8000*latest_target_index)/126 + 2000;
+    pid.t_s = ((8000*latest_target_index)/126 + 2000)/1000;
+    printf("%d\n",pid.output);
     return true;
+    //printf("off:%d\n",pid.offset);
+}
+void init_speed_table(){
+    double v_min = (double)CV_ARRAY_FLASH[1];
+    double v_mid = (double)CV_ARRAY_FLASH[5]*16;
+    double v_max = (double)CV_ARRAY_FLASH[4]*16;
+    double m_1 = (v_mid-v_min)/62;
+    double m_2 = (v_max-v_mid)/63;
+    for (uint8_t i = 1; i < 63; ++i) {
+        speed_table[i] = (uint16_t)lround(m_1*(i-1)+v_min);
+    }
+    for (uint8_t i = 63; i < 127; ++i) {
+        speed_table[i] = (uint16_t)lround(m_2*(i-63)+v_mid);
+    }
 }
 void init_pid(){
+    pid.k_p = 2000;
+    pid.k_i = 50;
+    pid.k_d = 1000;
+    pid.t_s = CV_ARRAY_FLASH[46];                                           // Default: (CV_ARRAY_FLASH[46]) = 2
+    pid.offset = 2500;
+    pid.sum_limit_max = 1000;                                               /*(float)(CV_ARRAY_FLASH[51] );*/
+    pid.sum_limit_min = -1000;                                              /*(float)(CV_ARRAY_FLASH[52] * (-1));*/
+    pid.direction_prev = target_direction;
+    pid.max_output = _125M/(CV_ARRAY_FLASH[8]*100+10000);
+}
+void init_msr(){
     msr.total_iterations = 100;/*CV_ARRAY_FLASH[60];*/
     msr.delay_in_us = 100; /*CV_ARRAY_FLASH[61];*/
     msr.left_side_array_cutoff = 15;/*CV_ARRAY_FLASH[62];*/
     msr.right_side_array_cutoff = 15;/*CV_ARRAY_FLASH[63];*/
-    msr.adc_offset = CV_ARRAY_FLASH[171];;
-    pid.e_sum = 0;
-    pid.e_prev = 0;
-    pid.k_p = 2500;
-    pid.k_i = 100;
-    pid.k_d = 100;
-    pid.t_s = 5  /*(float) CV_ARRAY_FLASH[47]*/;
-    pid.sum_limit_max = 1000;/*(float)(CV_ARRAY_FLASH[51] );*/
-    pid.sum_limit_min = -1000;/*(float)(CV_ARRAY_FLASH[52] * (-1));*/
-    pid.direction_prev = target_direction;
-    pid.max_output = _125M/(CV_ARRAY_FLASH[8]*100+10000);
+    msr.adc_offset = CV_ARRAY_FLASH[171];
 }
 void init_motor_pwm(uint8_t gpio) {
-    uint16_t wrap_counter = _125M/(CV_ARRAY_FLASH[8]*100+10000);        //  125MHz / f_pwm
-    init_offsets(wrap_counter);
+    uint16_t wrap_counter = _125M/(CV_ARRAY_FLASH[8]*100+10000);    // 125MHz / f_pwm
     uint32_t slice_num = pwm_gpio_to_slice_num(gpio);
-    pwm_set_clkdiv_int_frac(slice_num,CV_ARRAY_FLASH[46],0);
+    pwm_set_clkdiv_int_frac(slice_num,CV_ARRAY_FLASH[173],0);
     pwm_set_wrap(slice_num, wrap_counter);
     pwm_set_gpio_level(gpio,0);
     pwm_set_enabled(slice_num, true);
@@ -195,6 +212,8 @@ void core1_entry() {
         init_motor_pwm(MOTOR_FWD_PIN);
         init_motor_pwm(MOTOR_REV_PIN);
     }
+    init_speed_table();
+    init_msr();
     init_pid();
     alarm_pool_add_repeating_timer_ms(alarm_pool_create(0,1),
                                       CV_ARRAY_FLASH[47],

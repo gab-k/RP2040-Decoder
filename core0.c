@@ -42,7 +42,6 @@ uint16_t two_sigma(const uint16_t arr[], uint8_t length){
     return sum / counter;
 }
 void adc_offset_adjustment(uint8_t length){
-    length = 100;
     uint16_t offsets[length];
     //Set PWM level to 0 just for good measure
     pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
@@ -56,40 +55,6 @@ void adc_offset_adjustment(uint8_t length){
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
     CV_ARRAY_TEMP[171] = offsets_fwd_avg;
-    flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-    flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
-}
-uint16_t m_pwm_find_offset(uint16_t level, uint8_t step, uint8_t delay, uint32_t threshold, bool direction){
-    uint8_t gpio = MOTOR_FWD_PIN * direction + MOTOR_REV_PIN * !direction;
-    pwm_set_gpio_level(MOTOR_FWD_PIN,0);
-    pwm_set_gpio_level(MOTOR_REV_PIN,0);
-    while( measure(direction) < threshold ){
-        pwm_set_gpio_level(gpio,level);
-        busy_wait_ms(delay);
-        level += step;
-    }
-    pwm_set_gpio_level(MOTOR_FWD_PIN,0);
-    pwm_set_gpio_level(MOTOR_REV_PIN,0);
-    return level;
-}
-void m_pwm_offset_adjustment(uint8_t length){
-    uint16_t offsets_fwd[length];
-    uint16_t offsets_rev[length];
-    uint16_t max_lvl = _125M/(CV_ARRAY_FLASH[8]*100+10000);
-    for (uint8_t i = 0; i < length; ++i) {
-        offsets_fwd[i] = m_pwm_find_offset(0, max_lvl / 3000, 1, 30, true);
-        busy_wait_ms(500);
-        offsets_rev[i] = m_pwm_find_offset(0, max_lvl / 3000, 1, 30, false);
-        busy_wait_ms(500);
-    }
-    uint16_t offsets_fwd_avg = two_sigma(offsets_fwd, length);
-    uint16_t offsets_rev_avg = two_sigma(offsets_rev, length);
-    uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
-    memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
-    CV_ARRAY_TEMP[53] = offsets_fwd_avg;
-    CV_ARRAY_TEMP[54] = offsets_fwd_avg>>8;
-    CV_ARRAY_TEMP[55] = offsets_rev_avg;
-    CV_ARRAY_TEMP[56] = offsets_rev_avg>>8;
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
     flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
 }
@@ -119,14 +84,11 @@ void write_cv_byte(uint16_t cv_index, uint8_t cv_data){
         flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
         flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
     }
-    //Motor PWM offset Adjustment (CV_7; Value = 7);
+    //ADC offset Adjustment (CV_7; Value = 7);
     else if(cv_index == 6 && cv_data == 7){
-        m_pwm_offset_adjustment(CV_ARRAY_FLASH[57]);
+        adc_offset_adjustment(CV_ARRAY_FLASH[173]);
     }
-    //CV_1 = 0 is not permitted, therefore this is used to start the ADC offset adjustment routine
-    else if( !( cv_index&cv_data) ){
-        adc_offset_adjustment(100/*CV_ARRAY_FLASH[173]*/);
-    }
+    else if( !cv_index && !cv_data );
     else{
         uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
         memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
@@ -181,20 +143,22 @@ uint16_t get_16bit_CV (uint16_t CV_start_index){
     uint8_t byte_1 = CV_ARRAY_FLASH[CV_start_index+1];
     return (byte_0) + (byte_1<<8);
 }
-void set_outputs(uint32_t active_functions) {
+void set_outputs(uint32_t functions_to_set_bitmask) {
     uint32_t outputs_to_set = 0;
-    uint32_t outputs_with_PWM_enabled = get_32bit_CV(111);                //get outputs with pwm enabled (bitmask)
+    uint32_t outputs_with_PWM_enabled = get_32bit_CV(111);  //get outputs with pwm enabled (bitmask)
     uint32_t outputs_to_set_PWM = outputs_with_PWM_enabled;
+    uint32_t temp_mask = 1;
     for (uint8_t i = 0; i < 32; i++) {
-        if ( (active_functions>>i) & 1 ){
+        if (temp_mask & functions_to_set_bitmask ){
             outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * target_direction);
         }
+        temp_mask<<=1;
     }
     outputs_to_set &= GPIO_ALLOWED_OUTPUTS;                     // Prevent illegal GPIO
     outputs_to_set_PWM &= outputs_to_set;                       // Outputs with PWM to be enabled
     outputs_to_set &= ~outputs_to_set_PWM;                      // Outputs without PWM to be enabled
     gpio_put_masked(GPIO_ALLOWED_OUTPUTS, outputs_to_set);
-    uint32_t temp_mask = 1;
+    temp_mask = 1;
     for (uint8_t i = 0; i < 32; ++i) {
         if(temp_mask & outputs_to_set_PWM){
             pwm_set_gpio_level(i, level_table[i]);
@@ -207,15 +171,20 @@ void set_outputs(uint32_t active_functions) {
         temp_mask<<=1;
     }
 }
-void update_active_functions(uint32_t function_byte, uint8_t clr_bit_ind) {
+void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind, bool direction_change) {
     static uint32_t active_functions;
     static uint32_t prev_active_func;
-    function_byte &= ~(clr_bit_arr[clr_bit_ind]);
-    active_functions &= clr_bit_arr[clr_bit_ind];
-    active_functions |= function_byte;
-    uint32_t changes = active_functions ^ prev_active_func;
-    if(changes)set_outputs(active_functions);
-    prev_active_func = active_functions;
+    if (direction_change){
+        set_outputs(prev_active_func);
+    }
+    else{
+        new_function_bitmask &= ~(clr_bit_arr[clr_bit_ind]);    //clear every bit except bits corresponding to group of functions
+        active_functions &= clr_bit_arr[clr_bit_ind];           //clear bits corresponding to group of functions
+        active_functions |= new_function_bitmask;               //write bits corresponding to group of functions
+        uint32_t changes = active_functions ^ prev_active_func; //xor effectively checks for changes from previous state
+        if(changes)set_outputs(active_functions);
+        prev_active_func = active_functions;
+    }
 }
 bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]) {
     //Bitwise XOR for all Bytes -> Successful result is: "0000 0000"
@@ -270,24 +239,26 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     //0011-1111 (128 Speed Step Control) - 2 Byte length
     if (command_byte_n == 0b00111111){
         target_speed_step = byte_array[command_byte_start_index - 1];
-        if(target_speed_step>127) {
-            target_direction = true;        //Forward
+        if(target_speed_step>127 && !target_direction) {
+            target_direction = true;        //Change direction variable to forward (true)
+            update_active_functions(0,0,1); //Some functions depend on direction
         }
-        else {
-            target_direction = false;       //Reverse
+        else if (target_speed_step<128 && target_direction){
+            target_direction = false;       //Change direction variable to reverse (false)
+            update_active_functions(0,0,1); //Some functions depend on direction
         }
     }
     // 10XX-XXXX (Function Group Instruction)
     else if (command_byte_n >> 6 == 0b00000010){
         switch (command_byte_n >> 4) {
             case 0b00001011:    // F5-F8
-                update_active_functions((command_byte_n << 5),1);
+                update_active_functions((command_byte_n << 5),1,false);
                 break;
             case 0b00001010:    // F9-F12
-                update_active_functions((command_byte_n << 9),2);
+                update_active_functions((command_byte_n << 9),2,false);
                 break;
             default:            // F0-F4
-                update_active_functions(((command_byte_n << 1) + (command_byte_n >> 4)),0);
+                update_active_functions(((command_byte_n << 1) + (command_byte_n >> 4)),0,false);
                 break;
         }
     }
@@ -295,13 +266,13 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
     else if (command_byte_n >> 5 == 0b00000110) {
         switch (command_byte_n) {
             case 0b11011110: // F13-F20
-                update_active_functions((byte_array[command_byte_start_index - 1] << 13),3);
+                update_active_functions((byte_array[command_byte_start_index - 1] << 13),3,false);
                 break;
             case 0b11011111: // F21-F28
-                update_active_functions((byte_array[command_byte_start_index - 1] << 21),4);
+                update_active_functions((byte_array[command_byte_start_index - 1] << 21),4,false);
                 break;
             case 0b11011000: // F29-F31
-                update_active_functions((byte_array[command_byte_start_index - 1] << 29),5);
+                update_active_functions((byte_array[command_byte_start_index - 1] << 29),5,false);
                 break;
             default:
                 break;
@@ -392,7 +363,7 @@ void init_outputs(){
     for (uint8_t i = 0; i < 32; ++i) {
         if (Outputs_with_PWM_enabled&temp_mask){
             slice = pwm_gpio_to_slice_num(i);
-            channel = pwm_gpio_to_channel(i);   //0 for A, 1 for B ?
+            channel = pwm_gpio_to_channel(i);   //0 for Channel A, 1 for Channel B
             wrap = get_16bit_CV(115 + slice*7);
             level = get_16bit_CV(118 + 7*slice+ 2*channel);
             gpio_set_function(i,GPIO_FUNC_PWM);
@@ -410,18 +381,12 @@ void cv_setup_check(){
     multicore_fifo_pop_blocking();                      //wait for core1 launch before proceeding
     if (CV_ARRAY_FLASH[64]){
         uint8_t arr[4] = {125,8,7,124};
-        program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (CV_8; Value = 8)
+        program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
     //Check for adc offset setup
     if ( CV_ARRAY_FLASH[171]  == 0xFF ){
-        uint8_t arr[4] = {125,0,0,124};
-        program_mode(4,arr);        //ADC offset adjustment  (CV_1; Value = 0)
-    }
-    //Check for motor duty cycle offset setup
-    uint sum = (CV_ARRAY_FLASH[53]) + (CV_ARRAY_FLASH[54]) + (CV_ARRAY_FLASH[55]) + (CV_ARRAY_FLASH[56]);
-    if(!sum) {
         uint8_t arr[4] = {125,7,6,124};
-        program_mode(4,arr);        //Motor PWM offset adjustment (CV_7; Value = 7);
+        program_mode(4,arr);        //ADC offset adjustment  (write CV_7 = 7)
     }
 }
 int main() {

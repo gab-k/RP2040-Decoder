@@ -1,23 +1,19 @@
-#include "inttypes.h"
+#pragma once
 #define CV_ARRAY_SIZE 512
 //All CVs are 8-bit numbers (range 0 - 255)
 //Note : CV_1 ≙ index 0, CV_2 ≙ index 1, CV_3 ≙ index 2, ...
 //TODO:
-//      - pwm CV for aux & gpio (duty cycle/freq)
 //      - Packet Timeout
-//      - Motor PWM Clock & Divider
-//      - V_max/V_min & V_emf
-//      -
 uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000011,         //CV_1  -    Basic address  CV_1 = 0 is not allowed and used for initiating ADC offset adjustment
-   0b00000000,         //CV_2  -    Minimum speed
+   0b00001000,         //CV_2  -    Minimum speed
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 0 == Fastest dec/acc rate; 255 == slowest;
-   0b00000000,         //CV_3  -    Acceleration rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
-   0b00000000,         //CV_4  -    Deceleration rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
+   0b00010000,         //CV_3  -    Acceleration rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
+   0b00010000,         //CV_4  -    Deceleration rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b11111111,         //CV_5  -    V_max
-   0b01111111,         //CV_6  -    V_mid
+   0b01111111,         //CV_5  -    V_max
+   0b00111111,         //CV_6  -    V_mid
    0b00000001,         //CV_7  -    Version no.                                                         (read-only)
    0b00001101,         //CV_8  -    Manufacturer (13 = Public Domain & Do-It-Yourself Decoders)         (read-only)
    0b10010110,         //CV_9  -    PWM frequency in Hz = CV_9*100+10000    - Default = (150*100+10000)Hz = 25kHz
@@ -63,29 +59,25 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_44  -
    0b00000000,         //CV_45  -
    0b00000000,         //CV_46  -
-   0b00000001,         //CV_47  -   Additional motor-PWM clock divider.
-   // PID - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000101,         //CV_48  -   PID Control Sampling Time t_s  in ms ≙ Duration of 1 PID-Cycle                    //
-   0b01110011,         //CV_49  -   PID Control P_Factor        ≙   CV_49/256      i.e. Default = 115 -> 0.4492       //
-   0b01100110,         //CV_50  -   PID Control I_Factor        ≙   CV_50/64       i.e. Default = 102 -> 1.594 (1/sec)//
-   0b01111011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/4096     i.e. Default = 123 -> 0.03002 sec  //
-   0b00110000,         //CV_52  -   PID Integral Limit positive ≙ CV_52*10         i.e. Default = 48  -> +480         //
-   0b00110000,         //CV_53  -   PID Integral Limit negative ≙ CV_53*(-10)      i.e. Default = 48  -> -480         //
+    // PID - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
+   0b00000010,         //CV_47  -   PID Control sampling time t_s in ms for speed step < 2                            //
+   0b00000101,         //CV_48  -   PID Control sampling time t_s in ms for speed step > 2                            //
+   0b01110011,         //CV_49  -   PID Control P_Factor        ≙   CV_49/256           Default = 115 -> 0.4492       //
+   0b01100110,         //CV_50  -   PID Control I_Factor        ≙   CV_50/64            Default = 102 -> 1.594 (1/sec)//
+   0b01111011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/4096          Default = 123 -> 0.03002 sec  //
+   0b00110000,         //CV_52  -   PID Integral Limit positive ≙ CV_52*10              Default = 48  -> +480         //
+   0b00110000,         //CV_53  -   PID Integral Limit negative ≙ CV_53*(-10)           Default = 48  -> -480         //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   //This Offset is used to establish a "baseline" motor PWM duty cycle at which the motor starts to move             //
-   //If CV_54+CV_55+CV_56+CV_57 = 0 (after reset or manual overwrite) there will be a measurement procedure on startup//
-   //alternatively, the measurement can be done by writing a 7 to CV_7 on the programming track, although you should  //
-   //keep in mind, that the programming track might limit current.                                                    //
-   0b00000000,         //CV_54  -   Forward direction offset bits 0-7                   Default = 0                   //
-   0b00000000,         //CV_55  -   Forward direction offset bits 8-15                  Default = 0                   //
-   0b00000000,         //CV_56  -   Reverse direction offset bits 0-7                   Default = 0                   //
-   0b00000000,         //CV_57  -   Reverse direction offset bits 8-15                  Default = 0                   //
-   0b00001000,         //CV_58  -   Offset measurement cycles                           Default = 8                   //
+   0b00000001,         //CV_54  -   ---------------------------------------------------------------                   //
+   0b00000000,         //CV_55  -   ---------------------------------------------------------------                   //
+   0b00000000,         //CV_56  -   ---------------------------------------------------------------                   //
+   0b00000000,         //CV_57  -   ---------------------------------------------------------------                   //
+   0b00000101,         //CV_58  -   ---------------------------------------------------------------                   //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000111,         //CV_59  -   speed_helper timer delay -  can be used to adjust accel/decel rate                //
-   0b00010100,         //CV_60  -   PWM scaling factor (target EMF Voltage) -> 126*CV_60 = end_target|max             //
+   0b00010100,         //CV_60  -   .....................................................................             //
    // V_EMF Measurement Configuration //////////////////////////////////////////////////////////////////////////////////
-   0b01000110,         //CV_61  -   V_EMF Total amount of Measurement Iterations    -   Default = 70 iterations       //
+   0b01000110,         //CV_61  -   V_EMF Total amount of Measurement Iterations    -   Default = 100 iterations      //
    0b01100100,         //CV_62  -   V_EMF Delay before Measuring                    -   Default = 100us               //
    // CV_63 and CV_64 are used to determine how many elements of the sorted measurement array will be discarded       //
    // For Example: CV_63 = x and CV_64 = y                                                                            //
@@ -213,12 +205,12 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_171  -  Channel B Level Bits 8-15
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Offset adjustment for ADC                                                                                           //
-//If CV_172&CV_173 = 0xFF = 255 there will be a measurement procedure on startup                    (Note: Bitwise &) //
+//If CV_172 = 0xFF = 255 there will be a measurement procedure on startup                                             //
 //alternatively, the measurement can be done by writing a 0 to CV_1 on the programming track                          //
    0b11111111,         //CV_172  -  ADC offset                                          Default: 255                 //
-   0b11111111,         //CV_173  -  ADC offset measurement cycles                       Default: 127                 //
+   0b01111111,         //CV_173  -  ADC offset measurement cycles                       Default: 127                 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b01111111,         //CV_174  -
+   0b00000001,         //CV_174  -  Additional motor-PWM clock divider.
    0b00000000,         //CV_175  -
    0b00000000,         //CV_176  -
    0b00000000,         //CV_177  -
