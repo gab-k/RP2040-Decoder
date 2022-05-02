@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="E">
   <design>
-    <source>/home/gab/Documents/RP2040-Decoder/KiCad/RP2040-Decoder-Rev_0_2.kicad_sch</source>
-    <date>Mo 14 Feb 2022 19:02:20 CET</date>
-    <tool>Eeschema (6.0.1)</tool>
+    <source>C:\Users\gab\Documents\RP2040-Decoder\KiCad\RP2040-Decoder-Rev_0_2.kicad_sch</source>
+    <date>28/04/2022 16:04:35</date>
+    <tool>Eeschema (6.0.4)</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
         <title>RP2040-Decoder</title>
@@ -26,7 +26,7 @@
   <components>
     <comp ref="C1">
       <value>10u</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -35,7 +35,7 @@
     </comp>
     <comp ref="C2">
       <value>10u</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -44,7 +44,7 @@
     </comp>
     <comp ref="C3">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -53,7 +53,7 @@
     </comp>
     <comp ref="C4">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -61,8 +61,8 @@
       <tstamps>00000000-0000-0000-0000-000061f7bf44</tstamps>
     </comp>
     <comp ref="C5">
-      <value>2u2</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>10u</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -70,8 +70,8 @@
       <tstamps>00000000-0000-0000-0000-000061f48903</tstamps>
     </comp>
     <comp ref="C6">
-      <value>2u2</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>10u</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -80,7 +80,7 @@
     </comp>
     <comp ref="C7">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -89,7 +89,7 @@
     </comp>
     <comp ref="C8">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -98,7 +98,7 @@
     </comp>
     <comp ref="C9">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -107,7 +107,7 @@
     </comp>
     <comp ref="C10">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -116,7 +116,7 @@
     </comp>
     <comp ref="C11">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -125,7 +125,7 @@
     </comp>
     <comp ref="C12">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -134,7 +134,7 @@
     </comp>
     <comp ref="C13">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -142,8 +142,8 @@
       <tstamps>00000000-0000-0000-0000-000061fc1d7c</tstamps>
     </comp>
     <comp ref="C14">
-      <value>2u2</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>10u</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -152,7 +152,7 @@
     </comp>
     <comp ref="C15">
       <value>100n</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -161,7 +161,7 @@
     </comp>
     <comp ref="C16">
       <value>33p</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -170,7 +170,7 @@
     </comp>
     <comp ref="C17">
       <value>33p</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:C_0603_1608Metric</footprint>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -191,134 +191,257 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>d8c9e157-c0f6-4df9-9ba5-0bb60d315c95</tstamps>
     </comp>
-    <comp ref="D2">
-      <value>1N4148WS</value>
-      <footprint>Diode_SMD:D_SOD-323</footprint>
-      <datasheet>https://datasheet.lcsc.com/lcsc/2008281134_TWGMC-1N4148WS_C727111.pdf</datasheet>
-      <libsource lib="Diode" part="1N4148WS" description="75V 0.15A Fast switching Diode, SOD-323"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>00000000-0000-0000-0000-00006219c1a3</tstamps>
-    </comp>
-    <comp ref="D3">
-      <value>BZT52C3V3S</value>
-      <footprint>Diode_SMD:D_SOD-323</footprint>
-      <datasheet>https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</datasheet>
-      <libsource lib="" part="BZT52C3V3S_1" description="200mW Zener Diode, SOD-323"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>d801ac1b-19d7-4a6c-9e9e-c3524f1e6f82</tstamps>
-    </comp>
-    <comp ref="D4">
-      <value>BZT52C3V3S</value>
-      <footprint>Diode_SMD:D_SOD-323</footprint>
-      <datasheet>https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</datasheet>
-      <libsource lib="" part="BZT52C3V3S_2" description="200mW Zener Diode, SOD-323"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>36efa69d-129e-4573-89ef-3ac56919e797</tstamps>
-    </comp>
-    <comp ref="D5">
-      <value>BZT52C3V3S</value>
-      <footprint>Diode_SMD:D_SOD-323</footprint>
-      <datasheet>https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</datasheet>
-      <libsource lib="" part="BZT52C3V3S_3" description="200mW Zener Diode, SOD-323"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>380187f9-5366-4713-a781-9139a026a48e</tstamps>
-    </comp>
     <comp ref="J1">
-      <value>DCC_IN</value>
-      <footprint>Connector_PinHeader_1.00mm:PinHeader_1x02_P1.00mm_Vertical</footprint>
-      <libsource lib="Connector" part="Conn_01x02_Male" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <value>T0</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="" part="Conn_01x01_Male_1" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>00000000-0000-0000-0000-0000621bb5b9</tstamps>
+      <tstamps>864d3bfc-331d-4e4b-b1ec-3edb63307c9c</tstamps>
     </comp>
     <comp ref="J2">
-      <value>MOTOR_CONN</value>
-      <footprint>Connector_PinHeader_1.00mm:PinHeader_1x04_P1.00mm_Vertical</footprint>
-      <libsource lib="Connector" part="Conn_01x04_Male" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <value>T1</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="" part="Conn_01x01_Male_2" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>0ddb090e-4661-43b7-b7d9-cb3227885415</tstamps>
+      <tstamps>3df3fa5c-dfa0-471e-a2a5-d963c7b24b7f</tstamps>
     </comp>
     <comp ref="J3">
-      <value>GPIO_CONN</value>
-      <footprint>Connector_PinHeader_1.00mm:PinHeader_1x06_P1.00mm_Vertical</footprint>
-      <libsource lib="Connector" part="Conn_01x06_Male" description="Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <value>0</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>00000000-0000-0000-0000-0000624b0471</tstamps>
+      <tstamps>5f5cf5c4-69a1-46cf-b923-598cb687b24f</tstamps>
     </comp>
     <comp ref="J4">
-      <value>DEBUG_CONN</value>
-      <footprint>Connector_PinHeader_1.00mm:PinHeader_1x04_P1.00mm_Vertical</footprint>
-      <libsource lib="Connector" part="Conn_01x04_Male" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <value>1</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>00000000-0000-0000-0000-0000624e62e3</tstamps>
+      <tstamps>d5334551-c751-4aad-b6e2-9d23f08b857e</tstamps>
+    </comp>
+    <comp ref="J5">
+      <value>2</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>114a2327-4bca-4f82-aff8-aa6199690d2d</tstamps>
+    </comp>
+    <comp ref="J6">
+      <value>3</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>abb22e05-1457-442f-97a4-f7c21fe7da04</tstamps>
+    </comp>
+    <comp ref="J7">
+      <value>+3V3</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b06bbd06-095a-4826-9b31-36dfc01a1883</tstamps>
+    </comp>
+    <comp ref="J8">
+      <value>0</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1ef449bb-2ed4-4022-a844-f3a7f18eb118</tstamps>
+    </comp>
+    <comp ref="J9">
+      <value>1</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>91e6f349-1ab8-48dd-a933-e32836f7f264</tstamps>
+    </comp>
+    <comp ref="J10">
+      <value>2</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1e7018c6-c49e-47c9-a511-61b80afad2c8</tstamps>
+    </comp>
+    <comp ref="J11">
+      <value>3</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>46eca225-da16-4c83-b7ae-a41b341639c2</tstamps>
+    </comp>
+    <comp ref="J12">
+      <value>4</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e2dd5f1b-b2fd-4f42-a2ec-dfbac16ad4c9</tstamps>
+    </comp>
+    <comp ref="J13">
+      <value>5</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1e8a9e11-3616-4641-b478-61db5c44eda7</tstamps>
+    </comp>
+    <comp ref="J14">
+      <value>+V</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ec1f61aa-498a-4f37-9616-9e5d4d3c9322</tstamps>
+    </comp>
+    <comp ref="J15">
+      <value>M_OUT_B</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6c22686d-0edf-4eec-887b-8cf03a6d9e53</tstamps>
+    </comp>
+    <comp ref="J16">
+      <value>M_OUT_A</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f6b2bd02-bf4c-42be-afbb-1ab3bb06e318</tstamps>
+    </comp>
+    <comp ref="J17">
+      <value>GND</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>571d07e6-59b1-443f-be90-2f9a2aaf01d9</tstamps>
+    </comp>
+    <comp ref="J18">
+      <value>SWCLK</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9213b90c-4e6d-4a24-8e82-b03f0903ca0d</tstamps>
+    </comp>
+    <comp ref="J19">
+      <value>SWDIO</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c2ea7c23-cfe1-4946-9fe4-469295211eda</tstamps>
+    </comp>
+    <comp ref="J20">
+      <value>RUN</value>
+      <footprint>TestPoint:TestPoint_Pad_D2.0mm</footprint>
+      <libsource lib="Connector" part="Conn_01x01_Male" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6c83350b-4440-458b-ae52-6430d5430dfd</tstamps>
     </comp>
     <comp ref="Q1">
-      <value>WNM2030</value>
-      <footprint>RP2040-Decoder_Additional_Footprints:SOT-723-Extended_Pad</footprint>
-      <datasheet>https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</datasheet>
-      <libsource lib="" part="WNM2030_1" description="20V Vds, 0.95 Id, N-Channel MOSFET with ESD protection, SOT-723"/>
+      <value>T2N7002BK</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://datasheet.lcsc.com/lcsc/1810271831_TOSHIBA-T2N7002BK-LM_C146372.pdf</datasheet>
+      <libsource lib="RP2040-Decoder_Additional_Symbols" part="T2N7002BK" description="60V Vds, 0.4A Id, N-Channel MOSFET with ESD protection, SOT-23"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>93453ddd-b55e-4ec8-8c2c-2de58d2427d1</tstamps>
+      <tstamps>24e964f5-d424-48f3-83f0-20538d3dee4a</tstamps>
     </comp>
     <comp ref="Q2">
-      <value>WNM2030</value>
-      <footprint>RP2040-Decoder_Additional_Footprints:SOT-723-Extended_Pad</footprint>
-      <datasheet>https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</datasheet>
-      <libsource lib="" part="WNM2030_2" description="20V Vds, 0.95 Id, N-Channel MOSFET with ESD protection, SOT-723"/>
+      <value>T2N7002BK</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://datasheet.lcsc.com/lcsc/1810271831_TOSHIBA-T2N7002BK-LM_C146372.pdf</datasheet>
+      <libsource lib="RP2040-Decoder_Additional_Symbols" part="T2N7002BK" description="60V Vds, 0.4A Id, N-Channel MOSFET with ESD protection, SOT-23"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>7f252d06-5fe5-4970-b92f-115484bc237e</tstamps>
+      <tstamps>6882d215-b5de-4f47-a918-a41217f2ec53</tstamps>
     </comp>
     <comp ref="Q3">
-      <value>WNM2030</value>
-      <footprint>RP2040-Decoder_Additional_Footprints:SOT-723-Extended_Pad</footprint>
-      <datasheet>https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</datasheet>
-      <libsource lib="" part="WNM2030_3" description="20V Vds, 0.95 Id, N-Channel MOSFET with ESD protection, SOT-723"/>
+      <value>T2N7002BK</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://datasheet.lcsc.com/lcsc/1810271831_TOSHIBA-T2N7002BK-LM_C146372.pdf</datasheet>
+      <libsource lib="RP2040-Decoder_Additional_Symbols" part="T2N7002BK" description="60V Vds, 0.4A Id, N-Channel MOSFET with ESD protection, SOT-23"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>95c0e16d-8a77-4c69-8ac9-e10237e6fd29</tstamps>
+      <tstamps>c7e260f4-9c6d-4d08-a46e-41bc79040563</tstamps>
     </comp>
     <comp ref="Q4">
-      <value>WNM2030</value>
-      <footprint>RP2040-Decoder_Additional_Footprints:SOT-723-Extended_Pad</footprint>
-      <datasheet>https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</datasheet>
-      <libsource lib="RP2040-Decoder_Additional_Symbols" part="WNM2030" description="20V Vds, 0.95 Id, N-Channel MOSFET with ESD protection, SOT-723"/>
+      <value>T2N7002BK</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://datasheet.lcsc.com/lcsc/1810271831_TOSHIBA-T2N7002BK-LM_C146372.pdf</datasheet>
+      <libsource lib="RP2040-Decoder_Additional_Symbols" part="T2N7002BK" description="60V Vds, 0.4A Id, N-Channel MOSFET with ESD protection, SOT-23"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>f0aa5d28-bdfe-47ba-9201-641e44fa359f</tstamps>
+      <tstamps>547fddd1-ff31-41bb-9c5e-4d70ab2f4ca7</tstamps>
+    </comp>
+    <comp ref="Q5">
+      <value>T2N7002BK</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://datasheet.lcsc.com/lcsc/1810271831_TOSHIBA-T2N7002BK-LM_C146372.pdf</datasheet>
+      <libsource lib="RP2040-Decoder_Additional_Symbols" part="T2N7002BK" description="60V Vds, 0.4A Id, N-Channel MOSFET with ESD protection, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a9e0322f-62a5-4c4c-af6a-7c4ef3ccbd81</tstamps>
     </comp>
     <comp ref="R1">
-      <value>3k9</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <value>6k8</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>00000000-0000-0000-0000-0000621db99e</tstamps>
+      <tstamps>3d782e0c-cdf2-469b-ad6b-beb0d7ab7300</tstamps>
+    </comp>
+    <comp ref="R2">
+      <value>6k8</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>046f7483-641b-4e17-9a7f-331b0d1e8034</tstamps>
     </comp>
     <comp ref="R3">
       <value>200</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
       <libsource lib="" part="R_1" description="Resistor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -327,7 +450,7 @@
     </comp>
     <comp ref="R4">
       <value>DNF</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -335,8 +458,8 @@
       <tstamps>00000000-0000-0000-0000-0000620484ef</tstamps>
     </comp>
     <comp ref="R5">
-      <value>3k9</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <value>6k8</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -344,8 +467,8 @@
       <tstamps>00000000-0000-0000-0000-0000623ce830</tstamps>
     </comp>
     <comp ref="R6">
-      <value>3k9</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <value>6k8</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -353,8 +476,8 @@
       <tstamps>00000000-0000-0000-0000-0000623b9b34</tstamps>
     </comp>
     <comp ref="R7">
-      <value>3k9</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <value>1k</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -362,8 +485,8 @@
       <tstamps>00000000-0000-0000-0000-0000623ce82a</tstamps>
     </comp>
     <comp ref="R8">
-      <value>3k9</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <value>1k</value>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -372,7 +495,7 @@
     </comp>
     <comp ref="R9">
       <value>1k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:R_0603_1608Metric</footprint>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
@@ -391,17 +514,17 @@
     </comp>
     <comp ref="U2">
       <value>BDR6133</value>
-      <footprint>Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm_ThermalVias</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm_ThermalVias</footprint>
       <datasheet>https://datasheet.lcsc.com/lcsc/2101211904_Bardeen-Micro--BDR6133_C2687793.pdf</datasheet>
       <libsource lib="RP2040-Decoder_Additional_Symbols" part="BDR6133" description="H-Bridge driver, 1A, Low Voltage, PWM input, WSON-8"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>015952e7-15cf-4988-8378-751c6a0293ce</tstamps>
+      <tstamps>ffd3c66b-0b97-4a7a-992a-cb994ad7a705</tstamps>
     </comp>
     <comp ref="U3">
       <value>W25Q64JVSSIQ</value>
-      <footprint>Package_SO:SOIC-8_5.23x5.23mm_P1.27mm</footprint>
+      <footprint>RP2040-Decoder_Additional_Footprints:SOIC-8_5.23x5.23mm_P1.27mm</footprint>
       <datasheet>https://www.winbond.com/resource-files/w25q64jv%20revj%2003272018%20plus.pdf</datasheet>
       <libsource lib="RP2040-Decoder_Additional_Symbols" part="W25Q64JVSSIQ" description="64Mb Serial Flash Memory, Standard/Dual/Quad SPI, SOIC-8"/>
       <property name="Sheetname" value=""/>
@@ -426,64 +549,45 @@
       <fields>
         <field name="Frequency">12MHz</field>
       </fields>
-      <libsource lib="" part="X322512MSB4SI_1" description="Four pin crystal 12MHz, GND on pins 2 and 4, SMD3225-4P Package"/>
+      <libsource lib="RP2040-Decoder_Additional_Symbols" part="X322512MSB4SI" description="Four pin crystal 12MHz, GND on pins 2 and 4, SMD3225-4P Package"/>
       <property name="Frequency" value="12MHz"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="RP2040-Decoder-Rev_0_2.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>7e3144dd-ae35-4368-a7ae-3c7281afa76c</tstamps>
+      <tstamps>c8ccfb2a-56c9-4e72-b74f-5b38479c1007</tstamps>
     </comp>
   </components>
   <libparts>
-    <libpart lib="" part="BZT52C3V3S_1">
-      <description>200mW Zener Diode, SOD-323</description>
-      <docs>https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</docs>
+    <libpart lib="" part="Conn_01x01_Male_1">
+      <description>Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
       <footprints>
-        <fp>D?SOD?123*</fp>
+        <fp>Connector*:*</fp>
       </footprints>
       <fields>
-        <field name="Reference">D</field>
-        <field name="Value">BZT52C3V3S_1</field>
-        <field name="Footprint">Diode_SMD:D_SOD-323</field>
-        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</field>
+        <field name="Reference">J1</field>
+        <field name="Value">DCC_0</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D2.0mm</field>
+        <field name="Datasheet">~</field>
       </fields>
       <pins>
-        <pin num="1" name="K" type="passive"/>
-        <pin num="2" name="A" type="passive"/>
+        <pin num="1" name="Pin_1" type="power_out"/>
       </pins>
     </libpart>
-    <libpart lib="" part="BZT52C3V3S_2">
-      <description>200mW Zener Diode, SOD-323</description>
-      <docs>https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</docs>
+    <libpart lib="" part="Conn_01x01_Male_2">
+      <description>Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
       <footprints>
-        <fp>D?SOD?123*</fp>
+        <fp>Connector*:*</fp>
       </footprints>
       <fields>
-        <field name="Reference">D</field>
-        <field name="Value">BZT52C3V3S_2</field>
-        <field name="Footprint">Diode_SMD:D_SOD-323</field>
-        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</field>
+        <field name="Reference">J2</field>
+        <field name="Value">Conn_01x01_Male_2</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D2.0mm</field>
+        <field name="Datasheet">~</field>
       </fields>
       <pins>
-        <pin num="1" name="K" type="passive"/>
-        <pin num="2" name="A" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="" part="BZT52C3V3S_3">
-      <description>200mW Zener Diode, SOD-323</description>
-      <docs>https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</docs>
-      <footprints>
-        <fp>D?SOD?123*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">D</field>
-        <field name="Value">BZT52C3V3S_3</field>
-        <field name="Footprint">Diode_SMD:D_SOD-323</field>
-        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/2109071430_YONGYUTAI-BZT52C3V3S_C2892655.pdf</field>
-      </fields>
-      <pins>
-        <pin num="1" name="K" type="passive"/>
-        <pin num="2" name="A" type="passive"/>
+        <pin num="1" name="Pin_1" type="power_out"/>
       </pins>
     </libpart>
     <libpart lib="" part="R_1">
@@ -503,132 +607,19 @@
         <pin num="2" name="" type="power_out"/>
       </pins>
     </libpart>
-    <libpart lib="" part="WNM2030_1">
-      <description>20V Vds, 0.95 Id, N-Channel MOSFET with ESD protection, SOT-723</description>
-      <docs>https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</docs>
-      <footprints>
-        <fp>SOT?723*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">Q</field>
-        <field name="Value">WNM2030_1</field>
-        <field name="Footprint">RP2040-Decoder_Additional_Footprints:SOT-723-Extended_Pad</field>
-        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</field>
-      </fields>
-      <pins>
-        <pin num="1" name="G" type="input"/>
-        <pin num="2" name="S" type="passive"/>
-        <pin num="3" name="D" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="" part="WNM2030_2">
-      <description>20V Vds, 0.95 Id, N-Channel MOSFET with ESD protection, SOT-723</description>
-      <docs>https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</docs>
-      <footprints>
-        <fp>SOT?723*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">Q</field>
-        <field name="Value">WNM2030_2</field>
-        <field name="Footprint">RP2040-Decoder_Additional_Footprints:SOT-723-Extended_Pad</field>
-        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</field>
-      </fields>
-      <pins>
-        <pin num="1" name="G" type="input"/>
-        <pin num="2" name="S" type="passive"/>
-        <pin num="3" name="D" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="" part="WNM2030_3">
-      <description>20V Vds, 0.95 Id, N-Channel MOSFET with ESD protection, SOT-723</description>
-      <docs>https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</docs>
-      <footprints>
-        <fp>SOT?723*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">Q</field>
-        <field name="Value">WNM2030_3</field>
-        <field name="Footprint">RP2040-Decoder_Additional_Footprints:SOT-723-Extended_Pad</field>
-        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</field>
-      </fields>
-      <pins>
-        <pin num="1" name="G" type="input"/>
-        <pin num="2" name="S" type="passive"/>
-        <pin num="3" name="D" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="" part="X322512MSB4SI_1">
-      <description>Four pin crystal 12MHz, GND on pins 2 and 4, SMD3225-4P Package</description>
-      <docs>https://datasheet.lcsc.com/lcsc/2103291203_Yangxing-Tech-X322512MSB4SI_C9002.pdf</docs>
-      <footprints>
-        <fp>Crystal*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">Y</field>
-        <field name="Value">X322512MSB4SI_1</field>
-        <field name="Footprint">Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm</field>
-        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/2103291203_Yangxing-Tech-X322512MSB4SI_C9002.pdf</field>
-        <field name="Frequency">12MHz</field>
-      </fields>
-      <pins>
-        <pin num="1" name="1" type="passive"/>
-        <pin num="2" name="2" type="passive"/>
-        <pin num="3" name="3" type="passive"/>
-        <pin num="4" name="4" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="Connector" part="Conn_01x02_Male">
-      <description>Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+    <libpart lib="Connector" part="Conn_01x01_Male">
+      <description>Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
       <docs>~</docs>
       <footprints>
-        <fp>Connector*:*_1x??_*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">J1</field>
-        <field name="Value">DCC_IN</field>
-        <field name="Datasheet">~</field>
-      </fields>
-      <pins>
-        <pin num="1" name="Pin_1" type="power_out"/>
-        <pin num="2" name="Pin_2" type="power_out"/>
-      </pins>
-    </libpart>
-    <libpart lib="Connector" part="Conn_01x04_Male">
-      <description>Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
-      <docs>~</docs>
-      <footprints>
-        <fp>Connector*:*_1x??_*</fp>
+        <fp>Connector*:*</fp>
       </footprints>
       <fields>
         <field name="Reference">J</field>
-        <field name="Value">Conn_01x04_Male</field>
+        <field name="Value">Conn_01x01_Male</field>
         <field name="Datasheet">~</field>
       </fields>
       <pins>
         <pin num="1" name="Pin_1" type="passive"/>
-        <pin num="2" name="Pin_2" type="passive"/>
-        <pin num="3" name="Pin_3" type="passive"/>
-        <pin num="4" name="Pin_4" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="Connector" part="Conn_01x06_Male">
-      <description>Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
-      <docs>~</docs>
-      <footprints>
-        <fp>Connector*:*_1x??_*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">J</field>
-        <field name="Value">Conn_01x06_Male</field>
-        <field name="Datasheet">~</field>
-      </fields>
-      <pins>
-        <pin num="1" name="Pin_1" type="passive"/>
-        <pin num="2" name="Pin_2" type="passive"/>
-        <pin num="3" name="Pin_3" type="passive"/>
-        <pin num="4" name="Pin_4" type="passive"/>
-        <pin num="5" name="Pin_5" type="passive"/>
-        <pin num="6" name="Pin_6" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Device" part="C">
@@ -661,23 +652,6 @@
       <pins>
         <pin num="1" name="" type="passive"/>
         <pin num="2" name="" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="Diode" part="1N4148WS">
-      <description>75V 0.15A Fast switching Diode, SOD-323</description>
-      <docs>https://www.vishay.com/docs/85751/1n4148ws.pdf</docs>
-      <footprints>
-        <fp>D*SOD?323*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">D</field>
-        <field name="Value">1N4148WS</field>
-        <field name="Footprint">Diode_SMD:D_SOD-323</field>
-        <field name="Datasheet">https://www.vishay.com/docs/85751/1n4148ws.pdf</field>
-      </fields>
-      <pins>
-        <pin num="1" name="K" type="passive"/>
-        <pin num="2" name="A" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="RP2040-Decoder_Additional_Symbols" part="BDR6133">
@@ -810,6 +784,24 @@
         <pin num="57" name="GND" type="power_in"/>
       </pins>
     </libpart>
+    <libpart lib="RP2040-Decoder_Additional_Symbols" part="T2N7002BK">
+      <description>60V Vds, 0.4A Id, N-Channel MOSFET with ESD protection, SOT-23</description>
+      <docs>https://datasheet.lcsc.com/lcsc/1810271831_TOSHIBA-T2N7002BK-LM_C146372.pdf</docs>
+      <footprints>
+        <fp>SOT?723*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">Q</field>
+        <field name="Value">T2N7002BK</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/1810271831_TOSHIBA-T2N7002BK-LM_C146372.pdf</field>
+      </fields>
+      <pins>
+        <pin num="1" name="G" type="input"/>
+        <pin num="2" name="S" type="passive"/>
+        <pin num="3" name="D" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="RP2040-Decoder_Additional_Symbols" part="W25Q64JVSSIQ">
       <description>64Mb Serial Flash Memory, Standard/Dual/Quad SPI, SOIC-8</description>
       <docs>https://www.winbond.com/resource-files/w25q64jv%20revj%2003272018%20plus.pdf</docs>
@@ -833,37 +825,36 @@
         <pin num="8" name="VCC" type="power_in"/>
       </pins>
     </libpart>
-    <libpart lib="RP2040-Decoder_Additional_Symbols" part="WNM2030">
-      <description>20V Vds, 0.95 Id, N-Channel MOSFET with ESD protection, SOT-723</description>
-      <docs>https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</docs>
+    <libpart lib="RP2040-Decoder_Additional_Symbols" part="X322512MSB4SI">
+      <description>Four pin crystal 12MHz, GND on pins 2 and 4, SMD3225-4P Package</description>
+      <docs>https://datasheet.lcsc.com/lcsc/2103291203_Yangxing-Tech-X322512MSB4SI_C9002.pdf</docs>
       <footprints>
-        <fp>SOT?723*</fp>
+        <fp>Crystal*</fp>
       </footprints>
       <fields>
-        <field name="Reference">Q</field>
-        <field name="Value">WNM2030</field>
-        <field name="Footprint">RP2040-Decoder_Additional_Footprints:SOT-723-Extended_Pad</field>
-        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/1809191616_WILLSEMI-Will-Semicon-WNM2030-3-TR_C239769.pdf</field>
+        <field name="Reference">Y</field>
+        <field name="Value">X322512MSB4SI</field>
+        <field name="Footprint">Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm</field>
+        <field name="Datasheet">https://datasheet.lcsc.com/lcsc/2103291203_Yangxing-Tech-X322512MSB4SI_C9002.pdf</field>
+        <field name="Frequency">12MHz</field>
       </fields>
       <pins>
-        <pin num="1" name="G" type="input"/>
-        <pin num="2" name="S" type="passive"/>
-        <pin num="3" name="D" type="passive"/>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+        <pin num="4" name="4" type="passive"/>
       </pins>
     </libpart>
   </libparts>
   <libraries>
     <library logical="Connector">
-      <uri>/usr/share/kicad/symbols//Connector.kicad_sym</uri>
+      <uri>C:\Program Files\KiCad\6.0\share\kicad\symbols\/Connector.kicad_sym</uri>
     </library>
     <library logical="Device">
-      <uri>/usr/share/kicad/symbols//Device.kicad_sym</uri>
-    </library>
-    <library logical="Diode">
-      <uri>/usr/share/kicad/symbols//Diode.kicad_sym</uri>
+      <uri>C:\Program Files\KiCad\6.0\share\kicad\symbols\/Device.kicad_sym</uri>
     </library>
     <library logical="RP2040-Decoder_Additional_Symbols">
-      <uri>/home/gab/Documents/RP2040-Decoder/KiCad/RP2040-Decoder_Additional_Symbols.kicad_sym</uri>
+      <uri>C:\Users\gab\Documents\RP2040-Decoder\KiCad/RP2040-Decoder_Additional_Symbols.kicad_sym</uri>
     </library>
   </libraries>
   <nets>
@@ -886,6 +877,7 @@
       <node ref="C7" pin="1" pintype="passive"/>
       <node ref="C8" pin="1" pintype="passive"/>
       <node ref="C9" pin="1" pintype="passive"/>
+      <node ref="J7" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="R3" pin="1" pintype="passive"/>
       <node ref="R4" pin="2" pintype="passive"/>
       <node ref="U1" pin="2" pinfunction="VOUT" pintype="power_out"/>
@@ -900,41 +892,37 @@
       <node ref="U4" pin="48" pinfunction="USB_VDD" pintype="power_in"/>
       <node ref="U4" pin="49" pinfunction="IOVDD" pintype="power_in"/>
     </net>
-    <net code="3" name="+12V">
+    <net code="3" name="+V">
       <node ref="C2" pin="1" pintype="passive"/>
       <node ref="D1" pin="3" pinfunction="+" pintype="power_out"/>
-      <node ref="J2" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="J14" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="U1" pin="3" pinfunction="VIN" pintype="power_in"/>
       <node ref="U2" pin="3" pinfunction="VM" pintype="power_in"/>
     </net>
     <net code="4" name="/ADC_EMF_A">
-      <node ref="D4" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="R5" pin="1" pintype="passive"/>
       <node ref="R7" pin="2" pintype="passive"/>
       <node ref="U4" pin="38" pinfunction="GPIO26_ADC0" pintype="bidirectional"/>
-      <node ref="U4" pin="39" pinfunction="GPIO27_ADC1" pintype="bidirectional"/>
     </net>
     <net code="5" name="/ADC_EMF_B">
-      <node ref="D5" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="R6" pin="1" pintype="passive"/>
       <node ref="R8" pin="2" pintype="passive"/>
-      <node ref="U4" pin="40" pinfunction="GPIO28_ADC2" pintype="bidirectional"/>
-      <node ref="U4" pin="41" pinfunction="GPIO29_ADC3" pintype="bidirectional"/>
+      <node ref="U4" pin="39" pinfunction="GPIO27_ADC1" pintype="bidirectional"/>
     </net>
     <net code="6" name="/GPIO18">
-      <node ref="Q1" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="Q2" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U4" pin="29" pinfunction="GPIO18" pintype="bidirectional"/>
     </net>
     <net code="7" name="/GPIO19">
-      <node ref="Q2" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="Q3" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U4" pin="30" pinfunction="GPIO19" pintype="bidirectional"/>
     </net>
     <net code="8" name="/GPIO20">
-      <node ref="Q3" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="Q4" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U4" pin="31" pinfunction="GPIO20" pintype="bidirectional"/>
     </net>
     <net code="9" name="/GPIO21">
-      <node ref="Q4" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="Q5" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U4" pin="32" pinfunction="GPIO21" pintype="bidirectional"/>
     </net>
     <net code="10" name="/GPIO22">
@@ -946,17 +934,16 @@
       <node ref="U4" pin="35" pinfunction="GPIO23" pintype="bidirectional"/>
     </net>
     <net code="12" name="/GPIO24">
-      <node ref="D2" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="D3" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="Q1" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="U4" pin="37" pinfunction="GPIO25" pintype="bidirectional"/>
     </net>
     <net code="13" name="/MOTOR_OUT_A">
-      <node ref="J2" pin="3" pinfunction="Pin_3" pintype="passive"/>
+      <node ref="J15" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="R5" pin="2" pintype="passive"/>
       <node ref="U2" pin="4" pinfunction="OUTA" pintype="output"/>
     </net>
     <net code="14" name="/MOTOR_OUT_B">
-      <node ref="J2" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="J16" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="R6" pin="2" pintype="passive"/>
       <node ref="U2" pin="5" pinfunction="OUTB" pintype="output"/>
     </net>
@@ -979,15 +966,13 @@
       <node ref="C8" pin="2" pintype="passive"/>
       <node ref="C9" pin="2" pintype="passive"/>
       <node ref="D1" pin="4" pinfunction="-" pintype="power_out"/>
-      <node ref="D3" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="D4" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="D5" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="J2" pin="1" pinfunction="Pin_1" pintype="passive"/>
-      <node ref="J4" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="J17" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="Q1" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="Q2" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="Q3" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="Q4" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="Q5" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R2" pin="1" pintype="passive"/>
       <node ref="R7" pin="1" pintype="passive"/>
       <node ref="R8" pin="1" pintype="passive"/>
       <node ref="R9" pin="2" pintype="passive"/>
@@ -1016,93 +1001,98 @@
     </net>
     <net code="19" name="Net-(D1-Pad1)">
       <node ref="D1" pin="1" pintype="power_in"/>
-      <node ref="J1" pin="2" pinfunction="Pin_2" pintype="power_out"/>
-    </net>
-    <net code="20" name="Net-(D1-Pad2)">
-      <node ref="D1" pin="2" pintype="power_in"/>
       <node ref="J1" pin="1" pinfunction="Pin_1" pintype="power_out"/>
       <node ref="R1" pin="2" pintype="passive"/>
     </net>
-    <net code="21" name="Net-(D2-Pad2)">
-      <node ref="D2" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="R1" pin="1" pintype="passive"/>
+    <net code="20" name="Net-(D1-Pad2)">
+      <node ref="D1" pin="2" pintype="power_in"/>
+      <node ref="J2" pin="1" pinfunction="Pin_1" pintype="power_out"/>
     </net>
-    <net code="22" name="Net-(J3-Pad1)">
+    <net code="21" name="Net-(J3-Pad1)">
       <node ref="J3" pin="1" pinfunction="Pin_1" pintype="passive"/>
-      <node ref="U4" pin="7" pinfunction="GPIO5" pintype="bidirectional"/>
+      <node ref="Q2" pin="3" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="23" name="Net-(J3-Pad2)">
-      <node ref="J3" pin="2" pinfunction="Pin_2" pintype="passive"/>
-      <node ref="U4" pin="6" pinfunction="GPIO4" pintype="bidirectional"/>
+    <net code="22" name="Net-(J4-Pad1)">
+      <node ref="J4" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="Q3" pin="3" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="24" name="Net-(J3-Pad3)">
-      <node ref="J3" pin="3" pinfunction="Pin_3" pintype="passive"/>
-      <node ref="U4" pin="5" pinfunction="GPIO3" pintype="bidirectional"/>
+    <net code="23" name="Net-(J5-Pad1)">
+      <node ref="J5" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="Q4" pin="3" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="25" name="Net-(J3-Pad4)">
-      <node ref="J3" pin="4" pinfunction="Pin_4" pintype="passive"/>
-      <node ref="U4" pin="4" pinfunction="GPIO2" pintype="bidirectional"/>
+    <net code="24" name="Net-(J6-Pad1)">
+      <node ref="J6" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="Q5" pin="3" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="26" name="Net-(J3-Pad5)">
-      <node ref="J3" pin="5" pinfunction="Pin_5" pintype="passive"/>
-      <node ref="U4" pin="3" pinfunction="GPIO1" pintype="bidirectional"/>
-    </net>
-    <net code="27" name="Net-(J3-Pad6)">
-      <node ref="J3" pin="6" pinfunction="Pin_6" pintype="passive"/>
+    <net code="25" name="Net-(J8-Pad1)">
+      <node ref="J8" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="U4" pin="2" pinfunction="GPIO0" pintype="bidirectional"/>
     </net>
-    <net code="28" name="Net-(J4-Pad2)">
-      <node ref="J4" pin="2" pinfunction="Pin_2" pintype="passive"/>
-      <node ref="U4" pin="26" pinfunction="RUN" pintype="input"/>
+    <net code="26" name="Net-(J9-Pad1)">
+      <node ref="J9" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="U4" pin="3" pinfunction="GPIO1" pintype="bidirectional"/>
     </net>
-    <net code="29" name="Net-(J4-Pad3)">
-      <node ref="J4" pin="3" pinfunction="Pin_3" pintype="passive"/>
-      <node ref="U4" pin="25" pinfunction="SWD" pintype="bidirectional"/>
+    <net code="27" name="Net-(J10-Pad1)">
+      <node ref="J10" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="U4" pin="4" pinfunction="GPIO2" pintype="bidirectional"/>
     </net>
-    <net code="30" name="Net-(J4-Pad4)">
-      <node ref="J4" pin="4" pinfunction="Pin_4" pintype="passive"/>
+    <net code="28" name="Net-(J11-Pad1)">
+      <node ref="J11" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="U4" pin="5" pinfunction="GPIO3" pintype="bidirectional"/>
+    </net>
+    <net code="29" name="Net-(J12-Pad1)">
+      <node ref="J12" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="U4" pin="6" pinfunction="GPIO4" pintype="bidirectional"/>
+    </net>
+    <net code="30" name="Net-(J13-Pad1)">
+      <node ref="J13" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="U4" pin="7" pinfunction="GPIO5" pintype="bidirectional"/>
+    </net>
+    <net code="31" name="Net-(J18-Pad1)">
+      <node ref="J18" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="U4" pin="24" pinfunction="SWCLK" pintype="output"/>
     </net>
-    <net code="31" name="Net-(R4-Pad1)">
+    <net code="32" name="Net-(J19-Pad1)">
+      <node ref="J19" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="U4" pin="25" pinfunction="SWD" pintype="bidirectional"/>
+    </net>
+    <net code="33" name="Net-(J20-Pad1)">
+      <node ref="J20" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="U4" pin="26" pinfunction="RUN" pintype="input"/>
+    </net>
+    <net code="34" name="Net-(Q1-Pad1)">
+      <node ref="Q1" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R1" pin="1" pintype="passive"/>
+      <node ref="R2" pin="2" pintype="passive"/>
+    </net>
+    <net code="35" name="Net-(R4-Pad1)">
       <node ref="R4" pin="1" pintype="passive"/>
       <node ref="U3" pin="1" pinfunction="~{CS}" pintype="input"/>
       <node ref="U4" pin="56" pinfunction="QSPI_SS" pintype="bidirectional"/>
     </net>
-    <net code="32" name="Net-(R9-Pad1)">
+    <net code="36" name="Net-(R9-Pad1)">
       <node ref="R9" pin="1" pintype="passive"/>
       <node ref="U4" pin="21" pinfunction="XOUT" pintype="passive"/>
     </net>
-    <net code="33" name="Net-(U3-Pad2)">
+    <net code="37" name="Net-(U3-Pad2)">
       <node ref="U3" pin="2" pinfunction="DO(IO1)" pintype="bidirectional"/>
       <node ref="U4" pin="55" pinfunction="QSPI_SD1" pintype="bidirectional"/>
     </net>
-    <net code="34" name="Net-(U3-Pad3)">
+    <net code="38" name="Net-(U3-Pad3)">
       <node ref="U3" pin="3" pinfunction="IO2" pintype="bidirectional"/>
       <node ref="U4" pin="54" pinfunction="QSPI_SD2" pintype="bidirectional"/>
     </net>
-    <net code="35" name="Net-(U3-Pad5)">
+    <net code="39" name="Net-(U3-Pad5)">
       <node ref="U3" pin="5" pinfunction="DI(IO0)" pintype="bidirectional"/>
       <node ref="U4" pin="53" pinfunction="QSPI_SD0" pintype="bidirectional"/>
     </net>
-    <net code="36" name="Net-(U3-Pad6)">
+    <net code="40" name="Net-(U3-Pad6)">
       <node ref="U3" pin="6" pinfunction="CLK" pintype="input"/>
       <node ref="U4" pin="52" pinfunction="QSPI_SCLK" pintype="output"/>
     </net>
-    <net code="37" name="Net-(U3-Pad7)">
+    <net code="41" name="Net-(U3-Pad7)">
       <node ref="U3" pin="7" pinfunction="IO3" pintype="bidirectional"/>
       <node ref="U4" pin="51" pinfunction="QSPI_SD3" pintype="bidirectional"/>
-    </net>
-    <net code="38" name="unconnected-(Q1-Pad3)">
-      <node ref="Q1" pin="3" pinfunction="D" pintype="passive+no_connect"/>
-    </net>
-    <net code="39" name="unconnected-(Q2-Pad3)">
-      <node ref="Q2" pin="3" pinfunction="D" pintype="passive+no_connect"/>
-    </net>
-    <net code="40" name="unconnected-(Q3-Pad3)">
-      <node ref="Q3" pin="3" pinfunction="D" pintype="passive+no_connect"/>
-    </net>
-    <net code="41" name="unconnected-(Q4-Pad3)">
-      <node ref="Q4" pin="3" pinfunction="D" pintype="passive+no_connect"/>
     </net>
     <net code="42" name="unconnected-(U2-Pad8)">
       <node ref="U2" pin="8" pinfunction="NC" pintype="no_connect"/>
@@ -1146,10 +1136,16 @@
     <net code="55" name="unconnected-(U4-Pad36)">
       <node ref="U4" pin="36" pinfunction="GPIO24" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="56" name="unconnected-(U4-Pad46)">
+    <net code="56" name="unconnected-(U4-Pad40)">
+      <node ref="U4" pin="40" pinfunction="GPIO28_ADC2" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="57" name="unconnected-(U4-Pad41)">
+      <node ref="U4" pin="41" pinfunction="GPIO29_ADC3" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="58" name="unconnected-(U4-Pad46)">
       <node ref="U4" pin="46" pinfunction="USB_DM" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="57" name="unconnected-(U4-Pad47)">
+    <net code="59" name="unconnected-(U4-Pad47)">
       <node ref="U4" pin="47" pinfunction="USB_DP" pintype="bidirectional+no_connect"/>
     </net>
   </nets>
