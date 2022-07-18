@@ -92,7 +92,7 @@ uint32_t measure(bool direction){
     uint16_t key;
     pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
     pwm_set_gpio_level(MOTOR_REV_PIN, 0);
-    adc_select_input(!direction);
+    adc_select_input((!direction)+2);
     busy_wait_us(msr.delay_in_us);
     adc_run(true);
     for (int32_t i = 0; i < msr.total_iterations; ++i) {
@@ -148,6 +148,8 @@ bool pid_control(struct repeating_timer *t){
     pid.direction_prev = target_direction;
     pid.e_sum += pid.e;
     pid.e_prev = pid.e;
+    if (pid.e_sum < pid.sum_limit_min) pid.e_sum = pid.sum_limit_min;
+    else if (pid.e_sum > pid.sum_limit_max) pid.e_sum = pid.sum_limit_max;
     // Adjust offset when the absolute value of e_sum is half of max
     if (pid.e_sum > pid.sum_limit_max/2 || pid.e_sum < pid.sum_limit_min/2){
         pid.offset += 3*(pid.e_sum/pid.sum_limit_max);
@@ -157,7 +159,7 @@ bool pid_control(struct repeating_timer *t){
     // Increase sampling time for higher speed steps - Decrease for lower speed steps
     pid_control_timer.delay_us = (8000*latest_target_index)/126 + 2000;
     pid.t_s = ((8000*latest_target_index)/126 + 2000)/1000;
-    printf("%d\n",pid.output);
+    printf("%d\n",pid.e_sum);
     return true;
     //printf("off:%d\n",pid.offset);
 }

@@ -9,8 +9,8 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00001000,         //CV_2  -    Minimum speed
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 0 == Fastest dec/acc rate; 255 == slowest;
-   0b00010000,         //CV_3  -    Acceleration rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
-   0b00010000,         //CV_4  -    Deceleration rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
+   0b00000010,         //CV_3  -    Acceleration rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
+   0b00000010,         //CV_4  -    Deceleration rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b01111111,         //CV_5  -    V_max
    0b00111111,         //CV_6  -    V_mid
