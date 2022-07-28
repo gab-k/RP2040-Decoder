@@ -32,8 +32,5 @@
 #define FLASH_TARGET_OFFSET (PICO_FLASH_SIZE_BYTES-FLASH_SECTOR_SIZE) //This Offset should be far enough away from program data
 extern repeating_timer_t pid_control_timer;
 extern repeating_timer_t speed_helper_timer;
-extern bool target_direction;
-extern uint target_speed_step;
 extern const uint8_t *CV_ARRAY_FLASH;
 void core1_entry();
-uint32_t measure(bool direction);

@@ -5,12 +5,12 @@
 //TODO:
 //      - Packet Timeout
 uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
-   0b00000011,         //CV_1  -    Basic address  CV_1 = 0 is not allowed and used for initiating ADC offset adjustment
-   0b00001000,         //CV_2  -    Minimum speed
+   0b00000011,         //CV_1  -    Basic address  CV_1 = 0 is not allowed and used for initiating ADC offset adjustment    //TODO: verify
+   0b00001000,         //CV_2  -    V_min
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 0 == Fastest dec/acc rate; 255 == slowest;
-   0b00000010,         //CV_3  -    Acceleration rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
-   0b00000010,         //CV_4  -    Deceleration rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
+   0b00000000,         //CV_3  -    Acceleration rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
+   0b00000000,         //CV_4  -    Deceleration rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b01111111,         //CV_5  -    V_max
    0b00111111,         //CV_6  -    V_mid
@@ -60,8 +60,8 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_45  -
    0b00000000,         //CV_46  -
     // PID - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000010,         //CV_47  -   PID Control sampling time t_s in ms for speed step < 2                            //
-   0b00000101,         //CV_48  -   PID Control sampling time t_s in ms for speed step > 2                            //
+   0b00001010,         //CV_47  -   PID Control low pass filter time constant (tau)                                 //
+   0b00000101,         //CV_48  -   PID Control sampling time t in ms for speed step > 2                            //
    0b01110011,         //CV_49  -   PID Control P_Factor        ≙   CV_49/256           Default = 115 -> 0.4492       //
    0b01100110,         //CV_50  -   PID Control I_Factor        ≙   CV_50/64            Default = 102 -> 1.594 (1/sec)//
    0b01111011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/4096          Default = 123 -> 0.03002 sec  //
@@ -83,8 +83,8 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    // For Example: CV_63 = x and CV_64 = y                                                                            //
    // -> The x smallest values will be discarded.                                                                     //
    // -> The y largest values will be discarded.                                                                      //
-   0b00001111,         //CV_63  -   left_side_array_cutoff      -   Default = 15                                      //
-   0b00001111,         //CV_64  -   right_side_array_cutoff     -   Default = 15                                      //                                                  //
+   0b00001111,         //CV_63  -   l_side_arr_cutoff      -   Default = 15                                      //
+   0b00001111,         //CV_64  -   r_side_arr_cutoff     -   Default = 15                                      //                                                  //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000000,         //CV_65  -   Values > 0 indicate that flash is still in factory condition
    0b00000000,         //CV_66  -
