@@ -220,13 +220,14 @@ void init_pid(pid_params *pid){
     double v_min = (double)CV_ARRAY_FLASH[1];
     double v_mid = (double)CV_ARRAY_FLASH[5]*16;
     double v_max = (double)CV_ARRAY_FLASH[4]*16;
-    double m_1 = (v_mid-v_min)/62;
-    double m_2 = (v_max-v_mid)/63;
+    double delta_x = 63;
+    double m_1 = (v_mid-v_min)/delta_x;
+    double m_2 = (v_max-v_mid)/delta_x;
     pid->speed_table[0] = 0;
-    for (uint8_t i = 1; i < 63; ++i) {
+    for (uint8_t i = 1; i < 64; ++i) {
         pid->speed_table[i] = (uint16_t)lround(m_1*(i-1)+v_min);
     }
-    for (uint8_t i = 63; i < 127; ++i) {
+    for (uint8_t i = 64; i < 127; ++i) {
         pid->speed_table[i] = (uint16_t)lround(m_2*(i-63)+v_mid);
     }
 
