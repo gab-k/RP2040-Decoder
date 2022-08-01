@@ -24,6 +24,7 @@ add_executable(
         core0.h
         core1.c
         core1.h
+        shared.c
         shared.h)
 
 # Multiplier to lengthen XOSC startup delay to accommodate slow-starting oscillator

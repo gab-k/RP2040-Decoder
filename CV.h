@@ -1,16 +1,16 @@
 #pragma once
 #define CV_ARRAY_SIZE 512
-//All CVs are 8-bit numbers (range 0 - 255)
-//Note : CV_1 ≙ index 0, CV_2 ≙ index 1, CV_3 ≙ index 2, ...
-//TODO:
-//      - Packet Timeout
+// All CVs are 8-bit numbers (range 0 - 255)
+// Note : CV_1 ≙ index 0, CV_2 ≙ index 1, CV_3 ≙ index 2, ...
+// TODO: - Packet Timeout
+
 uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000011,         //CV_1  -    Basic address  CV_1 = 0 is not allowed and used for initiating ADC offset adjustment    //TODO: verify
    0b00001000,         //CV_2  -    V_min
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 0 == Fastest dec/acc rate; 255 == slowest;
-   0b00000000,         //CV_3  -    Acceleration rate   -   CV_3*CV_59 = Time for one discrete speed step change in ms
-   0b00000000,         //CV_4  -    Deceleration rate   -   CV_4*CV_59 = Time for one discrete speed step change in ms
+   0b00000000,         //CV_3  -    Acceleration rate   -   CV_3*CV_175 = Time for one discrete speed step change in ms
+   0b00000000,         //CV_4  -    Deceleration rate   -   CV_4*CV_175 = Time for one discrete speed step change in ms
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b01111111,         //CV_5  -    V_max
    0b00111111,         //CV_6  -    V_mid
@@ -59,32 +59,30 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_44  -
    0b00000000,         //CV_45  -
    0b00000000,         //CV_46  -
-    // PID - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
-   0b00001010,         //CV_47  -   PID Control low pass filter time constant (tau)                                 //
-   0b00000101,         //CV_48  -   PID Control sampling time t in ms for speed step > 2                            //
-   0b01110011,         //CV_49  -   PID Control P_Factor        ≙   CV_49/256           Default = 115 -> 0.4492       //
-   0b01100110,         //CV_50  -   PID Control I_Factor        ≙   CV_50/64            Default = 102 -> 1.594 (1/sec)//
-   0b01111011,         //CV_51  -   PID Control D_Factor        ≙   CV_51/4096          Default = 123 -> 0.03002 sec  //
-   0b00110000,         //CV_52  -   PID Integral Limit positive ≙ CV_52*10              Default = 48  -> +480         //
-   0b00110000,         //CV_53  -   PID Integral Limit negative ≙ CV_53*(-10)           Default = 48  -> -480         //
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000001,         //CV_54  -   ---------------------------------------------------------------                   //
-   0b00000000,         //CV_55  -   ---------------------------------------------------------------                   //
-   0b00000000,         //CV_56  -   ---------------------------------------------------------------                   //
-   0b00000000,         //CV_57  -   ---------------------------------------------------------------                   //
-   0b00000101,         //CV_58  -   ---------------------------------------------------------------                   //
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000111,         //CV_59  -   speed_helper timer delay -  can be used to adjust accel/decel rate                //
-   0b00010100,         //CV_60  -   .....................................................................             //
+    // Speed controller - Configuration ////////////////////////////////////////////////////////////////////////////////
+   0b00110010,         //CV_47  -   Feed-forward gain k_ff      ≙   CV_47/10000     Default = 50 -> 0.005             //
+   0b00001010,         //CV_48  -   PID Control low pass filter time constant (tau) in ms                             //
+   0b00000101,         //CV_49  -   PID Control sampling time t in ms                                                 //
+   0b00011001,         //CV_50  -   PID Control I_Factor        ≙   CV_50/10        Default = 25 -> 2.5               //
+   0b00110010,         //CV_51  -   PID Control D_Factor        ≙   CV_51/10000     Default = 50 -> 0.005             //
+   0b01100100,         //CV_52  -   PID Integral Limit positive ≙   CV_52*10        Default = 100 -> +1000            //
+   0b01100100,         //CV_53  -   PID Integral Limit negative ≙   CV_53*(-10)     Default = 100 -> -1000            //
+   0b00000011,         //CV_54  -   k_p @ x0 - High Byte (Bits 8-15)                divided by 100                    //
+   0b11101000,         //CV_55  -   k_p @ x0 - Low Byte (Bits 0-7)                  Default = 1000 -> 10              //
+   0b00000000,         //CV_56  -   k_p @ x1 - High Byte (Bits 8-15)                divided by 100                    //
+   0b11111010,         //CV_57  -   k_p @ x1 - Low Byte (Bits 0-7)                  Default = 250 -> 2.5              //
+   0b00000000,         //CV_58  -   k_p @ x2 - High Byte (Bits 8-15)                divided by 100                    //
+   0b10010110,         //CV_59  -   k_p @ x2 - Low Byte (Bits 0-7)                  Default = 150 -> 1.5              //
+   0b00001101,         //CV_60  -   x_1 shift in % ≙ CV_60/255                                                        //
    // V_EMF Measurement Configuration //////////////////////////////////////////////////////////////////////////////////
-   0b01000110,         //CV_61  -   V_EMF Total amount of Measurement Iterations    -   Default = 100 iterations      //
+   0b01100100,         //CV_61  -   V_EMF Total amount of Measurement Iterations    -   Default = 100 iterations      //
    0b01100100,         //CV_62  -   V_EMF Delay before Measuring                    -   Default = 100us               //
    // CV_63 and CV_64 are used to determine how many elements of the sorted measurement array will be discarded       //
    // For Example: CV_63 = x and CV_64 = y                                                                            //
    // -> The x smallest values will be discarded.                                                                     //
    // -> The y largest values will be discarded.                                                                      //
-   0b00001111,         //CV_63  -   l_side_arr_cutoff      -   Default = 15                                      //
-   0b00001111,         //CV_64  -   r_side_arr_cutoff     -   Default = 15                                      //                                                  //
+   0b00001111,         //CV_63  -   l_side_arr_cutoff      -   Default = 15                                           //
+   0b00001111,         //CV_64  -   r_side_arr_cutoff      -   Default = 15                                           //
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000000,         //CV_65  -   Values > 0 indicate that flash is still in factory condition
    0b00000000,         //CV_66  -
@@ -135,74 +133,74 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_111  -
 ///// PWM - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
 // This Config can cause conflicts when GPIOs controlled by the same slice are enabled at the same time.
-   0b00000000,         //CV_112  -  GPIO 0-7   enable PWM
-   0b00111100,         //CV_113  -  GPIO 8-15  enable PWM
-   0b00000000,         //CV_114  -  GPIO 16-23 enable PWM
-   0b00000000,         //CV_115  -  GPIO 24-31 enable PWM
+   0b00000000,         //CV_112  -  GPIO 24-31  enable PWM
+   0b00000000,         //CV_113  -  GPIO 16-23  enable PWM
+   0b00111100,         //CV_114  -  GPIO 8-15   enable PWM
+   0b00000000,         //CV_115  -  GPIO 0-7    enable PWM
 //Slice 0
-   0b00000000,         //CV_116  -  Wrap Bits 0-7
-   0b00000000,         //CV_117  -  Wrap Bits 8-15
-   0b00000001,         //CV_118  -  Clock Divider
-   0b00000000,         //CV_119  -  Channel A Level Bits 0-7
-   0b00000000,         //CV_120  -  Channel A Level Bits 8-15
-   0b00000000,         //CV_121  -  Channel B Level Bits 0-7
-   0b00000000,         //CV_122  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_116  -  Wrap Bits 8-15
+   0b00000000,         //CV_117  -  Wrap Bits 0-7
+   0b00000000,         //CV_118  -  Clock Divider
+   0b00000000,         //CV_119  -  Channel A Level Bits 8-15
+   0b00000000,         //CV_120  -  Channel A Level Bits 0-7
+   0b00000000,         //CV_121  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_122  -  Channel B Level Bits 0-7
 //Slice 1
-   0b00000000,         //CV_123  -  Wrap Bits 0-7
-   0b00000000,         //CV_124  -  Wrap Bits 8-15
-   0b00000001,         //CV_125  -  Clock Divider
-   0b00000000,         //CV_126  -  Channel A Level Bits 0-7
-   0b00000000,         //CV_127  -  Channel A Level Bits 8-15
-   0b00000000,         //CV_128  -  Channel B Level Bits 0-7
-   0b00000000,         //CV_129  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_123  -  Wrap Bits 8-15
+   0b00000000,         //CV_124  -  Wrap Bits 0-7
+   0b00000000,         //CV_125  -  Clock Divider
+   0b00000000,         //CV_126  -  Channel A Level Bits 8-15
+   0b00000000,         //CV_127  -  Channel A Level Bits 0-7
+   0b00000000,         //CV_128  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_129  -  Channel B Level Bits 0-7
 //Slice 2
-   0b00000000,         //CV_130  -  Wrap Bits 0-7
-   0b00000000,         //CV_131  -  Wrap Bits 8-15
-   0b00000001,         //CV_132  -  Clock Divider
-   0b00000000,         //CV_133  -  Channel A Level Bits 0-7
-   0b00000000,         //CV_134  -  Channel A Level Bits 8-15
-   0b00000000,         //CV_135  -  Channel B Level Bits 0-7
-   0b00000000,         //CV_136  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_130  -  Wrap Bits 8-15
+   0b00000000,         //CV_131  -  Wrap Bits 0-7
+   0b00000000,         //CV_132  -  Clock Divider
+   0b00000000,         //CV_133  -  Channel A Level Bits 8-15
+   0b00000000,         //CV_134  -  Channel A Level Bits 0-7
+   0b00000000,         //CV_135  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_136  -  Channel B Level Bits 0-7
 //Slice 3
-   0b00000000,         //CV_137  -  Wrap Bits 0-7
-   0b00000000,         //CV_138  -  Wrap Bits 8-15
-   0b00000001,         //CV_139  -  Clock Divider
-   0b00000000,         //CV_140  -  Channel A Level Bits 0-7
-   0b00000000,         //CV_141  -  Channel A Level Bits 8-15
-   0b00000000,         //CV_142  -  Channel B Level Bits 0-7
-   0b00000000,         //CV_143  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_137  -  Wrap Bits 8-15
+   0b00000000,         //CV_138  -  Wrap Bits 0-7
+   0b00000000,         //CV_139  -  Clock Divider
+   0b00000000,         //CV_140  -  Channel A Level Bits 8-15
+   0b00000000,         //CV_141  -  Channel A Level Bits 0-7
+   0b00000000,         //CV_142  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_143  -  Channel B Level Bits 0-7
 //Slice 4
-   0b00000000,         //CV_144  -  Wrap Bits 0-7
-   0b00000000,         //CV_145  -  Wrap Bits 8-15
-   0b00000001,         //CV_146  -  Clock Divider
-   0b00000000,         //CV_147  -  Channel A Level Bits 0-7
-   0b00000000,         //CV_148  -  Channel A Level Bits 8-15
-   0b00000000,         //CV_149  -  Channel B Level Bits 0-7
-   0b00000000,         //CV_150  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_144  -  Wrap Bits 8-15
+   0b00000000,         //CV_145  -  Wrap Bits 0-7
+   0b00000000,         //CV_146  -  Clock Divider
+   0b00000000,         //CV_147  -  Channel A Level Bits 8-15
+   0b00000000,         //CV_148  -  Channel A Level Bits 0-7
+   0b00000000,         //CV_149  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_150  -  Channel B Level Bits 0-7
 //Slice 5
-   0b10001000,         //CV_151  -  Wrap Bits 0-7
-   0b00010011,         //CV_152  -  Wrap Bits 8-15
-   0b00000001,         //CV_153  -  Clock Divider
-   0b11000100,         //CV_154  -  Channel A Level Bits 0-7
-   0b00001001,         //CV_155  -  Channel A Level Bits 8-15
-   0b11101000,         //CV_156  -  Channel B Level Bits 0-7
-   0b00000011,         //CV_157  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_151  -  Wrap Bits 8-15
+   0b00000000,         //CV_152  -  Wrap Bits 0-7
+   0b00000000,         //CV_153  -  Clock Divider
+   0b00000000,         //CV_154  -  Channel A Level Bits 8-15
+   0b00000000,         //CV_155  -  Channel A Level Bits 0-7
+   0b00000000,         //CV_156  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_157  -  Channel B Level Bits 0-7
 //Slice 6
-   0b11000100,         //CV_158  -  Wrap Bits 0-7
-   0b00001001,         //CV_159  -  Wrap Bits 8-15
-   0b00000001,         //CV_160  -  Clock Divider
-   0b11100010,         //CV_161  -  Channel A Level Bits 0-7
-   0b00000100,         //CV_162  -  Channel A Level Bits 8-15
-   0b11100010,         //CV_163  -  Channel B Level Bits 0-7
-   0b00000100,         //CV_164  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_158  -  Wrap Bits 8-15
+   0b00000000,         //CV_159  -  Wrap Bits 0-7
+   0b00000000,         //CV_160  -  Clock Divider
+   0b00000000,         //CV_161  -  Channel A Level Bits 8-15
+   0b00000000,         //CV_162  -  Channel A Level Bits 0-7
+   0b00000000,         //CV_163  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_164  -  Channel B Level Bits 0-7
 //Slice 7
-   0b00000000,         //CV_165  -  Wrap Bits 0-7
-   0b00000000,         //CV_166  -  Wrap Bits 8-15
-   0b00000001,         //CV_167  -  Clock Divider
-   0b00000000,         //CV_168  -  Channel A Level Bits 0-7
-   0b00000000,         //CV_169  -  Channel A Level Bits 8-15
-   0b00000000,         //CV_170  -  Channel B Level Bits 0-7
-   0b00000000,         //CV_171  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_165  -  Wrap Bits 8-15
+   0b00000000,         //CV_166  -  Wrap Bits 0-7
+   0b00000000,         //CV_167  -  Clock Divider
+   0b00000000,         //CV_168  -  Channel A Level Bits 8-15
+   0b00000000,         //CV_169  -  Channel A Level Bits 0-7
+   0b00000000,         //CV_170  -  Channel B Level Bits 8-15
+   0b00000000,         //CV_171  -  Channel B Level Bits 0-7
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Offset adjustment for ADC                                                                                           //
 //If CV_172 = 0xFF = 255 there will be a measurement procedure on startup                                             //
@@ -211,11 +209,11 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b01111111,         //CV_173  -  ADC offset measurement cycles                       Default: 127                 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000001,         //CV_174  -  Additional motor-PWM clock divider.
-   0b00000000,         //CV_175  -
-   0b00000000,         //CV_176  -
-   0b00000000,         //CV_177  -
-   0b00000000,         //CV_178  -
-   0b00000000,         //CV_179  -
+   0b00000111,         //CV_175  -  speed_helper timer delay -  can be used to adjust accel/decel rate
+   0b00000000,         //CV_176  -  Base-PWM forward bits 8-15
+   0b00000000,         //CV_177  -  Base-PWM forward bits 0-7
+   0b00000000,         //CV_178  -  Base-PWM reverse bits 15-8
+   0b00000000,         //CV_179  -  Base-PWM reverse bits 0-7
    0b00000000,         //CV_180  -
    0b00000000,         //CV_181  -
    0b00000000,         //CV_182  -
@@ -298,323 +296,323 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
 //           byte_3           --           byte_2          --           byte_1         --       byte_0
 //  X  X  X  X  - X  X  X  X  -- X  X  X  X  - X  X  X  X  -- X  X  X  X  - X  X  X  X -- X X X X - X X X X
 //F0 forward
-    0b00000000,         //byte 0    -   CV_257
-    0b00000000,         //byte 1    -   CV_258
-    0b00000000,         //byte 2    -   CV_259
-    0b00000000,         //byte 3    -   CV_260
+   0b00000000,         //CV_257  -  byte 3
+   0b00000000,         //CV_258  -  byte 2
+   0b00000000,         //CV_259  -  byte 1
+   0b00000000,         //CV_260  -  byte 0
 //F0 reverse
-    0b00000000,         //byte 0    -   CV_261
-    0b00000000,         //byte 1    -   CV_262
-    0b00000000,         //byte 2    -   CV_263
-    0b00000000,         //byte 3    -   CV_264
+   0b00000000,         //CV_261  -  byte 3
+   0b00000000,         //CV_262  -  byte 2
+   0b00000000,         //CV_263  -  byte 1
+   0b00000000,         //CV_264  -  byte 0
 //F1 forward
-    0b00000000,         //byte 0    -   CV_265
-    0b00000000,         //byte 1    -   CV_266
-    0b00000000,         //byte 2    -   CV_267
-    0b00000000,         //byte 3    -   CV_268
+   0b00000000,         //CV_265  -  byte 3
+   0b00000000,         //CV_266  -  byte 2
+   0b00000000,         //CV_267  -  byte 1
+   0b00000000,         //CV_268  -  byte 0
 //F1 reverse
-    0b00000000,         //byte 0    -   CV_269
-    0b00000000,         //byte 1    -   CV_270
-    0b00000000,         //byte 2    -   CV_271
-    0b00000000,         //byte 3    -   CV_272
+   0b00000000,         //CV_269  -  byte 3
+   0b00000000,         //CV_270  -  byte 2
+   0b00000000,         //CV_271  -  byte 1
+   0b00000000,         //CV_272  -  byte 0
 //F2 forward
-    0b00000000,         //byte 0    -   CV_273
-    0b00000000,         //byte 1    -   CV_274
-    0b00000000,         //byte 2    -   CV_275
-    0b00000000,         //byte 3    -   CV_276
+   0b00000000,         //CV_273  -  byte 3
+   0b00000000,         //CV_274  -  byte 2
+   0b00000000,         //CV_275  -  byte 1
+   0b00000000,         //CV_276  -  byte 0
 //F2 reverse
-    0b00000000,         //byte 0    -   CV_277
-    0b00000000,         //byte 1    -   CV_278
-    0b00000000,         //byte 2    -   CV_279
-    0b00000000,         //byte 3    -   CV_280
+   0b00000000,         //CV_277  -  byte 3
+   0b00000000,         //CV_278  -  byte 2
+   0b00000000,         //CV_279  -  byte 1
+   0b00000000,         //CV_280  -  byte 0
 //F3 forward
-    0b00000000,         //byte 0    -   CV_281
-    0b00000000,         //byte 1    -   CV_282
-    0b00000000,         //byte 2    -   CV_283
-    0b00000000,         //byte 3    -   CV_284
+   0b00000000,         //CV_281  -  byte 3
+   0b00000000,         //CV_282  -  byte 2
+   0b00000000,         //CV_283  -  byte 1
+   0b00000000,         //CV_284  -  byte 0
 //F3 reverse
-    0b00000000,         //byte 0    -   CV_285
-    0b00000000,         //byte 1    -   CV_286
-    0b00000000,         //byte 2    -   CV_287
-    0b00000000,         //byte 3    -   CV_288
+   0b00000000,         //CV_285  -  byte 3
+   0b00000000,         //CV_286  -  byte 2
+   0b00000000,         //CV_287  -  byte 1
+   0b00000000,         //CV_288  -  byte 0
 //F4 forward
-    0b00000000,         //byte 0    -   CV_289
-    0b00000000,         //byte 1    -   CV_290
-    0b00000000,         //byte 2    -   CV_291
-    0b00000000,         //byte 3    -   CV_292
+   0b00000000,         //CV_289  -  byte 3
+   0b00000000,         //CV_290  -  byte 2
+   0b00000000,         //CV_291  -  byte 1
+   0b00000000,         //CV_292  -  byte 0
 //F4 reverse
-    0b00000000,         //byte 0    -   CV_293
-    0b00000000,         //byte 1    -   CV_294
-    0b00000000,         //byte 2    -   CV_295
-    0b00000000,         //byte 3    -   CV_296
+   0b00000000,         //CV_293  -  byte 3
+   0b00000000,         //CV_294  -  byte 2
+   0b00000000,         //CV_295  -  byte 1
+   0b00000000,         //CV_296  -  byte 0
 //F5 forward
-    0b00000000,         //byte 0    -   CV_297
-    0b00000000,         //byte 1    -   CV_298
-    0b00000000,         //byte 2    -   CV_299
-    0b00000000,         //byte 3    -   CV_300
+   0b00000000,         //CV_297  -  byte 3
+   0b00000000,         //CV_298  -  byte 2
+   0b00000000,         //CV_299  -  byte 1
+   0b00000000,         //CV_300  -  byte 0
 //F5 reverse
-    0b00000000,         //byte 0    -   CV_301
-    0b00000000,         //byte 1    -   CV_302
-    0b00000000,         //byte 2    -   CV_303
-    0b00000000,         //byte 3    -   CV_304
+   0b00000000,         //CV_301  -  byte 3
+   0b00000000,         //CV_302  -  byte 2
+   0b00000000,         //CV_303  -  byte 1
+   0b00000000,         //CV_304  -  byte 0
 //F6 forward
-    0b00000000,         //byte 0    -   CV_305
-    0b00000000,         //byte 1    -   CV_306
-    0b00000000,         //byte 2    -   CV_307
-    0b00000000,         //byte 3    -   CV_308
+   0b00000000,         //CV_305  -  byte 3
+   0b00000000,         //CV_306  -  byte 2
+   0b00000000,         //CV_307  -  byte 1
+   0b00000000,         //CV_308  -  byte 0
 //F6 reverse
-    0b00000000,         //byte 0    -   CV_309
-    0b00000000,         //byte 1    -   CV_310
-    0b00000000,         //byte 2    -   CV_311
-    0b00000000,         //byte 3    -   CV_312
+   0b00000000,         //CV_309  -  byte 3
+   0b00000000,         //CV_310  -  byte 2
+   0b00000000,         //CV_311  -  byte 1
+   0b00000000,         //CV_312  -  byte 0
 //F7 forward
-    0b00000000,         //byte 0    -   CV_313
-    0b00000000,         //byte 1    -   CV_314
-    0b00000000,         //byte 2    -   CV_315
-    0b00000000,         //byte 3    -   CV_316
+   0b00000000,         //CV_313  -  byte 3
+   0b00000000,         //CV_314  -  byte 2
+   0b00000000,         //CV_315  -  byte 1
+   0b00000000,         //CV_316  -  byte 0
 //F7 reverse
-    0b00000000,         //byte 0    -   CV_317
-    0b00000000,         //byte 1    -   CV_318
-    0b00000000,         //byte 2    -   CV_319
-    0b00000000,         //byte 3    -   CV_320
+   0b00000000,         //CV_317  -  byte 3
+   0b00000000,         //CV_318  -  byte 2
+   0b00000000,         //CV_319  -  byte 1
+   0b00000000,         //CV_320  -  byte 0
 //F8 forward
-    0b00000000,         //byte 0    -   CV_321
-    0b00000000,         //byte 1    -   CV_322
-    0b00000000,         //byte 2    -   CV_323
-    0b00000000,         //byte 3    -   CV_324
+   0b00000000,         //CV_321  -  byte 3
+   0b00000000,         //CV_322  -  byte 2
+   0b00000000,         //CV_323  -  byte 1
+   0b00000000,         //CV_324  -  byte 0
 //F8 reverse
-    0b00000000,         //byte 0    -   CV_325
-    0b00000000,         //byte 1    -   CV_326
-    0b00000000,         //byte 2    -   CV_327
-    0b00000000,         //byte 3    -   CV_328
+   0b00000000,         //CV_325  -  byte 3
+   0b00000000,         //CV_326  -  byte 2
+   0b00000000,         //CV_327  -  byte 1
+   0b00000000,         //CV_328  -  byte 0
 //F9 forward
-    0b00000000,         //byte 0    -   CV_329
-    0b00000000,         //byte 1    -   CV_330
-    0b00000000,         //byte 2    -   CV_331
-    0b00000000,         //byte 3    -   CV_332
+   0b00000000,         //CV_329  -  byte 3
+   0b00000000,         //CV_330  -  byte 2
+   0b00000000,         //CV_331  -  byte 1
+   0b00000000,         //CV_332  -  byte 0
 //F9 reverse
-    0b00000000,         //byte 0    -   CV_333
-    0b00000000,         //byte 1    -   CV_334
-    0b00000000,         //byte 2    -   CV_335
-    0b00000000,         //byte 3    -   CV_336
+   0b00000000,         //CV_333  -  byte 3
+   0b00000000,         //CV_334  -  byte 2
+   0b00000000,         //CV_335  -  byte 1
+   0b00000000,         //CV_336  -  byte 0
 //F10 forward
-    0b00000000,         //byte 0    -   CV_337
-    0b00000100,         //byte 1    -   CV_338
-    0b00000000,         //byte 2    -   CV_339
-    0b00000000,         //byte 3    -   CV_340
+   0b00000000,         //CV_337  -  byte 3
+   0b00000000,         //CV_338  -  byte 2
+   0b00000000,         //CV_339  -  byte 1
+   0b00000000,         //CV_340  -  byte 0
 //F10 reverse
-    0b00000000,         //byte 0    -   CV_341
-    0b00000100,         //byte 1    -   CV_342
-    0b00000000,         //byte 2    -   CV_343
-    0b00000000,         //byte 3    -   CV_344
+   0b00000000,         //CV_341  -  byte 3
+   0b00000000,         //CV_342  -  byte 2
+   0b00000000,         //CV_343  -  byte 1
+   0b00000000,         //CV_344  -  byte 0
 //F11 forward
-    0b00000000,         //byte 0    -   CV_345
-    0b00111100,         //byte 1    -   CV_346
-    0b00000000,         //byte 2    -   CV_347
-    0b00000000,         //byte 3    -   CV_348
+   0b00000000,         //CV_345  -  byte 3
+   0b00000000,         //CV_346  -  byte 2
+   0b00000000,         //CV_347  -  byte 1
+   0b00000000,         //CV_348  -  byte 0
 //F11 reverse
-    0b00000000,         //byte 0    -   CV_349
-    0b00000000,         //byte 1    -   CV_350
-    0b00000000,         //byte 2    -   CV_351
-    0b00000000,         //byte 3    -   CV_352
+   0b00000000,         //CV_349  -  byte 3
+   0b00000000,         //CV_350  -  byte 2
+   0b00000000,         //CV_351  -  byte 1
+   0b00000000,         //CV_352  -  byte 0
 //F12 forward
-    0b00000000,         //byte 0    -   CV_353
-    0b00000000,         //byte 1    -   CV_354
-    0b00000000,         //byte 2    -   CV_355
-    0b00000000,         //byte 3    -   CV_356
+   0b00000000,         //CV_353  -  byte 3
+   0b00000000,         //CV_354  -  byte 2
+   0b00000000,         //CV_355  -  byte 1
+   0b00000000,         //CV_356  -  byte 0
 //F12 reverse
-    0b00000000,         //byte 0    -   CV_357
-    0b00000000,         //byte 1    -   CV_358
-    0b00000000,         //byte 2    -   CV_359
-    0b00000000,         //byte 3    -   CV_360
+   0b00000000,         //CV_357  -  byte 3
+   0b00000000,         //CV_358  -  byte 2
+   0b00000000,         //CV_359  -  byte 1
+   0b00000000,         //CV_360  -  byte 0
 //F13 forward
-    0b00000000,         //byte 0    -   CV_361
-    0b00000000,         //byte 1    -   CV_362
-    0b00000000,         //byte 2    -   CV_363
-    0b00000000,         //byte 3    -   CV_364
+   0b00000000,         //CV_361  -  byte 3
+   0b00000000,         //CV_362  -  byte 2
+   0b00000000,         //CV_363  -  byte 1
+   0b00000000,         //CV_364  -  byte 0
 //F13 reverse
-    0b00000000,         //byte 0    -   CV_365
-    0b00000000,         //byte 1    -   CV_366
-    0b00000000,         //byte 2    -   CV_367
-    0b00000000,         //byte 3    -   CV_368
+   0b00000000,         //CV_365  -  byte 3
+   0b00000000,         //CV_366  -  byte 2
+   0b00000000,         //CV_367  -  byte 1
+   0b00000000,         //CV_368  -  byte 0
 //F14 forward
-    0b00000000,         //byte 0    -   CV_369
-    0b00000000,         //byte 1    -   CV_370
-    0b00000000,         //byte 2    -   CV_371
-    0b00000000,         //byte 3    -   CV_372
+   0b00000000,         //CV_369  -  byte 3
+   0b00000000,         //CV_370  -  byte 2
+   0b00000000,         //CV_371  -  byte 1
+   0b00000000,         //CV_372  -  byte 0
 //F14 reverse
-    0b00000000,         //byte 0    -   CV_373
-    0b00000000,         //byte 1    -   CV_374
-    0b00000000,         //byte 2    -   CV_375
-    0b00000000,         //byte 3    -   CV_376
+   0b00000000,         //CV_373  -  byte 3
+   0b00000000,         //CV_374  -  byte 2
+   0b00000000,         //CV_375  -  byte 1
+   0b00000000,         //CV_376  -  byte 0
 //F15 forward
-    0b00000000,         //byte 0    -   CV_377
-    0b00000000,         //byte 1    -   CV_378
-    0b00000000,         //byte 2    -   CV_379
-    0b00000000,         //byte 3    -   CV_380
+   0b00000000,         //CV_377  -  byte 3
+   0b00000000,         //CV_378  -  byte 2
+   0b00000000,         //CV_379  -  byte 1
+   0b00000000,         //CV_380  -  byte 0
 //F15 reverse
-    0b00000000,         //byte 0    -   CV_381
-    0b00000000,         //byte 1    -   CV_382
-    0b00000000,         //byte 2    -   CV_383
-    0b00000000,         //byte 3    -   CV_384
+   0b00000000,         //CV_381  -  byte 3
+   0b00000000,         //CV_382  -  byte 2
+   0b00000000,         //CV_383  -  byte 1
+   0b00000000,         //CV_384  -  byte 0
 //F16 forward
-    0b00000000,         //byte 0    -   CV_385
-    0b00000000,         //byte 1    -   CV_386
-    0b00000000,         //byte 2    -   CV_387
-    0b00000000,         //byte 3    -   CV_388
+   0b00000000,         //CV_385  -  byte 3
+   0b00000000,         //CV_386  -  byte 2
+   0b00000000,         //CV_387  -  byte 1
+   0b00000000,         //CV_388  -  byte 0
 //F16 reverse
-    0b00000000,         //byte 0    -   CV_389
-    0b00000000,         //byte 1    -   CV_390
-    0b00000000,         //byte 2    -   CV_391
-    0b00000000,         //byte 3    -   CV_392
+   0b00000000,         //CV_389  -  byte 3
+   0b00000000,         //CV_390  -  byte 2
+   0b00000000,         //CV_391  -  byte 1
+   0b00000000,         //CV_392  -  byte 0
 //F17 forward
-    0b00000000,         //byte 0    -   CV_393
-    0b00000000,         //byte 1    -   CV_394
-    0b00000000,         //byte 2    -   CV_395
-    0b00000000,         //byte 3    -   CV_396
+   0b00000000,         //CV_393  -  byte 3
+   0b00000000,         //CV_394  -  byte 2
+   0b00000000,         //CV_395  -  byte 1
+   0b00000000,         //CV_396  -  byte 0
 //F17 reverse
-    0b00000000,         //byte 0    -   CV_397
-    0b00000000,         //byte 1    -   CV_398
-    0b00000000,         //byte 2    -   CV_399
-    0b00000000,         //byte 3    -   CV_400
+   0b00000000,         //CV_397  -  byte 3
+   0b00000000,         //CV_398  -  byte 2
+   0b00000000,         //CV_399  -  byte 1
+   0b00000000,         //CV_400  -  byte 0
 //F18 forward
-    0b00000000,         //byte 0    -   CV_401
-    0b00000000,         //byte 1    -   CV_402
-    0b00000000,         //byte 2    -   CV_403
-    0b00000000,         //byte 3    -   CV_404
+   0b00000000,         //CV_401  -  byte 3
+   0b00000000,         //CV_402  -  byte 2
+   0b00000000,         //CV_403  -  byte 1
+   0b00000000,         //CV_404  -  byte 0
 //F18 reverse
-    0b00000000,         //byte 0    -   CV_405
-    0b00000000,         //byte 1    -   CV_406
-    0b00000000,         //byte 2    -   CV_407
-    0b00000000,         //byte 3    -   CV_408
+   0b00000000,         //CV_405  -  byte 3
+   0b00000000,         //CV_406  -  byte 2
+   0b00000000,         //CV_407  -  byte 1
+   0b00000000,         //CV_408  -  byte 0
 //F19 forward
-    0b00000000,         //byte 0    -   CV_409
-    0b00000000,         //byte 1    -   CV_410
-    0b00000000,         //byte 2    -   CV_411
-    0b00000000,         //byte 3    -   CV_412
+   0b00000000,         //CV_409  -  byte 3
+   0b00000000,         //CV_410  -  byte 2
+   0b00000000,         //CV_411  -  byte 1
+   0b00000000,         //CV_412  -  byte 0
 //F19 reverse
-    0b00000000,         //byte 0    -   CV_413
-    0b00000000,         //byte 1    -   CV_414
-    0b00000000,         //byte 2    -   CV_415
-    0b00000000,         //byte 3    -   CV_416
+   0b00000000,         //CV_413  -  byte 3
+   0b00000000,         //CV_414  -  byte 2
+   0b00000000,         //CV_415  -  byte 1
+   0b00000000,         //CV_416  -  byte 0
 //F20 forward
-    0b00000000,         //byte 0    -   CV_417
-    0b00000000,         //byte 1    -   CV_418
-    0b00000000,         //byte 2    -   CV_419
-    0b00000000,         //byte 3    -   CV_420
+   0b00000000,         //CV_417  -  byte 3
+   0b00000000,         //CV_418  -  byte 2
+   0b00000000,         //CV_419  -  byte 1
+   0b00000000,         //CV_420  -  byte 0
 //F20 reverse
-    0b00000000,         //byte 0    -   CV_421
-    0b00000000,         //byte 1    -   CV_422
-    0b00000000,         //byte 2    -   CV_423
-    0b00000000,         //byte 3    -   CV_424
+   0b00000000,         //CV_421  -  byte 3
+   0b00000000,         //CV_422  -  byte 2
+   0b00000000,         //CV_423  -  byte 1
+   0b00000000,         //CV_424  -  byte 0
 //F21 forward
-    0b00000000,         //byte 0    -   CV_425
-    0b00000000,         //byte 1    -   CV_426
-    0b00000000,         //byte 2    -   CV_427
-    0b00000000,         //byte 3    -   CV_428
+   0b00000000,         //CV_425  -  byte 3
+   0b00000000,         //CV_426  -  byte 2
+   0b00000000,         //CV_427  -  byte 1
+   0b00000000,         //CV_428  -  byte 0
 //F21 reverse
-    0b00000000,         //byte 0    -   CV_429
-    0b00000000,         //byte 1    -   CV_430
-    0b00000000,         //byte 2    -   CV_431
-    0b00000000,         //byte 3    -   CV_432
+   0b00000000,         //CV_429  -  byte 3
+   0b00000000,         //CV_430  -  byte 2
+   0b00000000,         //CV_431  -  byte 1
+   0b00000000,         //CV_432  -  byte 0
 //F22 forward
-    0b00000000,         //byte 0    -   CV_433
-    0b00000000,         //byte 1    -   CV_434
-    0b00000000,         //byte 2    -   CV_435
-    0b00000000,         //byte 3    -   CV_436
+   0b00000000,         //CV_433  -  byte 3
+   0b00000000,         //CV_434  -  byte 2
+   0b00000000,         //CV_435  -  byte 1
+   0b00000000,         //CV_436  -  byte 0
 //F22 reverse
-    0b00000000,         //byte 0    -   CV_437
-    0b00000000,         //byte 1    -   CV_438
-    0b00000000,         //byte 2    -   CV_439
-    0b00000000,         //byte 3    -   CV_440
+   0b00000000,         //CV_437  -  byte 3
+   0b00000000,         //CV_438  -  byte 2
+   0b00000000,         //CV_439  -  byte 1
+   0b00000000,         //CV_440  -  byte 0
 //F23 forward
-    0b00000000,         //byte 0    -   CV_441
-    0b00000000,         //byte 1    -   CV_442
-    0b00000000,         //byte 2    -   CV_443
-    0b00000000,         //byte 3    -   CV_444
+   0b00000000,         //CV_441  -  byte 3
+   0b00000000,         //CV_442  -  byte 2
+   0b00000000,         //CV_443  -  byte 1
+   0b00000000,         //CV_444  -  byte 0
 //F23 reverse
-    0b00000000,         //byte 0    -   CV_445
-    0b00000000,         //byte 1    -   CV_446
-    0b00000000,         //byte 2    -   CV_447
-    0b00000000,         //byte 3    -   CV_448
+   0b00000000,         //CV_445  -  byte 3
+   0b00000000,         //CV_446  -  byte 2
+   0b00000000,         //CV_447  -  byte 1
+   0b00000000,         //CV_448  -  byte 0
 //F24 forward
-    0b00000000,         //byte 0    -   CV_449
-    0b00000000,         //byte 1    -   CV_450
-    0b00000000,         //byte 2    -   CV_451
-    0b00000000,         //byte 3    -   CV_452
+   0b00000000,         //CV_449  -  byte 3
+   0b00000000,         //CV_450  -  byte 2
+   0b00000000,         //CV_451  -  byte 1
+   0b00000000,         //CV_452  -  byte 0
 //F24 reverse
-    0b00000000,         //byte 0    -   CV_453
-    0b00000000,         //byte 1    -   CV_454
-    0b00000000,         //byte 2    -   CV_455
-    0b00000000,         //byte 3    -   CV_456
+   0b00000000,         //CV_453  -  byte 3
+   0b00000000,         //CV_454  -  byte 2
+   0b00000000,         //CV_455  -  byte 1
+   0b00000000,         //CV_456  -  byte 0
 //F25 forward
-    0b00000000,         //byte 0    -   CV_457
-    0b00000000,         //byte 1    -   CV_458
-    0b00000000,         //byte 2    -   CV_459
-    0b00000000,         //byte 3    -   CV_460
+   0b00000000,         //CV_457  -  byte 3
+   0b00000000,         //CV_458  -  byte 2
+   0b00000000,         //CV_459  -  byte 1
+   0b00000000,         //CV_460  -  byte 0
 //F25 reverse
-    0b00000000,         //byte 0    -   CV_461
-    0b00000000,         //byte 1    -   CV_462
-    0b00000000,         //byte 2    -   CV_463
-    0b00000000,         //byte 3    -   CV_464
+   0b00000000,         //CV_461  -  byte 3
+   0b00000000,         //CV_462  -  byte 2
+   0b00000000,         //CV_463  -  byte 1
+   0b00000000,         //CV_464  -  byte 0
 //F26 forward
-    0b00000000,         //byte 0    -   CV_465
-    0b00000000,         //byte 1    -   CV_466
-    0b00000000,         //byte 2    -   CV_467
-    0b00000000,         //byte 3    -   CV_468
+   0b00000000,         //CV_465  -  byte 3
+   0b00000000,         //CV_466  -  byte 2
+   0b00000000,         //CV_467  -  byte 1
+   0b00000000,         //CV_468  -  byte 0
 //F26 reverse
-    0b00000000,         //byte 0    -   CV_469
-    0b00000000,         //byte 1    -   CV_470
-    0b00000000,         //byte 2    -   CV_471
-    0b00000000,         //byte 3    -   CV_472
+   0b00000000,         //CV_469  -  byte 3
+   0b00000000,         //CV_470  -  byte 2
+   0b00000000,         //CV_471  -  byte 1
+   0b00000000,         //CV_472  -  byte 0
 //F27 forward
-    0b00000000,         //byte 0    -   CV_473
-    0b00000000,         //byte 1    -   CV_474
-    0b00000000,         //byte 2    -   CV_475
-    0b00000000,         //byte 3    -   CV_476
+   0b00000000,         //CV_473  -  byte 3
+   0b00000000,         //CV_474  -  byte 2
+   0b00000000,         //CV_475  -  byte 1
+   0b00000000,         //CV_476  -  byte 0
 //F27 reverse
-    0b00000000,         //byte 0    -   CV_477
-    0b00000000,         //byte 1    -   CV_478
-    0b00000000,         //byte 2    -   CV_479
-    0b00000000,         //byte 3    -   CV_480
+   0b00000000,         //CV_477  -  byte 3
+   0b00000000,         //CV_478  -  byte 2
+   0b00000000,         //CV_479  -  byte 1
+   0b00000000,         //CV_480  -  byte 0
 //F28 forward
-    0b00000000,         //byte 0    -   CV_481
-    0b00000000,         //byte 1    -   CV_482
-    0b00000000,         //byte 2    -   CV_483
-    0b00000000,         //byte 3    -   CV_484
+   0b00000000,         //CV_481  -  byte 3
+   0b00000000,         //CV_482  -  byte 2
+   0b00000000,         //CV_483  -  byte 1
+   0b00000000,         //CV_484  -  byte 0
 //F28 reverse
-    0b00000000,         //byte 0    -   CV_485
-    0b00000000,         //byte 1    -   CV_486
-    0b00000000,         //byte 2    -   CV_487
-    0b00000000,         //byte 3    -   CV_488
+   0b00000000,         //CV_485  -  byte 3
+   0b00000000,         //CV_486  -  byte 2
+   0b00000000,         //CV_487  -  byte 1
+   0b00000000,         //CV_488  -  byte 0
 //F29 forward
-    0b00000000,         //byte 0    -   CV_489
-    0b00000000,         //byte 1    -   CV_490
-    0b00000000,         //byte 2    -   CV_491
-    0b00000000,         //byte 3    -   CV_492
+   0b00000000,         //CV_489  -  byte 3
+   0b00000000,         //CV_490  -  byte 2
+   0b00000000,         //CV_491  -  byte 1
+   0b00000000,         //CV_492  -  byte 0
 //F29 reverse
-    0b00000000,         //byte 0    -   CV_493
-    0b00000000,         //byte 1    -   CV_494
-    0b00000000,         //byte 2    -   CV_495
-    0b00000000,         //byte 3    -   CV_496
+   0b00000000,         //CV_493  -  byte 3
+   0b00000000,         //CV_494  -  byte 2
+   0b00000000,         //CV_495  -  byte 1
+   0b00000000,         //CV_496  -  byte 0
 //F30 forward
-    0b00000000,         //byte 0    -   CV_497
-    0b00000000,         //byte 1    -   CV_498
-    0b00000000,         //byte 2    -   CV_499
-    0b00000000,         //byte 3    -   CV_500
+   0b00000000,         //CV_497  -  byte 3
+   0b00000000,         //CV_498  -  byte 2
+   0b00000000,         //CV_499  -  byte 1
+   0b00000000,         //CV_500  -  byte 0
 //F30 reverse
-    0b00000000,         //byte 0    -   CV_501
-    0b00000000,         //byte 1    -   CV_502
-    0b00000000,         //byte 2    -   CV_503
-    0b00000000,         //byte 3    -   CV_504
+   0b00000000,         //CV_501  -  byte 3
+   0b00000000,         //CV_502  -  byte 2
+   0b00000000,         //CV_503  -  byte 1
+   0b00000000,         //CV_504  -  byte 0
 //F31 forward
-    0b00000000,         //byte 0    -   CV_505
-    0b00000000,         //byte 1    -   CV_506
-    0b00000000,         //byte 2    -   CV_507
-    0b00000000,         //byte 3    -   CV_508
+   0b00000000,         //CV_505  -  byte 3
+   0b00000000,         //CV_506  -  byte 2
+   0b00000000,         //CV_507  -  byte 1
+   0b00000000,         //CV_508  -  byte 0
 //F31 reverse
-    0b00000000,         //byte 0    -   CV_509
-    0b00000000,         //byte 1    -   CV_510
-    0b00000000,         //byte 2    -   CV_511
-    0b00000000,         //byte 3    -   CV_512
+   0b00000000,         //CV_509  -  byte 3
+   0b00000000,         //CV_510  -  byte 2
+   0b00000000,         //CV_511  -  byte 1
+   0b00000000,         //CV_512  -  byte 0
 };

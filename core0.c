@@ -7,56 +7,79 @@
 #include "core0.h"
 const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
 uint64_t input_bit_buffer = 0;
-bool reset_package_flag = false;
-absolute_time_t falling_edge_time,rising_edge_time;
 uint16_t level_table[32] = {0};
+absolute_time_t falling_edge_time,rising_edge_time;
 
 
-uint16_t two_sigma(const uint16_t arr[], uint8_t length){
-    //Calculate arithmetic average
-    uint32_t sum = 0;
-    for (uint i = 0; i < length; ++i) {
+// Function returns average of values deviating less than twice the standard deviation from original average
+float two_std_dev(const float arr[], uint32_t length){
+    // Calculate arithmetic average
+    float sum = 0;
+    for (uint32_t i = 0; i < length; ++i) {
         sum += arr[i];
     }
-    uint16_t x_avg = sum / length;
-    //Calculate variance
+    float x_avg = sum / (float)length;
+
+    // Calculate sample variance and sampled standard deviation
     sum = 0;
-    for (uint8_t i = 0; i < length; ++i) {
+    for (uint32_t i = 0; i < length; ++i) {
         sum += (arr[i]-x_avg)*(arr[i]-x_avg);
     }
-    float variance = (float) sum/ (float)(length-1);
-    //Calculate standard deviation
-    uint16_t std_dev = (uint16_t)sqrtf(variance);
-    //"Filter" every array element that deviates more than 2*(std_dev)
+    float variance = sum / (float)(length-1);
+    float std_dev = sqrtf(variance);
+
+    // Sum every element that is within two times the sampled standard deviation and compute new average
     sum = 0;
-    uint8_t counter = 0;
-    for (uint8_t i = 0; i < length; ++i) {
-        uint16_t val = arr[i]-x_avg;
-        if ( val < 2*std_dev || val > (0-2*std_dev) ){
+    uint32_t counter = 0;
+    for (uint32_t i = 0; i < length; ++i) {
+        float diff = fabsf(arr[i]-x_avg);
+        if ( diff < std_dev*2.0f ){
             sum += arr[i];
             counter++;
         }
     }
-    //Calculate and return "new" arithmetic average from "filtered" array
-    return sum / counter;
+    return sum / (float)counter;
 }
 
 
 // Measures constant adc offset and programs the offset into flash
-void adc_offset_adjustment(uint8_t length){
-    uint16_t offsets[length];
-    //Set PWM level to 0 just for good measure
+void adc_offset_adjustment(uint32_t n){
+    float offsets_fwd[n];
+    float offsets_rev[n];
+    // Set PWM level to 0 just to be sure
     pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
     pwm_set_gpio_level(MOTOR_REV_PIN, 0);
-    for (uint8_t i  = 0;  i < length; i++) {
-        //uint16_t fwd = measure(true); //TODO: function needs to be rewritten without measure()
-        //uint16_t rev = measure(false);
-        //offsets[i] = (fwd+rev)/2;
+    busy_wait_ms(1000);
+
+    // Measure n times in "reverse direction" (GPIO 28)
+    adc_select_input(2);
+    adc_run(true);
+    for (uint32_t i  = 0;  i < n; i++) {
+        offsets_rev[i] = (float)adc_fifo_get_blocking();
     }
-    uint8_t offsets_fwd_avg = two_sigma(offsets, length);
+    adc_run(false);
+    adc_fifo_drain();
+    busy_wait_ms(1000);
+
+    // Measure n times in "forward direction" (GPIO 29)
+    adc_select_input(3);
+    adc_run(true);
+    for (uint32_t i  = 0;  i < n; i++) {
+        offsets_fwd[i] = (float)adc_fifo_get_blocking();
+    }
+    adc_run(false);
+    adc_fifo_drain();
+
+    // Find overall average discarding outliers in measurement
+    float offset_avg_fwd = two_std_dev(offsets_fwd, n);
+    float offset_avg_rev = two_std_dev(offsets_rev, n);
+    float overall_avg = (offset_avg_fwd+offset_avg_rev)/2;
+    uint8_t offset = (uint8_t)roundf(overall_avg);
+
+    // Create temporary array -> change CV 172 in temp array -> erase flash -> write temp array to flash
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
-    CV_ARRAY_TEMP[171] = offsets_fwd_avg;
+    CV_ARRAY_TEMP[171] = offset;
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
     flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
 }
@@ -90,34 +113,60 @@ void verify_cv_byte(uint16_t cv_address, uint8_t cv_data){
     if (CV_ARRAY_FLASH[cv_address] == cv_data) acknowledge();
 }
 
+void regular_cv_write(uint16_t cv_index, uint8_t cv_data){
+    uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
+    memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
+    CV_ARRAY_TEMP[cv_index] = cv_data;
+    flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+    flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
+    acknowledge();
+}
+
 
 // CV writing function first erases block in flashes and then rewrites to flash
 // Writing to read-only functions also gets handled here (e.g. complete reset to default)
-void write_cv_byte(uint16_t cv_index, uint8_t cv_data){
-    //CV_7 & CV_8 are read-only
-    //Reset all CVs to Default (CV_8; Value = 8)
-    if(cv_index == 7 && cv_data == 8){
-        flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-        flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
-    }
-    //ADC offset Adjustment (CV_7; Value = 7);
-    else if(cv_index == 6 && cv_data == 7){
-        adc_offset_adjustment(CV_ARRAY_FLASH[173]);
-    }
-    else if( !cv_index && !cv_data );
-    else{
-        uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
-        memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
-        CV_ARRAY_TEMP[cv_index] = cv_data;
-        flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-        flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
-        acknowledge();
+void write_cv_handler(uint16_t cv_index, uint8_t cv_data){
+    switch (cv_index) {
+        // CV_1 => Value = 0 is not allowed
+        case 0:
+            if (cv_data == 0) break;
+        // CV_7 & CV_8 are read-only
+        // ADC offset Adjustment (CV_7; Value = 7);
+        case 6:
+            if (cv_data == 7) adc_offset_adjustment(8192);
+            break;
+        // Reset all CVs to Default (CV_8; Value = 8)
+        case 7:
+            if (cv_data == 8){
+                flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+                flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
+            }
+            break;
+
+        // CV_17 must have a value between 11000000->(192dec) and 11100111->(231dec) inclusive
+        // CV_17 == 192 && CV_18 == 0 -> Address = 0 is also not valid and therefore shall not be set
+        case 16:
+            if ( (cv_data < 192 || cv_data > 231) || (CV_ARRAY_FLASH[17] == 0 && cv_data == 192) )  break;
+            else regular_cv_write(cv_index,cv_data);
+            break;
+        case 17:
+            if(CV_ARRAY_FLASH[16] == 192 && cv_data == 0) break;
+            else regular_cv_write(cv_index,cv_data);
+            break;
+        // CV_31 & CV_32 Index high byte isn't implemented and shall not be set
+        case 30:
+        case 31:
+            break;
+
+        // Regular CV write is carried out
+        default:
+            regular_cv_write(cv_index,cv_data);
     }
 }
 
 
 // CV Programming function resets core1 and evaluates the type of programming instruction (e.g. write byte)
-void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
+void program_mode(uint8_t number_of_bytes, const uint8_t * const byte_array, bool restart_core1){
     //First check for valid programming command ("address" 112-127)
     if (byte_array[number_of_bytes - 1]<128 && byte_array[number_of_bytes - 1]>111){
             uint8_t instruction_type_mask = 0b00001100;
@@ -151,46 +200,28 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]){
             // Write CV byte instruction
             else if (instruction_type == 0b000001100) {
                 uint8_t cv_data = byte_array[number_of_bytes - 3];
-                write_cv_byte(cv_address, cv_data);
+                write_cv_handler(cv_address, cv_data);
             }
 
-            // Restore interrupts and launch start core1
+            // Restore interrupts
             restore_interrupts(saved_interrupts);
-            multicore_launch_core1(core1_entry);
-
-            //wait for core1 launch before proceeding
-            multicore_fifo_pop_blocking();
+            busy_wait_ms(5);
     }
 }
 
 
-// retrieve 4Bytes from CV_ARRAY_FLASH at once and return 32-Bit value
-uint32_t get_32bit_CV (uint16_t CV_start_index){
-    uint8_t byte_0 = CV_ARRAY_FLASH[CV_start_index];
-    uint8_t byte_1 = CV_ARRAY_FLASH[CV_start_index+1];
-    uint8_t byte_2 = CV_ARRAY_FLASH[CV_start_index+2];
-    uint8_t byte_3 = CV_ARRAY_FLASH[CV_start_index+3];
-    return (byte_0) + (byte_1<<8) + (byte_2<<16) + (byte_3<<24);
-}
 
-
-// retrieve 2Bytes from CV_ARRAY_FLASH at once and return 16-Bit value
-uint16_t get_16bit_CV (uint16_t CV_start_index){
-    uint8_t byte_0 = CV_ARRAY_FLASH[CV_start_index];
-    uint8_t byte_1 = CV_ARRAY_FLASH[CV_start_index+1];
-    return (byte_0) + (byte_1<<8);
-}
 
 
 // Set outputs according to configuration (PWM on/off, PWM duty cycle/level, ...)
 void set_outputs(uint32_t functions_to_set_bitmask) {
     uint32_t outputs_to_set = 0;
-    uint32_t outputs_with_PWM_enabled = get_32bit_CV(111);  //get outputs with pwm enabled (bitmask)
+    uint32_t outputs_with_PWM_enabled = get_32bit_CV(111);  //get outputs with pwm enabled (bitmask)    // TODO: Verify  - should be fine...
     uint32_t outputs_to_set_PWM = outputs_with_PWM_enabled;
     uint32_t temp_mask = 1;
     for (uint8_t i = 0; i < 32; i++) {
         if (temp_mask & functions_to_set_bitmask ){
-            outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * get_direction(0));
+            //outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * get_direction(0));   //TODO: verify
         }
         temp_mask<<=1;
     }
@@ -232,7 +263,7 @@ void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind,
 
 
 // Bitwise XOR for all Bytes -> Successful result is: "0000 0000"
-bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]) {
+bool error_detection(int8_t number_of_bytes, const uint8_t * const byte_array) {
     uint8_t xor_byte = 0;
     for (int i = 0; i < number_of_bytes; i++) {
         xor_byte = xor_byte ^ byte_array[i];
@@ -242,37 +273,45 @@ bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]) {
 
 
 // Check for long address. Function returns true for long address.
-bool is_long_address(uint8_t number_of_bytes, const uint8_t byte_array[]) {
+bool is_long_address(uint8_t number_of_bytes, const uint8_t * const byte_array) {
     if ((byte_array[number_of_bytes - 1]>>6) == 0b00000011) return true;
     return false;
 }
 
 
 // First checks for idle package and then evaluates address included in byte_array[]
-bool address_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
-    //Check for Idle Package
+bool address_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_array) {
+    // Check for Idle Package
     if (byte_array[number_of_bytes - 1] == 255)
     {
         return false;
     }
 
-    //Long Address Package
+    // Long/extended address decoder configuration (CV_29 Bit5)
+    bool CV_29_bit5 = (CV_ARRAY_FLASH[28]&0b00100000)>>5;
     uint16_t read_address;
-    if (is_long_address(number_of_bytes, byte_array))
-    {
-        //start of transmission -> address_byte_1 -> address_byte_0 -> ... -> end of transmission
-        uint16_t address_byte_1 = (byte_array[number_of_bytes - 1]) - 192;  //remove long address identifier bits
-        uint16_t address_byte_0 = (byte_array[number_of_bytes - 2]);
-        read_address = (address_byte_1 << 8) + address_byte_0;
-        uint8_t long_address_mask = 0b00111111;
-        uint16_t long_address = ((CV_ARRAY_FLASH[16]&long_address_mask)<<8)+CV_ARRAY_FLASH[17];
-        return (long_address == read_address);
+    // Decoder configured to receive long/extended address
+    if (CV_29_bit5){
+        // Package received does contain a long address -> Check for accordance
+        if (is_long_address(number_of_bytes, byte_array))
+        {
+            // start of transmission -> address_byte_1 -> address_byte_0 -> ... -> end of transmission
+            uint16_t address_byte_1 = (byte_array[number_of_bytes - 1]) - 192;  // Remove long address identifier bits
+            uint16_t address_byte_0 = (byte_array[number_of_bytes - 2]);
+            read_address = (address_byte_1 << 8) + address_byte_0;
+            uint16_t long_address = get_16bit_CV(16) & 0x3FFF;      // &Mask to remove long address identifier bits
+            return (long_address == read_address);
+        }
+        // Package received does not contain a long address
+        else return false;
     }
 
-    //Short Address Package
+
+    // Short address decoder configuration (CV_29 Bit5)
     else
     {
-        //start of transmission ->  address_byte_0 -> ... -> end of transmission
+        // Short Address Package
+        // start of transmission ->  address_byte_0 -> ... -> end of transmission
         read_address = (byte_array[number_of_bytes - 1]);
         return (CV_ARRAY_FLASH[0] == read_address);
     }
@@ -280,7 +319,7 @@ bool address_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
 
 
 // Evaluate the type of instruction
-void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) {
+void instruction_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_array) {
     // start of transmission -> ... -> command_byte_n -> ... -> command_byte_0 -> ... -> end of transmission
     // The position of command bytes depend on whether the address is long or not
     uint8_t command_byte_n;
@@ -299,7 +338,7 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
         uint32_t speed_step = byte_array[command_byte_start_index - 1];
         multicore_fifo_push_blocking(speed_step);
         // In case of a direction change, functions need to be updated because functions might depend on direction state
-        if (get_direction(0) != prev_dir) update_active_functions(0,0,1);
+        if (get_direction(0) != prev_dir) update_active_functions(0,0,true);
     }
 
     // 10XX-XXXX (Function Group Instruction)
@@ -337,7 +376,7 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]) 
 
 
 // Check for reset package - When reset package is found stop the motor and disable all functions
-bool reset_package_check(uint8_t number_of_bytes,const uint8_t byte_array[]){
+bool reset_package_check(uint8_t number_of_bytes,const uint8_t * const byte_array){
     if (byte_array[number_of_bytes-1] == 0b00000000 && byte_array[number_of_bytes-2] == 0b00000000){
         uint32_t speed_step = 1;
         multicore_fifo_push_blocking(speed_step);
@@ -378,20 +417,32 @@ void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
 
 // Sequence of bits gets evaluated
 void evaluation(){
+    static bool core1_launched = false;
+    static bool reset_package_flag;
     int8_t number_of_bytes = check_for_package();
+    // number of bytes is != -1 when the package is valid
     if (number_of_bytes != -1) {
+        // Split data into 8Bit array
         uint8_t byte_array[SIZE_BYTE_ARRAY] = {0};
         bits_to_byte_array(number_of_bytes,byte_array);
-        if(byte_array[number_of_bytes-3]==239 && byte_array[number_of_bytes-4]==151){
-        }
+        // Check for errors
         if (error_detection(number_of_bytes,byte_array)) {
+            // Check for matching address
             if (address_evaluation(number_of_bytes,byte_array)) {
                 reset_package_flag = false;
+                if (!core1_launched){
+                    multicore_launch_core1(core1_entry);
+                    // Wait for pid.direction pointer via multicore fifo also signalizing that core1 initialization is finished.
+                    get_direction((bool *) multicore_fifo_pop_blocking());
+                    core1_launched = true;
+                }
                 instruction_evaluation(number_of_bytes,byte_array);
             }
+            // When previous packet was a reset package -> enter program mode
             else if (reset_package_flag) {
-                program_mode(number_of_bytes,byte_array);
+                program_mode(number_of_bytes,byte_array,true);
             }
+            // Check for reset package and set flag when reset package is received
             else {
                 reset_package_flag = reset_package_check(number_of_bytes,byte_array);
             }
@@ -434,7 +485,7 @@ void track_signal_fall(unsigned int gpio, long unsigned int events) {
 void init_outputs(){
     gpio_init_mask(GPIO_ALLOWED_OUTPUTS);
     gpio_set_dir_out_masked(GPIO_ALLOWED_OUTPUTS);          //note: This might also disable UART on GPIO0 & GPIO1
-    uint32_t Outputs_with_PWM_enabled = get_32bit_CV(111);
+    uint32_t Outputs_with_PWM_enabled = get_32bit_CV(111);  // TODO: Verify - should be fine...
     uint32_t slice, channel;
     uint16_t wrap, level;
     uint32_t temp_mask = 1;
@@ -442,8 +493,8 @@ void init_outputs(){
         if (Outputs_with_PWM_enabled&temp_mask){
             slice = pwm_gpio_to_slice_num(i);
             channel = pwm_gpio_to_channel(i);   //0 for Channel A, 1 for Channel B
-            wrap = get_16bit_CV(115 + slice*7);
-            level = get_16bit_CV(118 + 7*slice+ 2*channel);
+            wrap = get_16bit_CV(115 + slice*7); // TODO: Verify
+            level = get_16bit_CV(118 + 7*slice+ 2*channel); // TODO: Verify
             gpio_set_function(i,GPIO_FUNC_PWM);
             pwm_set_wrap(slice,wrap);
             pwm_set_gpio_level(i,0);
@@ -456,19 +507,72 @@ void init_outputs(){
 }
 
 
+// Measures "base" pwm duty cycle needed to overcome friction
+uint16_t measure_base_pwm(bool direction, uint8_t iterations){
+    uint gpio;
+    if (direction) gpio = MOTOR_FWD_PIN;
+    else gpio = MOTOR_REV_PIN;
+    float level_arr[iterations];
+    for (int i = 0; i < iterations; ++i) {
+        uint16_t level = 0;
+        float measurement;
+        do {
+            pwm_set_gpio_level(gpio, level);
+            busy_wait_ms(15);
+            level += 10;
+            measurement = measure(CV_ARRAY_FLASH[60],
+                                  CV_ARRAY_FLASH[61],
+                                  CV_ARRAY_FLASH[62],
+                                  CV_ARRAY_FLASH[63],
+                                  direction);
+        }
+        // (Measurement - ADC_Offset) < 5.0f
+        while((measurement - (float)CV_ARRAY_FLASH[171]) < 5.0f);
+        level_arr[i] = (float)level;
+        busy_wait_ms(500);
+    }
+    // Find and return overall average discarding outliers in measurement
+    return (uint16_t)two_std_dev(level_arr,5);
+}
+
+
 // Check for flash memory factory condition and adc offset setup
 // When factory condition is found the CV_ARRAY_DEFAULT will be written into flash
 // When ADC Setup is not configured run adc offset adjustment function and write adc offset into flash
 void cv_setup_check(){
-    //Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition is found.
-    if (CV_ARRAY_FLASH[64]){
+
+    // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition is found.
+    if ( CV_ARRAY_FLASH[64] ){
         uint8_t arr[4] = {125,8,7,124};
-        program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
+        program_mode(4,arr,false);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
-    //Check for adc offset setup
+
+    // Check for adc offset setup
     if ( CV_ARRAY_FLASH[171]  == 0xFF ){
         uint8_t arr[4] = {125,7,6,124};
-        program_mode(4,arr);        //ADC offset adjustment  (write CV_7 = 7)
+        program_mode(4,arr,false);        //ADC offset adjustment  (write CV_7 = 7)
+    }
+
+    // Check for base PWM configuration - used for feed-forward
+    // Forward Direction
+    if (get_16bit_CV(175) == 0){
+        uint16_t base_pwm_fwd = measure_base_pwm(true,10);
+        uint8_t base_pwm_fwd_high_byte = base_pwm_fwd>>8;
+        uint8_t base_pwm_fwd_low_byte = base_pwm_fwd&0x00FF;
+        uint8_t arr0[4] = {125,base_pwm_fwd_high_byte,175,124};
+        program_mode(4,arr0,false);
+        uint8_t arr1[4] = {125,base_pwm_fwd_low_byte,176,124};
+        program_mode(4,arr1,false);
+    }
+    // Reverse Direction
+    if (get_16bit_CV(177) == 0){
+        uint16_t base_pwm_rev = measure_base_pwm(false,10);
+        uint8_t base_pwm_rev_high_byte = base_pwm_rev>>8;
+        uint8_t base_pwm_rev_low_byte = base_pwm_rev&0x00FF;
+        uint8_t arr0[4] = {125,base_pwm_rev_high_byte,177,124};
+        program_mode(4,arr0,false);
+        uint8_t arr1[4] = {125,base_pwm_rev_low_byte,178,124};
+        program_mode(4,arr1,false);
     }
 }
 
@@ -486,12 +590,36 @@ bool get_direction(bool *direction_ptr){
 }
 
 
+// Motor PWM initialization
+void init_motor_pwm(uint8_t gpio) {
+    uint16_t wrap_counter = _125M/(CV_ARRAY_FLASH[8]*100+10000);    // 125MHz / f_pwm
+    uint32_t slice_num = pwm_gpio_to_slice_num(gpio);
+    pwm_set_clkdiv_int_frac(slice_num,CV_ARRAY_FLASH[173],0);
+    pwm_set_wrap(slice_num, wrap_counter);
+    pwm_set_gpio_level(gpio,0);
+    pwm_set_enabled(slice_num, true);
+}
+
+
+// Main initialization  -  GPIO Config / ADC Config
+void init_main(){
+    if(gpio_get_function(MOTOR_FWD_PIN) != 4){
+        gpio_set_function(MOTOR_FWD_PIN, GPIO_FUNC_PWM);
+        gpio_set_function(MOTOR_REV_PIN, GPIO_FUNC_PWM);
+        adc_init();
+        adc_gpio_init(FWD_V_EMF_ADC_PIN);
+        adc_gpio_init(REV_V_EMF_ADC_PIN);
+        adc_fifo_setup(true,false,0,false,false);
+    }
+}
+
+
 int main() {
     stdio_init_all();
     printf("core0 init...\n");
-    multicore_launch_core1(core1_entry);
-    // Wait for pid.direction pointer via multicore fifo also signalizing that core1 initialization is finished.
-    get_direction((bool *) multicore_fifo_pop_blocking());
+    init_main();
+    init_motor_pwm(MOTOR_FWD_PIN);
+    init_motor_pwm(MOTOR_REV_PIN);
     cv_setup_check();
     init_outputs();
     gpio_init(DCC_INPUT_PIN);
