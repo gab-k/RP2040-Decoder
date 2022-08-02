@@ -304,7 +304,7 @@ void core1_entry() {
         // Check for time difference between last packet and current time (Packet Timeout)
         absolute_time_t current_time = get_absolute_time();
         if (absolute_time_diff_us(time_last_update,current_time) > packet_timeout_threshold_in_us){
-            update_speed_dir(pid,0);
+            update_speed_dir(pid,1 + 128*pid->direction);   // Emergency stop on timeout
         }
         // If core0 sends new speed data to core1 speed_step_target and direction variables get updated
         if(multicore_fifo_rvalid()) {

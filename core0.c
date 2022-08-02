@@ -129,7 +129,7 @@ void write_cv_handler(uint16_t cv_index, uint8_t cv_data){
     switch (cv_index) {
         // CV_1 => Value = 0 is not allowed
         case 0:
-            if (cv_data == 0) break;
+            if (cv_data == 0 || cv_data > 127) break;
         // CV_7 & CV_8 are read-only
         // ADC offset Adjustment (CV_7; Value = 7);
         case 6:
