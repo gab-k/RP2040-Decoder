@@ -19,7 +19,7 @@ void update_speed_dir(pid_params *pid, uint32_t speed_step_target){
         if (pid->speed_step_target == 128) pid->end_target_index = 0;
         else pid->end_target_index = (pid->speed_step_target-129);
     }
-        // Reverse
+    // Reverse
     else {
         pid->direction = false^reverse_dir;
         if (pid->speed_step_target == 0) pid->end_target_index = 0;
@@ -75,11 +75,12 @@ bool speed_helper(struct repeating_timer *t) {
 
 // Helper function to adjust pwm level/duty cycle.
 void adjust_pwm_level(uint16_t level, pid_params *pid) {
+    // Forward
     if (pid->direction) {
         pwm_set_gpio_level(MOTOR_REV_PIN, 0);
         pwm_set_gpio_level(MOTOR_FWD_PIN, level);
     }
-        //Reverse
+    // Reverse
     else {
         pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
         pwm_set_gpio_level(MOTOR_REV_PIN, level);
@@ -241,12 +242,12 @@ void init_pid(pid_params *pid){
     pid->cd_1 = (2*pid->tau-pid->t)/(2*pid->tau+pid->t);
     pid->int_lim_max = 10*(float)CV_ARRAY_FLASH[51];
     pid->int_lim_min = -10*(float)CV_ARRAY_FLASH[52];
-    pid->k_ff = (float)CV_ARRAY_FLASH[46]/10000;     // 0.005f;
+    pid->k_ff = (float)CV_ARRAY_FLASH[46]/10000;
     pid->max_output = (float)(_125M/(CV_ARRAY_FLASH[8]*100+10000));
     pid->x_1_rev = 0.0f;
     pid->x_1_fwd = 0.0f;
-    pid->y_1_fwd = (float)get_16bit_CV(175); //(float)measure_base_pwm(pid,1);
-    pid->y_1_rev = (float)get_16bit_CV(177); //(float)measure_base_pwm(pid,0);
+    pid->y_1_fwd = (float)get_16bit_CV(175);
+    pid->y_1_rev = (float)get_16bit_CV(177);
     pid->x_2_rev = (float)pid->speed_table[126];
     pid->x_2_fwd = (float)pid->speed_table[126];
 

@@ -1,19 +1,18 @@
 #pragma once
 #define CV_ARRAY_SIZE 512
-// All CVs are 8-bit numbers (range 0 - 255)
+// All CVs are 8-bit numbers ranging from (0 - 255)dec ≙ (0b00000000 - 0b11111111)bin ≙ (0x00 - 0xFF)hex
 // Note : CV_1 ≙ index 0, CV_2 ≙ index 1, CV_3 ≙ index 2, ...
-// TODO: - Packet Timeout
 
 uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
-   0b00000011,         //CV_1  -    Basic address  CV_1 = 0 is not allowed and used for initiating ADC offset adjustment    //TODO: verify
-   0b00001000,         //CV_2  -    V_min   -   Default = 8
+   0b00000011,         //CV_1  -    Basic address       -   CV_1 = 0 and CV_1 > 127 are not valid - Default = 3
+   0b00001000,         //CV_2  -    V_min               -   Default = 8
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 0 == Fastest dec/acc rate; 255 == slowest;
    0b00000000,         //CV_3  -    Acceleration rate   -   CV_3*CV_175 = Time for one discrete speed step change in ms
    0b00000000,         //CV_4  -    Deceleration rate   -   CV_4*CV_175 = Time for one discrete speed step change in ms
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b01100100,         //CV_5  -    V_max   -   Default = 100*16
-   0b00111111,         //CV_6  -    V_mid   -   Default = 63*16
+   0b01100100,         //CV_5  -    V_max               -   Default = 100*16
+   0b00111111,         //CV_6  -    V_mid               -   Default = 63*16
    0b00000001,         //CV_7  -    Version no.                                                         (read-only)
    0b00001101,         //CV_8  -    Manufacturer (13 = Public Domain & Do-It-Yourself Decoders)         (read-only)
    0b10010110,         //CV_9  -    PWM frequency in Hz = CV_9*100+10000    - Default = (150*100+10000)Hz = 25kHz
@@ -135,7 +134,7 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
 // This Config can cause conflicts when GPIOs controlled by the same slice are enabled at the same time.
    0b00000000,         //CV_112  -  GPIO 24-31  enable PWM
    0b00000000,         //CV_113  -  GPIO 16-23  enable PWM
-   0b00111100,         //CV_114  -  GPIO 8-15   enable PWM
+   0b00000000,         //CV_114  -  GPIO 8-15   enable PWM
    0b00000000,         //CV_115  -  GPIO 0-7    enable PWM
 //Slice 0
    0b00000000,         //CV_116  -  Wrap Bits 8-15
@@ -204,7 +203,6 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Offset adjustment for ADC                                                                                           //
 //If CV_172 = 0xFF = 255 there will be a measurement procedure on startup                                             //
-//alternatively, the measurement can be done by writing a 0 to CV_1 on the programming track                          //
    0b11111111,         //CV_172  -  ADC offset                                          Default: 255                 //
    0b01111111,         //CV_173  -  ADC offset measurement cycles                       Default: 127                 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -30,7 +30,7 @@ void verify_cv_bit(uint16_t cv_address,bool bit_val, uint8_t bit_pos);
 void verify_cv_byte(uint16_t cv_address, uint8_t cv_data);
 void regular_cv_write(uint16_t cv_index, uint8_t cv_data);
 void write_cv_handler(uint16_t cv_index, uint8_t cv_data);
-void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[], bool restart_core1);
+void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]);
 void set_outputs(uint32_t functions_to_set_bitmask);
 void update_active_functions(uint32_t byte, uint8_t clr_bit_ind,bool direction_change);
 bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]);
