@@ -5,7 +5,7 @@
 //////////////////////////
 
 #include "core0.h"
-// XIP_BASE + FLASH_TARGET_OFFSET = "0x101FF000"
+// XIP_BASE + FLASH_TARGET_OFFSET = "0x101FF000" <- This address need to be smaller than __flash_binary_end stored in RP2040-Decoder.elf.map
 const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
 uint64_t input_bit_buffer = 0;
 uint16_t level_table[32] = {0};
