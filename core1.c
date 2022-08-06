@@ -36,6 +36,7 @@ bool speed_helper(struct repeating_timer *t) {
     pid_params *pid = (pid_params *)(t->user_data);
     uint8_t accel_rate = CV_ARRAY_FLASH[2];
     uint8_t decel_rate = CV_ARRAY_FLASH[3];
+    static bool prev_dir;
     static uint8_t speed_helper_counter;
     static uint8_t speed_table_index;
 
@@ -62,11 +63,21 @@ bool speed_helper(struct repeating_timer *t) {
         speed_helper_counter = 0;
     }
 
+    // Change of direction while decelerating -> jump to most recent speed_step without delay (other direction)
+    else if (pid->direction != prev_dir){
+        speed_table_index = pid->end_target_index;
+        pid->setpoint = pid->speed_table[speed_table_index];
+        speed_helper_counter = 0;
+    }
+
     // Acceleration/Deceleration "scheduled"
     else if (pid->end_target_index != speed_table_index) speed_helper_counter++;
 
     // Target reached -> Reset Counter
     else speed_helper_counter = 0;
+
+    // Save prev speed_helper direction - not to be confused with pid->prev_direction
+    prev_dir = pid->direction;
 
     // return true to schedule the repeating timer again
     return true;
@@ -184,15 +195,9 @@ bool pid_control(struct repeating_timer *t){
     // Set PWM Level and discard results in adc fifo
     adjust_pwm_level((uint16_t)roundf(output),pid);
     adc_fifo_drain();
-    if(pid->setpoint > 2) {
-        printf("p:%f\n", p);
-        printf("i:%f\n", i);
-        printf("d:%f\n", d);
-        printf("o:%f\n", output);
-    }
+
     // Check for High or Low Integrator values -> Update x,y values of feedforward function
     if( (output < pid->max_output && output > pid->max_output/2) && ((i > pid->int_lim_max/2) || (i < pid->int_lim_min/2)) ) update_y(pid,i);
-
 
     // Save previous error, integrator, differentiator, direction, setpoint and measured value also sum error to e_sum
     pid->e_prev = e;

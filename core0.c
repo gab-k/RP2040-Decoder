@@ -519,18 +519,20 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
     else gpio = MOTOR_REV_PIN;
     float level_arr[iterations];
     for (int i = 0; i < iterations; ++i) {
-        uint16_t max_level = (_125M/(CV_ARRAY_FLASH[8]*100+10000));
+        uint16_t max_level = _125M/(CV_ARRAY_FLASH[8]*100+10000);
         uint16_t level = max_level/20;
         float measurement;
         do {
             pwm_set_gpio_level(gpio, level);
-            busy_wait_ms(15);
+            busy_wait_ms(30);
             level += max_level/500;
             measurement = measure(CV_ARRAY_FLASH[60],
                                   CV_ARRAY_FLASH[61],
                                   CV_ARRAY_FLASH[62],
                                   CV_ARRAY_FLASH[63],
                                   direction);
+            // Abort measurement and write default value of 0 to flash
+            if (level > max_level) return 0;
         }
         while((measurement - (float)CV_ARRAY_FLASH[171]) < 5.0f);
         level_arr[i] = (float)level;
@@ -546,8 +548,8 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
 // When ADC Setup is not configured run adc offset adjustment function and write adc offset into flash
 void cv_setup_check(){
 
-    // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition is found.
-    if ( CV_ARRAY_FLASH[64] ){
+    // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
+    if ( CV_ARRAY_FLASH[64]   == 0xFF ){
         uint8_t arr[4] = {125,8,7,124};
         program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
@@ -597,7 +599,7 @@ bool get_direction(bool *direction_ptr){
 
 // Motor PWM initialization
 void init_motor_pwm(uint8_t gpio) {
-    uint16_t wrap_counter = _125M/(CV_ARRAY_FLASH[8]*100+10000);    // 125MHz / f_pwm
+    uint16_t wrap_counter = (_125M/(CV_ARRAY_FLASH[8]*100+10000)) - 1;
     uint32_t slice_num = pwm_gpio_to_slice_num(gpio);
     pwm_set_clkdiv_int_frac(slice_num,CV_ARRAY_FLASH[173],0);
     pwm_set_wrap(slice_num, wrap_counter);

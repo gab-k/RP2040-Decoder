@@ -66,8 +66,8 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00110010,         //CV_51  -   PID Control D_Factor        ≙   CV_51/10000     Default = 50 -> 0.005             //
    0b01100100,         //CV_52  -   PID Integral Limit positive ≙   CV_52*10        Default = 100 -> +1000            //
    0b01100100,         //CV_53  -   PID Integral Limit negative ≙   CV_53*(-10)     Default = 100 -> -1000            //
-   0b00000011,         //CV_54  -   k_p @ x0 - High Byte (Bits 8-15)                divided by 100                    //
-   0b11101000,         //CV_55  -   k_p @ x0 - Low Byte (Bits 0-7)                  Default = 1000 -> 10              //
+   0b00000111,         //CV_54  -   k_p @ x0 - High Byte (Bits 8-15)                divided by 100                    //
+   0b11010000,         //CV_55  -   k_p @ x0 - Low Byte (Bits 0-7)                  Default = 2000 -> 20              //
    0b00000000,         //CV_56  -   k_p @ x1 - High Byte (Bits 8-15)                divided by 100                    //
    0b11111010,         //CV_57  -   k_p @ x1 - Low Byte (Bits 0-7)                  Default = 250 -> 2.5              //
    0b00000000,         //CV_58  -   k_p @ x2 - High Byte (Bits 8-15)                divided by 100                    //
