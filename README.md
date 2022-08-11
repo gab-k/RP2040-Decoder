@@ -17,8 +17,8 @@ Features
 Getting Started
 ------------
 
-The [Wiki - Getting started](https://github.com/gab-k/RP2040-Decoder/wiki/Getting-started) page provides a brief overview.
-A Description on how to compile and flash the decoder using  Windows can be found [here](https://github.com/gab-k/RP2040-Decoder/wiki/Quick-start-guide-(Windows)).
+
+The ["Getting Started"](https://github.com/gab-k/RP2040-Decoder/wiki/Getting-started) page provides an overview of the steps required to use the decoder as well as brief instructions for all the necessary steps.
 
 
 License
