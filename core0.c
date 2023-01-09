@@ -132,6 +132,8 @@ void write_cv_handler(uint16_t cv_index, uint8_t cv_data){
         case 0: //CV_1
             // CV_1 => Value = 0 is not allowed
             if (cv_data == 0 || cv_data > 127) break;
+            else regular_cv_write(cv_index,cv_data);
+            break;
         case 6: //CV_7
             // Read only (CV_7 - Version no.)
             // ADC offset Adjustment (CV_7; Value = 7);
