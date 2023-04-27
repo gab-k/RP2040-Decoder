@@ -79,6 +79,8 @@ void adc_offset_adjustment(uint32_t n){
     float overall_avg = (offset_avg_fwd+offset_avg_rev)/2;
     uint8_t offset = (uint8_t)roundf(overall_avg);
 
+    LOG(1, "new adc offset CV[171] (%f): (uint8_t)%d\n", overall_avg, offset);
+
     // Create temporary array -> change CV 172 in temp array -> erase flash -> write temp array to flash
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
@@ -550,14 +552,18 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
                                   CV_ARRAY_FLASH[63],
                                   direction);
             // Abort measurement and write default value of 0 to flash
-            if (level > max_level) return 0;
-        }
-        while((measurement - (float)CV_ARRAY_FLASH[171]) < 5.0f);
+            if (level > max_level) {
+                LOG(1, "measure_base_pwm: abort measurement and return 0\n");
+                return 0;
+            }
+        } while((measurement - (float)CV_ARRAY_FLASH[171]) < 5.0f);
         level_arr[i] = (float)level;
         busy_wait_ms(100);
     }
     // Find and return overall average discarding outliers in measurement - multiply with 0.9
-    return (uint16_t)(0.9f*two_std_dev(level_arr,5));
+    float retVal = 0.9f*two_std_dev(level_arr,5);
+    printf("measure_base_pwm: %d(%f)\n", (uint16_t)retVal, retVal);
+    return (uint16_t)(retVal);
 }
 
 
@@ -566,7 +572,7 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
 // When ADC Setup is not configured run adc offset adjustment function and write adc offset into flash
 void cv_setup_check(){
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
-    if ( CV_ARRAY_FLASH[64]   == 0xFF ){
+    if ( CV_ARRAY_FLASH[64] == 0xFF ){
         LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)\n");
         uint8_t arr[4] = {125,8,7,124};
         program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
@@ -574,7 +580,7 @@ void cv_setup_check(){
 
     // Check for adc offset setup
     if ( CV_ARRAY_FLASH[171]  == 0xFF ){
-        LOG(1, "found cv[171] equals to 0xff, adc offset adjustments (and cr[8] = 8)\n");
+        LOG(1, "found cv[171] equals to 0xff, adc offset adjstments (and cr[7] = 7)\n");
         uint8_t arr[4] = {125,7,6,124};
         program_mode(4,arr);        //ADC offset adjustment  (write CV_7 = 7)
     }
@@ -602,6 +608,8 @@ void cv_setup_check(){
         uint8_t arr1[4] = {125,base_pwm_rev_low_byte,178,124};
         program_mode(4,arr1);
     }
+    LOG(1, "int_lim_max %f\n", 10*(float)CV_ARRAY_FLASH[51]);
+    LOG(1, "int_lim_min %f\n", -10*(float)CV_ARRAY_FLASH[52]);
 }
 
 
