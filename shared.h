@@ -15,6 +15,9 @@
 #include "hardware/flash.h"
 #include "hardware/irq.h"
 
+#define LOGLEVEL 3
+#define LOG(level, x, ...) {if(level <= LOGLEVEL) { printf((x), ##__VA_ARGS__);}}
+
 // Constant Value of 125 x 10⁶
 #define _125M 125000000
 

@@ -45,6 +45,8 @@ float two_std_dev(const float arr[], uint32_t length){
 
 // Measures constant adc offset and programs the offset into flash
 void adc_offset_adjustment(uint32_t n){
+    LOG(1, "adc_offset_adjustment\n");
+
     float offsets_fwd[n];
     float offsets_rev[n];
     // Set PWM level to 0 just to be sure
@@ -131,18 +133,24 @@ void write_cv_handler(uint16_t cv_index, uint8_t cv_data){
     switch (cv_index) {
         case 0: //CV_1
             // CV_1 => Value = 0 is not allowed
-            if (cv_data == 0 || cv_data > 127) break;
-            else regular_cv_write(cv_index,cv_data);
+            if (cv_data == 0 || cv_data > 127) 
+                break;
+            else 
+                regular_cv_write(cv_index,cv_data);
             break;
         case 6: //CV_7
             // Read only (CV_7 - Version no.)
             // ADC offset Adjustment (CV_7; Value = 7);
-            if (cv_data == 7) adc_offset_adjustment(8192);
+            if (cv_data == 7) {
+                LOG(1, "trigger adc offset adjustment via cv7 => 7\n");
+                adc_offset_adjustment(8192);
+            }
             break;
         case 7: //CV_8
             // Read only (CV_8 - Manufacturer ID)
             // Reset all CVs to Default (CV_8; Value = 8)
             if (cv_data == 8){
+                LOG(1, "reset of flash triggered via cv8 => 8\n");
                 flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
                 flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
             }
@@ -150,12 +158,16 @@ void write_cv_handler(uint16_t cv_index, uint8_t cv_data){
         // CV_17 must have a value between 11000000->(192dec) and 11100111->(231dec) inclusive
         // CV_17 == 192 && CV_18 == 0 -> Address = 0 is also not valid and therefore shall not be set
         case 16:    //CV_17
-            if ( (cv_data < 192 || cv_data > 231) || (CV_ARRAY_FLASH[17] == 0 && cv_data == 192) )  break;
-            else regular_cv_write(cv_index,cv_data);
+            if ( (cv_data < 192 || cv_data > 231) || (CV_ARRAY_FLASH[17] == 0 && cv_data == 192) )  
+                break;
+            else 
+                regular_cv_write(cv_index,cv_data);
             break;
         case 17:    //CV_18
-            if(CV_ARRAY_FLASH[16] == 192 && cv_data == 0) break;
-            else regular_cv_write(cv_index,cv_data);
+            if(CV_ARRAY_FLASH[16] == 192 && cv_data == 0) 
+                break;
+            else 
+                regular_cv_write(cv_index,cv_data);
             break;
         // CV_31 & CV_32 Index high byte isn't implemented and shall not be set
         case 30:    //CV_31
@@ -169,9 +181,9 @@ void write_cv_handler(uint16_t cv_index, uint8_t cv_data){
 
 
 // CV Programming function resets core1 and evaluates the type of programming instruction (e.g. write byte)
-void program_mode(uint8_t number_of_bytes, const uint8_t * const byte_array){
+void program_mode(uint8_t number_of_bytes, const uint8_t * const byte_array) {
     //First check for valid programming command ("address" 112-127)
-    if (byte_array[number_of_bytes - 1]<128 && byte_array[number_of_bytes - 1]>111){
+    if (byte_array[number_of_bytes - 1]<128 && byte_array[number_of_bytes - 1]>111) {
             uint8_t instruction_type_mask = 0b00001100;
             uint8_t instruction_type = instruction_type_mask & byte_array[number_of_bytes - 1];
             uint8_t cv_address_ms_bits_mask = 0b00000011;
@@ -179,9 +191,13 @@ void program_mode(uint8_t number_of_bytes, const uint8_t * const byte_array){
             uint16_t cv_address = byte_array[number_of_bytes - 2] + (cv_address_ms_bits << 8);
 
             // Before accessing flash, timers and interrupts need to be disabled and core1 needs to be shut down.
-            if(pid_control_timer.pool)alarm_pool_destroy(pid_control_timer.pool);
-            if(speed_helper_timer.pool)alarm_pool_destroy(speed_helper_timer.pool);
+            if(pid_control_timer.pool)
+                alarm_pool_destroy(pid_control_timer.pool);
+            if(speed_helper_timer.pool)
+                alarm_pool_destroy(speed_helper_timer.pool);
+
             multicore_reset_core1();
+            
             uint32_t saved_interrupts = save_and_disable_interrupts();
 
             // Verify CV bit instruction
@@ -549,15 +565,16 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
 // When factory condition is found the CV_ARRAY_DEFAULT will be written into flash
 // When ADC Setup is not configured run adc offset adjustment function and write adc offset into flash
 void cv_setup_check(){
-
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
     if ( CV_ARRAY_FLASH[64]   == 0xFF ){
+        LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)\n");
         uint8_t arr[4] = {125,8,7,124};
         program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
 
     // Check for adc offset setup
     if ( CV_ARRAY_FLASH[171]  == 0xFF ){
+        LOG(1, "found cv[171] equals to 0xff, adc offset adjustments (and cr[8] = 8)\n");
         uint8_t arr[4] = {125,7,6,124};
         program_mode(4,arr);        //ADC offset adjustment  (write CV_7 = 7)
     }
@@ -565,6 +582,7 @@ void cv_setup_check(){
     // Check for base PWM configuration - used for feed-forward
     // Forward Direction
     if (get_16bit_CV(175) == 0){
+        LOG(1, "found cv[175] equals to 0, forward direction\n");
         uint16_t base_pwm_fwd = measure_base_pwm(true,10);
         uint8_t base_pwm_fwd_high_byte = base_pwm_fwd>>8;
         uint8_t base_pwm_fwd_low_byte = base_pwm_fwd&0x00FF;
@@ -575,6 +593,7 @@ void cv_setup_check(){
     }
     // Reverse Direction
     if (get_16bit_CV(177) == 0){
+        LOG(1, "found cv[177] equals to 0, reverse direction\n");
         uint16_t base_pwm_rev = measure_base_pwm(false,10);
         uint8_t base_pwm_rev_high_byte = base_pwm_rev>>8;
         uint8_t base_pwm_rev_low_byte = base_pwm_rev&0x00FF;
@@ -625,16 +644,20 @@ void init_main(){
 
 int main() {
     stdio_init_all();
-    printf("core0 init...\n");
+    LOG(0, "core0 init\n");
     init_main();
+    LOG(1, "init motor pwms\n");
     init_motor_pwm(MOTOR_FWD_PIN);
     init_motor_pwm(MOTOR_REV_PIN);
+    LOG(1, "check cvs\n");
     cv_setup_check();
+    LOG(1, "init outputs\n");
     init_outputs();
+    LOG(1, "init gpios\n");
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     gpio_pull_up(DCC_INPUT_PIN);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
-    printf("core0 done\n");
+    LOG(0, "core0 done\n");
     while (1);
 }
