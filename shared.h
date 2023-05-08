@@ -16,7 +16,8 @@
 #include "hardware/irq.h"
 
 #define LOGLEVEL 3
-#define LOG(level, x, ...) {if(level <= LOGLEVEL) { printf((x), ##__VA_ARGS__);}}
+//#define LOG(level, x, ...) {if(level <= LOGLEVEL) { printf((x), ##__VA_ARGS__);}}
+#define LOG(level, ...)  printf(__VA_ARGS__)
 
 // Constant Value of 125 x 10⁶
 #define _125M 125000000
@@ -28,8 +29,14 @@
 #define FWD_V_EMF_ADC_PIN 28u
 #define REV_V_EMF_ADC_PIN 29u
 
-// GPIO used directly (GPIO 0-5 incl.) as outputs or to switch auxiliary output transistors (GPIO 24-27 incl.)
-#define GPIO_OUTPUT_PIN_MASK (1u<<24) | (1u<<25) | (1u<<26) | (1u<<27) | (1u<<5) | (1u<<4) | (1u<<3) | (1u<<2) | (1u<<1) | (1u<<0)
+#if LOGLEVEL != 0
+   // GPIO used directly (GPIO 0-5 incl.) as outputs or to switch auxiliary output transistors (GPIO 24-27 incl.)
+   #define GPIO_OUTPUT_PIN_MASK (1u<<24) | (1u<<25) | (1u<<26) | (1u<<27) | (1u<<5) | (1u<<4) | (1u<<3) | (1u<<2)
+#else
+   // GPIO used directly (GPIO 0-5 incl.) as outputs or to switch auxiliary output transistors (GPIO 24-27 incl.)
+   #define GPIO_OUTPUT_PIN_MASK (1u<<24) | (1u<<25) | (1u<<26) | (1u<<27) | (1u<<5) | (1u<<4) | (1u<<3) | (1u<<2) | (1u<<1) | (1u<<0)
+#endif
+
 // GPIO pin mask to prevent setting illegal GPIOs (ADC, Motor, DCC Input Pin)
 #define GPIO_ILLEGAL_MASK (1u<<DCC_INPUT_PIN) | (1u<<MOTOR_FWD_PIN) | (1u<<MOTOR_REV_PIN) | (1u<<FWD_V_EMF_ADC_PIN) | (1u<<REV_V_EMF_ADC_PIN)
 

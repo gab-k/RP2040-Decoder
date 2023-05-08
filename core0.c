@@ -364,7 +364,9 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_a
     if (command_byte_n == 0b00111111){
         static bool prev_dir;
         uint32_t speed_step = byte_array[command_byte_start_index - 1];
+//        LOG(1, "new speed %d", speed_step);
         multicore_fifo_push_blocking(speed_step);
+//        LOG(1, " submitted to list\n");
         // In case of a direction change, functions need to be updated because functions might depend on direction state
         if (get_direction(0) != prev_dir) {
             update_active_functions(0,0,true);
@@ -541,6 +543,7 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
     for (int i = 0; i < iterations; ++i) {
         uint16_t max_level = _125M/(CV_ARRAY_FLASH[8]*100+10000);
         uint16_t level = max_level/20;
+        LOG(1, "iteration %d: maxlevel %d level %d\n", i, max_level, level);
         float measurement;
         do {
             pwm_set_gpio_level(gpio, level);
@@ -552,11 +555,13 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
                                   CV_ARRAY_FLASH[63],
                                   direction);
             // Abort measurement and write default value of 0 to flash
+            LOG(1, "level %d measurement %f loop-cond: %f\n", level, measurement, measurement-(float)CV_ARRAY_FLASH[171]);
             if (level > max_level) {
                 LOG(1, "measure_base_pwm: abort measurement and return 0\n");
                 return 0;
             }
         } while((measurement - (float)CV_ARRAY_FLASH[171]) < 5.0f);
+        LOG(1, "level_arr[%d] = %f\n", i, level);
         level_arr[i] = (float)level;
         busy_wait_ms(100);
     }
@@ -572,7 +577,8 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
 // When ADC Setup is not configured run adc offset adjustment function and write adc offset into flash
 void cv_setup_check(){
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
-    if ( CV_ARRAY_FLASH[64] == 0xFF ){
+//    if ( CV_ARRAY_FLASH[64] == 0xFF ){
+    if(1) {
         LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)\n");
         uint8_t arr[4] = {125,8,7,124};
         program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
@@ -608,8 +614,8 @@ void cv_setup_check(){
         uint8_t arr1[4] = {125,base_pwm_rev_low_byte,178,124};
         program_mode(4,arr1);
     }
-    LOG(1, "int_lim_max %f\n", 10*(float)CV_ARRAY_FLASH[51]);
-    LOG(1, "int_lim_min %f\n", -10*(float)CV_ARRAY_FLASH[52]);
+    LOG(1, "int_lim_max %d\n", CV_ARRAY_FLASH[51]);
+    LOG(1, "int_lim_min %d\n", CV_ARRAY_FLASH[52]);
 }
 
 
@@ -652,7 +658,7 @@ void init_main(){
 
 int main() {
     stdio_init_all();
-    LOG(0, "core0 init\n");
+    LOG(0, "\n\n======\ncore0 init\n");
     init_main();
     LOG(1, "init motor pwms\n");
     init_motor_pwm(MOTOR_FWD_PIN);
