@@ -543,7 +543,7 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
     for (int i = 0; i < iterations; ++i) {
         uint16_t max_level = _125M/(CV_ARRAY_FLASH[8]*100+10000);
         uint16_t level = max_level/20;
-        LOG(1, "iteration %d: maxlevel %d level %d\n", i, max_level, level);
+        LOG(3, "iteration %d: maxlevel %d level %d\n", i, max_level, level);
         float measurement;
         do {
             pwm_set_gpio_level(gpio, level);
@@ -554,20 +554,20 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
                                   CV_ARRAY_FLASH[62],
                                   CV_ARRAY_FLASH[63],
                                   direction);
-            // Abort measurement and write default value of 0 to flash
-            LOG(1, "level %d measurement %f loop-cond: %f\n", level, measurement, measurement-(float)CV_ARRAY_FLASH[171]);
+            LOG(3, "level %d measurement %f loop-cond: %f\n", level, measurement, measurement-(float)CV_ARRAY_FLASH[171]);
             if (level > max_level) {
+                // Abort measurement and write default value of 0 to flash
                 LOG(1, "measure_base_pwm: abort measurement and return 0\n");
                 return 0;
             }
         } while((measurement - (float)CV_ARRAY_FLASH[171]) < 5.0f);
-        LOG(1, "level_arr[%d] = %f\n", i, level);
+        LOG(3, "level_arr[%d] = %f\n", i, level);
         level_arr[i] = (float)level;
         busy_wait_ms(100);
     }
     // Find and return overall average discarding outliers in measurement - multiply with 0.9
     float retVal = 0.9f*two_std_dev(level_arr,5);
-    printf("measure_base_pwm: %d(%f)\n", (uint16_t)retVal, retVal);
+    LOG(1, "measure_base_pwm: %d(%f)\n", (uint16_t)retVal, retVal);
     return (uint16_t)(retVal);
 }
 
@@ -577,8 +577,7 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
 // When ADC Setup is not configured run adc offset adjustment function and write adc offset into flash
 void cv_setup_check(){
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
-//    if ( CV_ARRAY_FLASH[64] == 0xFF ){
-    if(1) {
+    if ( CV_ARRAY_FLASH[64] == 0xFF ){
         LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)\n");
         uint8_t arr[4] = {125,8,7,124};
         program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
@@ -640,11 +639,13 @@ void init_motor_pwm(uint8_t gpio) {
     pwm_set_wrap(slice_num, wrap_counter);
     pwm_set_gpio_level(gpio,0);
     pwm_set_enabled(slice_num, true);
+
+    LOG(2, "init motor(%d): wrapCounter %d clkdiv %d\n", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
 }
 
 
 // Main initialization  -  GPIO Config / ADC Config
-void init_main(){
+void init_gpio_adc(){
     if(gpio_get_function(MOTOR_FWD_PIN) != 4){
         gpio_set_function(MOTOR_FWD_PIN, GPIO_FUNC_PWM);
         gpio_set_function(MOTOR_REV_PIN, GPIO_FUNC_PWM);
@@ -658,8 +659,8 @@ void init_main(){
 
 int main() {
     stdio_init_all();
-    LOG(0, "\n\n======\ncore0 init\n");
-    init_main();
+    LOG(1, "\n\n======\ncore0 init\n");
+    init_gpio_adc();
     LOG(1, "init motor pwms\n");
     init_motor_pwm(MOTOR_FWD_PIN);
     init_motor_pwm(MOTOR_REV_PIN);

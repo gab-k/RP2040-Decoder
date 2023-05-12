@@ -15,9 +15,17 @@
 #include "hardware/flash.h"
 #include "hardware/irq.h"
 
-#define LOGLEVEL 3
+
+// here you can enable printf debugging (needs extra soldering and you have to enable uart in the cmake configuration)
+// please note
+// - if it's disabled it will be compiled completely out
+// - be careful that printf debugging can change your timing behavior, for example in the pid controller limit the outputs
+//   like already done (only print every 100th iteration for example!)
+// - also note that with logging enabled GPIO0/1 are DISABLED from decoder functions because they are used for uart to the
+//   outside world (this is configure automatically for you below!)
+#define LOGLEVEL 0
 //#define LOG(level, x, ...) {if(level <= LOGLEVEL) { printf((x), ##__VA_ARGS__);}}
-#define LOG(level, ...)  printf(__VA_ARGS__)
+#define LOG(level, ...)  { if(level <= LOGLEVEL) {printf(__VA_ARGS__);}}
 
 // Constant Value of 125 x 10⁶
 #define _125M 125000000

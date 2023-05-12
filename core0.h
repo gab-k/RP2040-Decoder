@@ -55,4 +55,4 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations);
 void cv_setup_check();
 bool get_direction(bool *direction_ptr);
 void init_motor_pwm(uint8_t gpio);
-void init_main();
+void init_gpio_adc();

@@ -300,7 +300,7 @@ void init_pid(pid_params *pid){
 
 
 void core1_entry() {
-    printf("core1 init...\n");
+    LOG(1, "core1 init...\n");
     pid_params pid_parameters;
     pid_params *pid = &pid_parameters;
     init_pid(pid);
