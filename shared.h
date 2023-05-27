@@ -23,8 +23,8 @@
 //   like already done (only print every 100th iteration for example!)
 // - also note that with logging enabled GPIO0/1 are DISABLED from decoder functions because they are used for uart to the
 //   outside world (this is configure automatically for you below!)
+// - IMPORTANT: you have to enable uart in the cmakelists.txt to enable logging!
 #define LOGLEVEL 0
-//#define LOG(level, x, ...) {if(level <= LOGLEVEL) { printf((x), ##__VA_ARGS__);}}
 #define LOG(level, ...)  { if(level <= LOGLEVEL) {printf(__VA_ARGS__);}}
 
 // Constant Value of 125 x 10⁶
@@ -37,8 +37,9 @@
 #define FWD_V_EMF_ADC_PIN 28u
 #define REV_V_EMF_ADC_PIN 29u
 
+// if logging is enabled do NOT use gpio0/1 for functions in the decoder
 #if LOGLEVEL != 0
-   // GPIO used directly (GPIO 0-5 incl.) as outputs or to switch auxiliary output transistors (GPIO 24-27 incl.)
+   // GPIO used directly (GPIO 2-5 incl.) as outputs or to switch auxiliary output transistors (GPIO 24-27 incl.)
    #define GPIO_OUTPUT_PIN_MASK (1u<<24) | (1u<<25) | (1u<<26) | (1u<<27) | (1u<<5) | (1u<<4) | (1u<<3) | (1u<<2)
 #else
    // GPIO used directly (GPIO 0-5 incl.) as outputs or to switch auxiliary output transistors (GPIO 24-27 incl.)
