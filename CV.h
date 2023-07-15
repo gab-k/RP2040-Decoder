@@ -203,8 +203,8 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Offset adjustment for ADC                                                                                           //
 //If CV_172 = 0xFF = 255 there will be a measurement procedure on startup                                             //
-   0b11111111,         //CV_172  -  ADC offset                                          Default: 255                 //
-   0b01111111,         //CV_173  -  ADC offset measurement cycles                       Default: 127                 //
+   0b11111111,         //CV_172  -  ADC offset                              Default: 255  (triggers new measurement!) //
+   0b01111111,         //CV_173  -  ADC offset measurement cycles           Default: 127                              //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000001,         //CV_174  -  Additional motor-PWM clock divider.
    0b00000111,         //CV_175  -  speed_helper timer delay -  can be used to adjust accel/decel rate

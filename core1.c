@@ -16,14 +16,18 @@ void update_speed_dir(pid_params *pid, uint32_t speed_step_target){
     // Forward
     if(speed_step_target > 127) {
         pid->direction = true^reverse_dir;
-        if (pid->speed_step_target == 128) pid->end_target_index = 0;
-        else pid->end_target_index = (pid->speed_step_target-129);
+        if (pid->speed_step_target == 128) 
+            pid->end_target_index = 0;
+        else 
+            pid->end_target_index = (pid->speed_step_target-129);
     }
     // Reverse
     else {
         pid->direction = false^reverse_dir;
-        if (pid->speed_step_target == 0) pid->end_target_index = 0;
-        else pid->end_target_index = (pid->speed_step_target-1);
+        if (pid->speed_step_target == 0) 
+            pid->end_target_index = 0;
+        else 
+            pid->end_target_index = (pid->speed_step_target-1);
     }
 }
 
@@ -192,6 +196,15 @@ bool pid_control(struct repeating_timer *t){
     if (output < 0 || !pid->setpoint) output = 0.0f;
     else if (output > pid->max_output) output = pid->max_output;
 
+    if(LOGLEVEL >= 1) {
+        static int counter = 0;
+        counter++;
+        if(counter > 100) {
+            LOG(1, "pid error(%f) output(%f)\n", e, output);
+            counter = 0;            
+        }
+    }
+
     // Set PWM Level and discard results in adc fifo
     adjust_pwm_level((uint16_t)roundf(output),pid);
     adc_fifo_drain();
@@ -226,6 +239,9 @@ void init_pid(pid_params *pid){
     double v_min = (double)CV_ARRAY_FLASH[1];
     double v_mid = (double)CV_ARRAY_FLASH[5]*16;
     double v_max = (double)CV_ARRAY_FLASH[4]*16;
+
+    LOG(1, "speedtable min(%f) mid(%f) max(%f)\n", v_min, v_mid, v_max);
+
     double delta_x = 63;
     double m_1 = (v_mid-v_min)/delta_x;
     double m_2 = (v_max-v_mid)/delta_x;
@@ -284,7 +300,7 @@ void init_pid(pid_params *pid){
 
 
 void core1_entry() {
-    printf("core1 init...\n");
+    LOG(1, "core1 init...\n");
     pid_params pid_parameters;
     pid_params *pid = &pid_parameters;
     init_pid(pid);
@@ -305,7 +321,7 @@ void core1_entry() {
     multicore_fifo_push_blocking((uint32_t) &(pid->direction));
     uint64_t packet_timeout_threshold_in_us = CV_ARRAY_FLASH[10]*1000000;
     absolute_time_t time_last_update = get_absolute_time();
-    printf("core1 done\n");
+//    printf("core1 done\n");
     while (1){
         // Check for time difference between last packet and current time (Packet Timeout)
         absolute_time_t current_time = get_absolute_time();

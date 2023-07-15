@@ -30,6 +30,13 @@ void verify_cv_bit(uint16_t cv_address,bool bit_val, uint8_t bit_pos);
 void verify_cv_byte(uint16_t cv_address, uint8_t cv_data);
 void regular_cv_write(uint16_t cv_index, uint8_t cv_data);
 void write_cv_handler(uint16_t cv_index, uint8_t cv_data);
+
+
+#define ProgramInstrVerifyBit  0b10
+#define ProgramInstrVerifyByte 0b01
+#define ProgramInstrWriteByte  0b11
+#define ProgramCmd(instr, adrmsbits) ((instr<<2) | (adrmsbits))
+
 void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]);
 void set_outputs(uint32_t functions_to_set_bitmask);
 void update_active_functions(uint32_t byte, uint8_t clr_bit_ind,bool direction_change);
@@ -48,4 +55,4 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations);
 void cv_setup_check();
 bool get_direction(bool *direction_ptr);
 void init_motor_pwm(uint8_t gpio);
-void init_main();
+void init_gpio_adc();
