@@ -176,7 +176,7 @@ bool pid_control(struct repeating_timer *t){
 
     // Measure BEMF voltage and compute error
     pid->measurement = measure(pid->msr_total_iterations,
-                               pid->msr_total_iterations,
+                               pid->msr_delay_in_us,
                                pid->l_side_arr_cutoff,
                                pid->r_side_arr_cutoff,
                                pid->direction);
