@@ -85,12 +85,12 @@
         "lib_footprint_mismatch": "warning",
         "malformed_courtyard": "error",
         "microvia_drill_out_of_range": "error",
-        "missing_courtyard": "ignore",
+        "missing_courtyard": "warning",
         "missing_footprint": "warning",
         "net_conflict": "warning",
-        "npth_inside_courtyard": "ignore",
+        "npth_inside_courtyard": "warning",
         "padstack": "error",
-        "pth_inside_courtyard": "ignore",
+        "pth_inside_courtyard": "warning",
         "shorting_items": "error",
         "silk_edge_clearance": "warning",
         "silk_over_copper": "warning",
@@ -176,7 +176,7 @@
       ],
       "track_widths": [
         0.0,
-        0.127,
+        0.1,
         0.2,
         0.25,
         0.4,
@@ -191,7 +191,7 @@
           "drill": 0.0
         },
         {
-          "diameter": 0.56,
+          "diameter": 0.5,
           "drill": 0.3
         },
         {
