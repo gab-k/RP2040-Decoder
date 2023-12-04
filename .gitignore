@@ -3,8 +3,8 @@
 build
 cmake-build-debug
 cmake-build-release
-KiCad/RP2040-Decoder-backups
-KiCad/*.bak
-KiCad/fp-info-cache
-KiCad/_autosave-*
-KiCad/*.kicad_prl
+KiCad/*/RP2040-Decoder-backups
+KiCad/*/*.bak
+KiCad/*/fp-info-cache
+KiCad/*/_autosave-*
+KiCad/*/*.kicad_prl
