@@ -5,99 +5,17 @@
   (paper "A3")
 
   (title_block
-    (title "RP2040-Decoder")
+    (title "RP2040-Decoder (USB)")
     (date "2023-12-03")
     (rev "0.4")
   )
 
   (lib_symbols
-    (symbol "Conn_01x01_Male_1" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
-      (property "Reference" "J1" (at -1.27 0 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Value" "DCC_0" (at -6.35 0 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "Datasheet" "~" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_keywords" "connector" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_fp_filters" "Connector*:*" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "Conn_01x01_Male_1_1_1"
-        (polyline
-          (pts
-            (xy 1.27 0)
-            (xy 0.8636 0)
-          )
-          (stroke (width 0.1524) (type default))
-          (fill (type none))
-        )
-        (rectangle (start 0.8636 0.127) (end 0 -0.127)
-          (stroke (width 0.1524) (type default))
-          (fill (type outline))
-        )
-        (pin power_out line (at 5.08 0 180) (length 3.81)
-          (name "Pin_1" (effects (font (size 1.27 1.27))))
-          (number "1" (effects (font (size 1.27 1.27))))
-        )
-      )
-    )
-    (symbol "Conn_01x01_Male_2" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
-      (property "Reference" "J2" (at -1.27 0 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Value" "Conn_01x01_Male_2" (at -6.35 0 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "Datasheet" "~" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_keywords" "connector" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_fp_filters" "Connector*:*" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "Conn_01x01_Male_2_1_1"
-        (polyline
-          (pts
-            (xy 1.27 0)
-            (xy 0.8636 0)
-          )
-          (stroke (width 0.1524) (type default))
-          (fill (type none))
-        )
-        (rectangle (start 0.8636 0.127) (end 0 -0.127)
-          (stroke (width 0.1524) (type default))
-          (fill (type outline))
-        )
-        (pin power_out line (at 5.08 0 180) (length 3.81)
-          (name "Pin_1" (effects (font (size 1.27 1.27))))
-          (number "1" (effects (font (size 1.27 1.27))))
-        )
-      )
-    )
-    (symbol "Connector:Conn_01x01_Male" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
+    (symbol "Connector:Conn_01x01_Pin" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
       (property "Reference" "J" (at 0 2.54 0)
         (effects (font (size 1.27 1.27)))
       )
-      (property "Value" "Conn_01x01_Male" (at 0 -2.54 0)
+      (property "Value" "Conn_01x01_Pin" (at 0 -2.54 0)
         (effects (font (size 1.27 1.27)))
       )
       (property "Footprint" "" (at 0 0 0)
@@ -106,16 +24,19 @@
       (property "Datasheet" "~" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
+      (property "ki_locked" "" (at 0 0 0)
+        (effects (font (size 1.27 1.27)))
+      )
       (property "ki_keywords" "connector" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "ki_description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)" (at 0 0 0)
+      (property "ki_description" "Generic connector, single row, 01x01, script generated" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "ki_fp_filters" "Connector*:*" (at 0 0 0)
+      (property "ki_fp_filters" "Connector*:*_1x??_*" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (symbol "Conn_01x01_Male_1_1"
+      (symbol "Conn_01x01_Pin_1_1"
         (polyline
           (pts
             (xy 1.27 0)
@@ -729,7 +650,7 @@
       (property "Value" "RP2040" (at 24.13 -49.53 0)
         (effects (font (size 1.27 1.27)))
       )
-      (property "Footprint" "RP2040-Decoder_Additional_Footprints:QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm" (at -21.59 -60.96 0)
+      (property "Footprint" "Package_DFN_QFN:QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm" (at -21.59 -60.96 0)
         (effects (font (size 1.27 1.27)) hide)
       )
       (property "Datasheet" "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf" (at -6.35 -64.77 0)
@@ -1501,7 +1422,7 @@
       (property "Datasheet" "" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "ki_keywords" "power-flag" (at 0 0 0)
+      (property "ki_keywords" "global power" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
       (property "ki_description" "Power symbol creates a global label with name \"+1V1\"" (at 0 0 0)
@@ -1553,7 +1474,7 @@
       (property "Datasheet" "" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "ki_keywords" "power-flag" (at 0 0 0)
+      (property "ki_keywords" "global power" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
       (property "ki_description" "Power symbol creates a global label with name \"+3V3\"" (at 0 0 0)
@@ -1605,7 +1526,7 @@
       (property "Datasheet" "" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "ki_keywords" "power-flag" (at 0 0 0)
+      (property "ki_keywords" "global power" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
       (property "ki_description" "Power symbol creates a global label with name \"GND\" , ground" (at 0 0 0)
@@ -3118,10 +3039,6 @@
     (effects (font (size 2.54 2.54)) (justify left bottom))
     (uuid 5a51befc-2a60-4520-8842-6df42119ff88)
   )
-  (text "C5/C6 should be close to pin 45/44" (at 127 157.48 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 7e9d20e5-85c9-4171-99b1-b0fc03cb9afa)
-  )
   (text "Flash Memory" (at 35.56 167.64 0)
     (effects (font (size 2.54 2.54)) (justify left bottom))
     (uuid b79f00af-31e0-4be3-870e-3252ab7ce7ef)
@@ -3291,13 +3208,13 @@
   (symbol (lib_id "Device:C") (at 106.68 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f48903)
-    (property "Reference" "C5" (at 109.601 146.1516 0)
+    (property "Reference" "C9" (at 109.601 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10u" (at 109.601 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 107.6452 151.13 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 107.6452 151.13 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 106.68 147.32 0)
@@ -3308,7 +3225,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C5") (unit 1)
+          (reference "C9") (unit 1)
         )
       )
     )
@@ -3317,13 +3234,13 @@
   (symbol (lib_id "Device:C") (at 142.24 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f49506)
-    (property "Reference" "C7" (at 145.161 146.1516 0)
+    (property "Reference" "C11" (at 145.161 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 145.161 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 145.161 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 145.161 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 142.24 147.32 0)
@@ -3334,7 +3251,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C7") (unit 1)
+          (reference "C11") (unit 1)
         )
       )
     )
@@ -3343,13 +3260,13 @@
   (symbol (lib_id "Device:C") (at 152.4 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f4d9a1)
-    (property "Reference" "C8" (at 155.321 146.1516 0)
+    (property "Reference" "C12" (at 155.321 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 155.321 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 155.321 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 155.321 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 152.4 147.32 0)
@@ -3360,7 +3277,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C8") (unit 1)
+          (reference "C12") (unit 1)
         )
       )
     )
@@ -3369,13 +3286,13 @@
   (symbol (lib_id "Device:C") (at 162.56 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f4de3b)
-    (property "Reference" "C9" (at 165.481 146.1516 0)
+    (property "Reference" "C13" (at 165.481 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 165.481 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 165.481 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 165.481 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 162.56 147.32 0)
@@ -3386,7 +3303,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C9") (unit 1)
+          (reference "C13") (unit 1)
         )
       )
     )
@@ -3395,13 +3312,13 @@
   (symbol (lib_id "Device:C") (at 172.72 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f4ee25)
-    (property "Reference" "C10" (at 175.641 146.1516 0)
+    (property "Reference" "C14" (at 175.641 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 175.641 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 175.641 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 175.641 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 172.72 147.32 0)
@@ -3412,7 +3329,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C10") (unit 1)
+          (reference "C14") (unit 1)
         )
       )
     )
@@ -3421,7 +3338,7 @@
   (symbol (lib_id "power:+1V1") (at 106.68 140.97 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f75ece)
-    (property "Reference" "#PWR09" (at 106.68 144.78 0)
+    (property "Reference" "#PWR018" (at 106.68 144.78 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+1V1" (at 106.68 137.16 0)
@@ -3437,7 +3354,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR09") (unit 1)
+          (reference "#PWR018") (unit 1)
         )
       )
     )
@@ -3446,13 +3363,13 @@
   (symbol (lib_id "Device:C") (at 96.52 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f7bf44)
-    (property "Reference" "C4" (at 99.441 146.1516 0)
+    (property "Reference" "C8" (at 99.441 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 99.441 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 99.441 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 99.441 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 96.52 147.32 0)
@@ -3463,7 +3380,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C4") (unit 1)
+          (reference "C8") (unit 1)
         )
       )
     )
@@ -3472,13 +3389,13 @@
   (symbol (lib_id "Device:C") (at 86.36 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f7c99b)
-    (property "Reference" "C3" (at 89.281 146.1516 0)
+    (property "Reference" "C7" (at 89.281 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 89.281 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 89.281 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 89.281 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 86.36 147.32 0)
@@ -3489,7 +3406,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C3") (unit 1)
+          (reference "C7") (unit 1)
         )
       )
     )
@@ -3498,13 +3415,13 @@
   (symbol (lib_id "Device:C") (at 182.88 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fbb1a5)
-    (property "Reference" "C11" (at 185.801 146.1516 0)
+    (property "Reference" "C15" (at 185.801 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 185.801 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 185.801 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 185.801 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 182.88 147.32 0)
@@ -3515,7 +3432,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C11") (unit 1)
+          (reference "C15") (unit 1)
         )
       )
     )
@@ -3524,13 +3441,13 @@
   (symbol (lib_id "Device:C") (at 193.04 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fbb8ee)
-    (property "Reference" "C12" (at 195.961 146.1516 0)
+    (property "Reference" "C16" (at 195.961 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 195.961 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 195.961 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 195.961 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 193.04 147.32 0)
@@ -3541,7 +3458,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C12") (unit 1)
+          (reference "C16") (unit 1)
         )
       )
     )
@@ -3550,13 +3467,13 @@
   (symbol (lib_id "Device:C") (at 35.56 189.23 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00006202d251)
-    (property "Reference" "C15" (at 38.481 188.0616 0)
+    (property "Reference" "C18" (at 38.481 188.0616 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 38.481 190.373 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 38.481 191.5414 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 38.481 191.5414 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 35.56 189.23 0)
@@ -3567,7 +3484,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C15") (unit 1)
+          (reference "C18") (unit 1)
         )
       )
     )
@@ -3576,13 +3493,13 @@
   (symbol (lib_id "Device:R") (at 52.07 177.8 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-0000620484ef)
-    (property "Reference" "R4" (at 52.07 172.5422 90)
+    (property "Reference" "R18" (at 52.07 172.5422 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "DNF" (at 52.07 174.8536 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 52.07 176.022 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 52.07 176.022 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 52.07 177.8 0)
@@ -3593,7 +3510,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R4") (unit 1)
+          (reference "R18") (unit 1)
         )
       )
     )
@@ -3602,13 +3519,13 @@
   (symbol (lib_id "Device:C") (at 49.53 234.95 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-0000620db00d)
-    (property "Reference" "C16" (at 52.451 233.7816 0)
+    (property "Reference" "C19" (at 52.451 233.7816 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "33p" (at 52.451 236.093 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 52.451 237.2614 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 52.451 237.2614 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 49.53 234.95 0)
@@ -3619,7 +3536,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C16") (unit 1)
+          (reference "C19") (unit 1)
         )
       )
     )
@@ -3628,13 +3545,13 @@
   (symbol (lib_id "Device:C") (at 74.93 234.95 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-0000620dea8b)
-    (property "Reference" "C17" (at 77.851 233.7816 0)
+    (property "Reference" "C20" (at 77.851 233.7816 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "33p" (at 77.851 236.093 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 77.851 237.2614 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 77.851 237.2614 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 74.93 234.95 0)
@@ -3645,7 +3562,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C17") (unit 1)
+          (reference "C20") (unit 1)
         )
       )
     )
@@ -3654,7 +3571,7 @@
   (symbol (lib_id "power:GND") (at 63.5 242.57 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-0000620e3b7e)
-    (property "Reference" "#PWR022" (at 63.5 248.92 0)
+    (property "Reference" "#PWR031" (at 63.5 248.92 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 63.5 246.38 0)
@@ -3670,7 +3587,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR022") (unit 1)
+          (reference "#PWR031") (unit 1)
         )
       )
     )
@@ -3679,13 +3596,13 @@
   (symbol (lib_id "Device:R") (at 85.09 228.6 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-0000620f5623)
-    (property "Reference" "R9" (at 85.09 223.52 90)
+    (property "Reference" "R19" (at 85.09 223.52 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 85.09 226.06 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 85.09 226.822 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 85.09 226.822 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 85.09 228.6 0)
@@ -3696,7 +3613,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R9") (unit 1)
+          (reference "R19") (unit 1)
         )
       )
     )
@@ -3711,7 +3628,7 @@
     (property "Value" "6k8" (at 107.95 48.26 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 105.918 46.99 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 105.918 46.99 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 104.14 46.99 0)
@@ -3731,7 +3648,7 @@
   (symbol (lib_id "power:+3V3") (at 88.9 35.56 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 06dc7588-2a7d-4a93-b316-1451e7354abf)
-    (property "Reference" "#PWR030" (at 88.9 39.37 0)
+    (property "Reference" "#PWR02" (at 88.9 39.37 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (at 88.9 31.75 0)
@@ -3747,7 +3664,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR030") (unit 1)
+          (reference "#PWR02") (unit 1)
         )
       )
     )
@@ -3756,13 +3673,13 @@
   (symbol (lib_id "Device:R") (at 285.75 175.26 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0bc6629d-17bd-428b-84e8-0f5ab459aa34)
-    (property "Reference" "R11" (at 281.94 173.99 0)
+    (property "Reference" "R15" (at 281.94 173.99 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 281.94 176.53 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 287.528 175.26 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 287.528 175.26 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 285.75 175.26 0)
@@ -3773,7 +3690,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R11") (unit 1)
+          (reference "R15") (unit 1)
         )
       )
     )
@@ -3782,13 +3699,13 @@
   (symbol (lib_id "Device:C") (at 203.2 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0e10c59f-9db2-41c5-a7a0-351e7eadbeb1)
-    (property "Reference" "C6" (at 206.121 146.1516 0)
+    (property "Reference" "C17" (at 206.121 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10u" (at 206.121 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 204.1652 151.13 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 204.1652 151.13 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 203.2 147.32 0)
@@ -3799,7 +3716,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C6") (unit 1)
+          (reference "C17") (unit 1)
         )
       )
     )
@@ -3808,7 +3725,7 @@
   (symbol (lib_id "power:GND") (at 328.93 222.25 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0e14861e-2a96-4853-b3aa-5cf815c5f577)
-    (property "Reference" "#PWR021" (at 328.93 228.6 0)
+    (property "Reference" "#PWR030" (at 328.93 228.6 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 328.93 226.06 0)
@@ -3824,13 +3741,13 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR021") (unit 1)
+          (reference "#PWR030") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 317.5 38.1 270) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 317.5 38.1 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 114a2327-4bca-4f82-aff8-aa6199690d2d)
     (property "Reference" "J5" (at 317.5 36.83 90)
@@ -3839,7 +3756,7 @@
     (property "Value" "2" (at 317.5 31.75 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 317.5 38.1 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" (at 317.5 38.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 317.5 38.1 0)
@@ -3858,7 +3775,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:W25Q64JVSSIQ") (at 57.15 189.23 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 11b43075-515f-45da-8f63-74ef52534506)
-    (property "Reference" "U3" (at 48.26 199.39 0)
+    (property "Reference" "U4" (at 48.26 199.39 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "W25Q64JVSSIQ" (at 60.96 199.39 0)
@@ -3881,7 +3798,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "U3") (unit 1)
+          (reference "U4") (unit 1)
         )
       )
     )
@@ -3890,7 +3807,7 @@
   (symbol (lib_id "power:GND") (at 69.85 222.25 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 11f3f41a-02a6-4837-8c2f-1e450f3d1691)
-    (property "Reference" "#PWR0101" (at 69.85 228.6 0)
+    (property "Reference" "#PWR029" (at 69.85 228.6 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 69.85 226.06 0)
@@ -3906,7 +3823,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR0101") (unit 1)
+          (reference "#PWR029") (unit 1)
         )
       )
     )
@@ -3915,13 +3832,13 @@
   (symbol (lib_id "Device:R") (at 346.71 124.46 0) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 13f83dc5-3837-4076-92cd-27dc8180a0b4)
-    (property "Reference" "R5" (at 350.52 123.19 0)
+    (property "Reference" "R6" (at 350.52 123.19 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "6k8" (at 350.52 125.73 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 344.932 124.46 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 344.932 124.46 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 346.71 124.46 0)
@@ -3932,7 +3849,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R5") (unit 1)
+          (reference "R6") (unit 1)
         )
       )
     )
@@ -3941,13 +3858,13 @@
   (symbol (lib_id "Device:C") (at 68.58 48.26 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 15c7da5b-1a7f-4aa2-9d89-31675b0a3891)
-    (property "Reference" "C22" (at 72.39 48.26 0)
+    (property "Reference" "C1" (at 72.39 48.26 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10u" (at 72.39 50.8 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 69.5452 52.07 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 69.5452 52.07 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 68.58 48.26 0)
@@ -3961,7 +3878,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C22") (unit 1)
+          (reference "C1") (unit 1)
         )
       )
     )
@@ -3970,7 +3887,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:+V") (at 184.15 63.5 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 1bb9f1b2-cb04-4466-af57-81e74120d7a3)
-    (property "Reference" "#PWR016" (at 184.15 67.31 0)
+    (property "Reference" "#PWR010" (at 184.15 67.31 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+V" (at 184.15 59.69 0)
@@ -3986,22 +3903,22 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR016") (unit 1)
+          (reference "#PWR010") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 180.34 186.69 180) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 180.34 186.69 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 1e7018c6-c49e-47c9-a511-61b80afad2c8)
-    (property "Reference" "J10" (at 181.61 186.69 0)
+    (property "Reference" "J11" (at 181.61 186.69 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "2" (at 186.69 186.69 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 180.34 186.69 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 180.34 186.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 180.34 186.69 0)
@@ -4011,22 +3928,22 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J10") (unit 1)
+          (reference "J11") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 180.34 194.31 180) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 180.34 194.31 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 1e8a9e11-3616-4641-b478-61db5c44eda7)
-    (property "Reference" "J13" (at 181.61 194.31 0)
+    (property "Reference" "J14" (at 181.61 194.31 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "5" (at 186.69 194.31 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 180.34 194.31 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 180.34 194.31 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 180.34 194.31 0)
@@ -4036,22 +3953,22 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J13") (unit 1)
+          (reference "J14") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 180.34 181.61 180) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 180.34 181.61 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 1ef449bb-2ed4-4022-a844-f3a7f18eb118)
-    (property "Reference" "J8" (at 181.61 181.61 0)
+    (property "Reference" "J9" (at 181.61 181.61 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "0" (at 186.69 181.61 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 180.34 181.61 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 180.34 181.61 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 180.34 181.61 0)
@@ -4061,7 +3978,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J8") (unit 1)
+          (reference "J9") (unit 1)
         )
       )
     )
@@ -4103,7 +4020,7 @@
     (property "Value" "1k" (at 273.05 176.53 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 278.638 175.26 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 278.638 175.26 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 276.86 175.26 0)
@@ -4123,16 +4040,16 @@
   (symbol (lib_id "Connector:USB_C_Receptacle_USB2.0") (at 33.02 87.63 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 2716c5a3-9273-4b15-a3a8-4799d07901ce)
-    (property "Reference" "J7" (at 33.02 64.77 0)
+    (property "Reference" "J8" (at 33.02 64.77 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "USB_C_Receptacle_USB2.0" (at 33.02 67.31 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12" (at 36.83 87.63 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:USB_C_Receptacle_HRO_TYPE-C-31-M-12" (at 36.83 87.63 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "https://datasheet.lcsc.com/lcsc/2111231930_SHOU-HAN-TYPE-C-16PIN-2MD-073_C2765186.pdf" (at 36.83 87.63 0)
+    (property "Datasheet" "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" (at 36.83 87.63 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet original reference" "https://datasheet.lcsc.com/lcsc/2205251630_Korean-Hroparts-Elec-TYPE-C-31-M-12_C165948.pdf" (at 33.02 87.63 0)
@@ -4158,7 +4075,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J7") (unit 1)
+          (reference "J8") (unit 1)
         )
       )
     )
@@ -4167,7 +4084,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:AP7381-33Y-13") (at 78.74 40.64 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 2e61e6c9-7435-4bce-93e5-8761050f3c6a)
-    (property "Reference" "U6" (at 78.74 34.29 0)
+    (property "Reference" "U1" (at 78.74 34.29 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "AP7381-33Y-13" (at 78.74 36.83 0)
@@ -4185,7 +4102,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "U6") (unit 1)
+          (reference "U1") (unit 1)
         )
       )
     )
@@ -4194,13 +4111,13 @@
   (symbol (lib_id "Device:R") (at 184.15 69.85 0) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 34951700-92a1-4367-863e-08b6aaf05439)
-    (property "Reference" "R7" (at 187.96 68.58 0)
+    (property "Reference" "R3" (at 187.96 68.58 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "6k8" (at 187.96 71.12 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 182.372 69.85 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 182.372 69.85 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 184.15 69.85 0)
@@ -4211,7 +4128,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R7") (unit 1)
+          (reference "R3") (unit 1)
         )
       )
     )
@@ -4226,7 +4143,7 @@
     (property "Value" "6k8" (at 107.95 35.56 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 105.918 34.29 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 105.918 34.29 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 104.14 34.29 0)
@@ -4243,7 +4160,7 @@
     )
   )
 
-  (symbol (lib_name "Conn_01x01_Male_2") (lib_id "Connector:Conn_01x01_Male") (at 24.13 30.48 0) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 24.13 30.48 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 3df3fa5c-dfa0-471e-a2a5-d963c7b24b7f)
     (property "Reference" "J2" (at 22.86 30.48 0)
@@ -4271,7 +4188,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:SS54") (at 48.26 46.99 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 3fadde44-5654-430f-84e1-1c5ffc2520b0)
-    (property "Reference" "D2" (at 50.8 45.72 90)
+    (property "Reference" "D4" (at 50.8 45.72 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SS54" (at 50.8 48.26 90)
@@ -4288,7 +4205,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "D2") (unit 1)
+          (reference "D4") (unit 1)
         )
       )
     )
@@ -4297,7 +4214,7 @@
   (symbol (lib_id "power:GND") (at 78.74 58.42 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 420a550e-1325-456c-910d-8b8f345f6a41)
-    (property "Reference" "#PWR032" (at 78.74 64.77 0)
+    (property "Reference" "#PWR05" (at 78.74 64.77 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 78.74 62.23 0)
@@ -4313,22 +4230,22 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR032") (unit 1)
+          (reference "#PWR05") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 180.34 189.23 180) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 180.34 189.23 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 46eca225-da16-4c83-b7ae-a41b341639c2)
-    (property "Reference" "J11" (at 181.61 189.23 0)
+    (property "Reference" "J12" (at 181.61 189.23 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "3" (at 186.69 189.23 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 180.34 189.23 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 180.34 189.23 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 180.34 189.23 0)
@@ -4338,16 +4255,16 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J11") (unit 1)
+          (reference "J12") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 96.52 40.64 180) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 96.52 40.64 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 4bb67ce0-a68d-443e-953b-a7a2c6f21ca4)
-    (property "Reference" "J20" (at 99.06 39.37 0)
+    (property "Reference" "J7" (at 99.06 39.37 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "+3V3" (at 99.06 41.91 0)
@@ -4363,7 +4280,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J20") (unit 1)
+          (reference "J7") (unit 1)
         )
       )
     )
@@ -4372,7 +4289,7 @@
   (symbol (lib_id "power:GND") (at 35.56 196.85 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 4d4fbf9d-f761-44da-b43e-ef628de2c203)
-    (property "Reference" "#PWR018" (at 35.56 203.2 0)
+    (property "Reference" "#PWR027" (at 35.56 203.2 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 35.56 200.66 0)
@@ -4388,7 +4305,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR018") (unit 1)
+          (reference "#PWR027") (unit 1)
         )
       )
     )
@@ -4397,13 +4314,13 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:DRV8874PWPR") (at 289.56 133.35 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 4d4ff814-3935-407a-ac76-74463f023522)
-    (property "Reference" "U5" (at 309.5341 125.73 0)
+    (property "Reference" "U3" (at 309.5341 125.73 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "DRV8874PWPR" (at 309.5341 128.27 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.46x2.31mm_ThermalVias" (at 321.31 228.27 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.46x2.31mm_ThermalVias" (at 321.31 228.27 0)
       (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (property "Datasheet" "https://www.ti.com/lit/gpn/DRV8874" (at 321.31 328.27 0)
@@ -4444,7 +4361,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "U5") (unit 1)
+          (reference "U3") (unit 1)
         )
       )
     )
@@ -4453,7 +4370,7 @@
   (symbol (lib_id "power:GND") (at 360.68 59.69 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 51b3604a-0113-49e0-8b30-52c8fbdce6c0)
-    (property "Reference" "#PWR07" (at 360.68 66.04 0)
+    (property "Reference" "#PWR09" (at 360.68 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 360.68 63.5 0)
@@ -4469,7 +4386,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR07") (unit 1)
+          (reference "#PWR09") (unit 1)
         )
       )
     )
@@ -4505,7 +4422,7 @@
   (symbol (lib_id "power:GND") (at 294.64 123.19 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 5637c1dd-da3a-4f3a-b02d-2870c3ab0919)
-    (property "Reference" "#PWR025" (at 294.64 129.54 0)
+    (property "Reference" "#PWR017" (at 294.64 129.54 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 294.64 128.27 0)
@@ -4521,16 +4438,16 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR025") (unit 1)
+          (reference "#PWR017") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 335.28 220.98 0) (mirror y) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 335.28 220.98 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 571d07e6-59b1-443f-be90-2f9a2aaf01d9)
-    (property "Reference" "J17" (at 337.82 220.98 0)
+    (property "Reference" "J18" (at 337.82 220.98 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "GND" (at 345.44 220.98 0)
@@ -4546,7 +4463,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J17") (unit 1)
+          (reference "J18") (unit 1)
         )
       )
     )
@@ -4555,13 +4472,13 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:RP2040") (at 134.62 214.63 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 5be710a2-fcda-4b2d-9820-ecc5222143f9)
-    (property "Reference" "U4" (at 105.41 165.1 0)
+    (property "Reference" "U5" (at 105.41 165.1 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "RP2040" (at 158.75 264.16 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm" (at 113.03 275.59 0)
+    (property "Footprint" "Package_DFN_QFN:QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm" (at 113.03 275.59 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf" (at 128.27 279.4 0)
@@ -4627,7 +4544,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "U4") (unit 1)
+          (reference "U5") (unit 1)
         )
       )
     )
@@ -4636,13 +4553,13 @@
   (symbol (lib_id "Device:C") (at 88.9 48.26 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 5c39f673-a488-492d-b526-c1b28050b65e)
-    (property "Reference" "C14" (at 82.55 48.26 0)
+    (property "Reference" "C2" (at 82.55 48.26 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10u" (at 82.55 50.8 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 89.8652 52.07 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 89.8652 52.07 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 88.9 48.26 0)
@@ -4656,7 +4573,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C14") (unit 1)
+          (reference "C2") (unit 1)
         )
       )
     )
@@ -4665,7 +4582,7 @@
   (symbol (lib_id "power:GND") (at 172.72 153.67 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 5c4af26e-916e-4816-82fb-e760486c1656)
-    (property "Reference" "#PWR012" (at 172.72 160.02 0)
+    (property "Reference" "#PWR021" (at 172.72 160.02 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 172.72 157.48 0)
@@ -4681,7 +4598,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR012") (unit 1)
+          (reference "#PWR021") (unit 1)
         )
       )
     )
@@ -4690,13 +4607,13 @@
   (symbol (lib_id "Device:R") (at 53.34 80.01 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 5eb79c3d-d502-4e61-89a9-4080e6b1d21e)
-    (property "Reference" "R16" (at 50.8 82.55 90)
+    (property "Reference" "R5" (at 50.8 82.55 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "5k1" (at 55.88 82.55 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 53.34 78.232 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 53.34 78.232 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 53.34 80.01 0)
@@ -4707,13 +4624,13 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R16") (unit 1)
+          (reference "R5") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 312.42 38.1 270) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 312.42 38.1 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 5f5cf5c4-69a1-46cf-b923-598cb687b24f)
     (property "Reference" "J3" (at 312.42 36.83 90)
@@ -4722,7 +4639,7 @@
     (property "Value" "0" (at 312.42 31.75 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 312.42 38.1 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" (at 312.42 38.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 312.42 38.1 0)
@@ -4741,7 +4658,7 @@
   (symbol (lib_id "power:GND") (at 302.26 59.69 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 62d7e241-6e9d-4a41-93f7-50599331e9de)
-    (property "Reference" "#PWR05" (at 302.26 66.04 0)
+    (property "Reference" "#PWR07" (at 302.26 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 302.26 63.5 0)
@@ -4757,7 +4674,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR05") (unit 1)
+          (reference "#PWR07") (unit 1)
         )
       )
     )
@@ -4766,7 +4683,7 @@
   (symbol (lib_id "power:GND") (at 67.31 163.83 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 63749595-74c8-461e-8a35-f5329f15e719)
-    (property "Reference" "#PWR029" (at 67.31 170.18 0)
+    (property "Reference" "#PWR022" (at 67.31 170.18 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 67.31 167.64 0)
@@ -4782,7 +4699,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR029") (unit 1)
+          (reference "#PWR022") (unit 1)
         )
       )
     )
@@ -4844,10 +4761,10 @@
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 335.28 215.9 0) (mirror y) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 335.28 215.9 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 6c22686d-0edf-4eec-887b-8cf03a6d9e53)
-    (property "Reference" "J15" (at 337.82 215.9 0)
+    (property "Reference" "J16" (at 337.82 215.9 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "M_OUT_B" (at 345.44 215.9 0)
@@ -4863,7 +4780,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J15") (unit 1)
+          (reference "J16") (unit 1)
         )
       )
     )
@@ -4872,7 +4789,7 @@
   (symbol (lib_id "power:GND") (at 261.62 165.1 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 6c647d31-9f40-4653-974f-894916ec879b)
-    (property "Reference" "#PWR013" (at 261.62 171.45 0)
+    (property "Reference" "#PWR023" (at 261.62 171.45 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 261.62 170.18 0)
@@ -4888,7 +4805,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR013") (unit 1)
+          (reference "#PWR023") (unit 1)
         )
       )
     )
@@ -4897,7 +4814,7 @@
   (symbol (lib_id "power:GND") (at 353.06 166.37 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 6ffe4cb4-44df-4aea-b406-2c7869b3222e)
-    (property "Reference" "#PWR027" (at 353.06 172.72 0)
+    (property "Reference" "#PWR024" (at 353.06 172.72 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 353.06 171.45 0)
@@ -4913,7 +4830,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR027") (unit 1)
+          (reference "#PWR024") (unit 1)
         )
       )
     )
@@ -4922,7 +4839,7 @@
   (symbol (lib_id "power:GND") (at 66.04 81.28 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 74d8ba41-1e49-4bda-84fb-7964ac27a27e)
-    (property "Reference" "#PWR02" (at 66.04 87.63 0)
+    (property "Reference" "#PWR011" (at 66.04 87.63 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 66.04 85.09 0)
@@ -4938,7 +4855,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR02") (unit 1)
+          (reference "#PWR011") (unit 1)
         )
       )
     )
@@ -4947,7 +4864,7 @@
   (symbol (lib_id "power:GND") (at 307.34 182.88 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 79189a95-ab1a-4bd2-af6c-b687a68ac717)
-    (property "Reference" "#PWR014" (at 307.34 189.23 0)
+    (property "Reference" "#PWR026" (at 307.34 189.23 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 307.34 187.96 0)
@@ -4963,7 +4880,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR014") (unit 1)
+          (reference "#PWR026") (unit 1)
         )
       )
     )
@@ -4972,13 +4889,13 @@
   (symbol (lib_id "Device:C") (at 281.94 118.11 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 7eb33466-6ffd-49c0-b99c-980e7aec8584)
-    (property "Reference" "C20" (at 285.75 116.84 0)
+    (property "Reference" "C3" (at 285.75 116.84 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10u" (at 285.75 119.38 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 282.9052 121.92 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 282.9052 121.92 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 281.94 118.11 0)
@@ -4992,7 +4909,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C20") (unit 1)
+          (reference "C3") (unit 1)
         )
       )
     )
@@ -5001,13 +4918,13 @@
   (symbol (lib_id "Device:R") (at 172.72 173.99 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 7edd1560-0dcb-425e-a665-b013134a4756)
-    (property "Reference" "R19" (at 170.18 176.53 90)
+    (property "Reference" "R13" (at 170.18 176.53 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "27R" (at 175.26 176.53 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 172.72 172.212 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 172.72 172.212 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 172.72 173.99 0)
@@ -5018,13 +4935,13 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R19") (unit 1)
+          (reference "R13") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_name "Conn_01x01_Male_1") (lib_id "Connector:Conn_01x01_Male") (at 24.13 27.94 0) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 24.13 27.94 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 864d3bfc-331d-4e4b-b1ec-3edb63307c9c)
     (property "Reference" "J1" (at 22.86 27.94 0)
@@ -5052,13 +4969,13 @@
   (symbol (lib_id "Device:C") (at 332.74 124.46 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 8796d729-826f-4ec2-84a1-904f1cfe51c5)
-    (property "Reference" "C18" (at 336.55 123.19 0)
+    (property "Reference" "C5" (at 336.55 123.19 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 336.55 125.73 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 335.661 126.7714 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 335.661 126.7714 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 332.74 124.46 0)
@@ -5072,7 +4989,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C18") (unit 1)
+          (reference "C5") (unit 1)
         )
       )
     )
@@ -5081,13 +4998,13 @@
   (symbol (lib_id "Device:R") (at 328.93 165.1 0) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 887831bf-4ef0-4084-83b3-a3d151146711)
-    (property "Reference" "R12" (at 332.74 163.83 0)
+    (property "Reference" "R10" (at 332.74 163.83 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "6k8" (at 332.74 166.37 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 327.152 165.1 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 327.152 165.1 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 328.93 165.1 0)
@@ -5098,7 +5015,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R12") (unit 1)
+          (reference "R10") (unit 1)
         )
       )
     )
@@ -5107,7 +5024,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:SS54") (at 34.29 45.72 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 8ad8f498-8c37-43e6-ab7a-4a899a3202ff)
-    (property "Reference" "D4" (at 36.83 44.7675 90)
+    (property "Reference" "D3" (at 36.83 44.7675 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "SS54" (at 36.83 47.3075 90)
@@ -5124,7 +5041,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "D4") (unit 1)
+          (reference "D3") (unit 1)
         )
       )
     )
@@ -5133,7 +5050,7 @@
   (symbol (lib_id "power:GND") (at 184.15 86.36 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 8d83090d-0e38-42c8-96a3-4238cf5c73d9)
-    (property "Reference" "#PWR028" (at 184.15 92.71 0)
+    (property "Reference" "#PWR012" (at 184.15 92.71 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 184.15 90.17 0)
@@ -5149,7 +5066,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR028") (unit 1)
+          (reference "#PWR012") (unit 1)
         )
       )
     )
@@ -5158,13 +5075,13 @@
   (symbol (lib_id "Device:R") (at 53.34 77.47 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 8fa9a3c0-3ec6-4cca-9cbb-d164166e70e8)
-    (property "Reference" "R15" (at 50.8 74.93 90)
+    (property "Reference" "R4" (at 50.8 74.93 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "5k1" (at 55.88 74.93 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 53.34 75.692 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 53.34 75.692 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 53.34 77.47 0)
@@ -5175,22 +5092,22 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R15") (unit 1)
+          (reference "R4") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 180.34 184.15 180) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 180.34 184.15 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 91e6f349-1ab8-48dd-a933-e32836f7f264)
-    (property "Reference" "J9" (at 181.61 184.15 0)
+    (property "Reference" "J10" (at 181.61 184.15 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1" (at 186.69 184.15 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 180.34 184.15 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 180.34 184.15 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 180.34 184.15 0)
@@ -5200,22 +5117,22 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J9") (unit 1)
+          (reference "J10") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 90.17 243.84 0) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 90.17 243.84 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 9213b90c-4e6d-4a24-8e82-b03f0903ca0d)
-    (property "Reference" "J18" (at 87.63 243.84 0)
+    (property "Reference" "J19" (at 87.63 243.84 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "SWCLK" (at 81.28 243.84 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 90.17 243.84 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 90.17 243.84 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 90.17 243.84 0)
@@ -5225,7 +5142,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J18") (unit 1)
+          (reference "J19") (unit 1)
         )
       )
     )
@@ -5234,7 +5151,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:SS54") (at 34.29 33.02 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 93029122-e7dd-45de-9bc3-6579fc8afc15)
-    (property "Reference" "D3" (at 36.83 31.4325 90)
+    (property "Reference" "D1" (at 36.83 31.4325 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SS54" (at 36.83 33.9725 90)
@@ -5251,7 +5168,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "D3") (unit 1)
+          (reference "D1") (unit 1)
         )
       )
     )
@@ -5260,7 +5177,7 @@
   (symbol (lib_id "power:+3V3") (at 346.71 110.49 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 96650694-0541-4e5b-a7c4-af5651a7c595)
-    (property "Reference" "#PWR019" (at 346.71 114.3 0)
+    (property "Reference" "#PWR014" (at 346.71 114.3 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (at 346.71 106.68 0)
@@ -5276,7 +5193,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR019") (unit 1)
+          (reference "#PWR014") (unit 1)
         )
       )
     )
@@ -5311,7 +5228,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:+V") (at 281.94 107.95 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 9b12c5a8-6b27-4e62-aac4-a37f033b7688)
-    (property "Reference" "#PWR015" (at 281.94 111.76 0)
+    (property "Reference" "#PWR013" (at 281.94 111.76 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+V" (at 281.94 104.14 0)
@@ -5327,7 +5244,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR015") (unit 1)
+          (reference "#PWR013") (unit 1)
         )
       )
     )
@@ -5336,7 +5253,7 @@
   (symbol (lib_id "power:GND") (at 134.62 266.7 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 9db5ba07-ff99-44f4-9cda-20a595c659c4)
-    (property "Reference" "#PWR024" (at 134.62 273.05 0)
+    (property "Reference" "#PWR033" (at 134.62 273.05 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 134.62 270.51 0)
@@ -5352,7 +5269,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR024") (unit 1)
+          (reference "#PWR033") (unit 1)
         )
       )
     )
@@ -5361,7 +5278,7 @@
   (symbol (lib_id "power:GND") (at 33.02 118.11 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 9e2bb8a1-d0bf-4299-bad5-fe3ef2641cb1)
-    (property "Reference" "#PWR03" (at 33.02 124.46 0)
+    (property "Reference" "#PWR015" (at 33.02 124.46 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 33.02 121.92 0)
@@ -5377,7 +5294,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR03") (unit 1)
+          (reference "#PWR015") (unit 1)
         )
       )
     )
@@ -5386,7 +5303,7 @@
   (symbol (lib_id "power:GND") (at 121.92 266.7 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 9e4422f0-701f-4f2c-8b08-087f00d6c659)
-    (property "Reference" "#PWR023" (at 121.92 273.05 0)
+    (property "Reference" "#PWR032" (at 121.92 273.05 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 121.92 270.51 0)
@@ -5402,7 +5319,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR023") (unit 1)
+          (reference "#PWR032") (unit 1)
         )
       )
     )
@@ -5411,13 +5328,13 @@
   (symbol (lib_id "Device:C") (at 294.64 118.11 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid a8701d97-67c8-4ea6-a6a4-a70813002565)
-    (property "Reference" "C19" (at 298.45 116.84 0)
+    (property "Reference" "C4" (at 298.45 116.84 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 298.45 119.38 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 297.561 120.4214 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 297.561 120.4214 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 294.64 118.11 0)
@@ -5431,7 +5348,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C19") (unit 1)
+          (reference "C4") (unit 1)
         )
       )
     )
@@ -5464,7 +5381,7 @@
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 320.04 38.1 270) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 320.04 38.1 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid abb22e05-1457-442f-97a4-f7c21fe7da04)
     (property "Reference" "J6" (at 320.04 36.83 90)
@@ -5473,7 +5390,7 @@
     (property "Value" "3" (at 320.04 31.75 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 320.04 38.1 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" (at 320.04 38.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 320.04 38.1 0)
@@ -5492,13 +5409,13 @@
   (symbol (lib_id "Device:R") (at 328.93 175.26 0) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid afcb8d96-f5f2-4196-a5f9-bce7a6a760e5)
-    (property "Reference" "R13" (at 332.74 173.99 0)
+    (property "Reference" "R16" (at 332.74 173.99 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 332.74 176.53 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 327.152 175.26 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 327.152 175.26 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 328.93 175.26 0)
@@ -5509,7 +5426,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R13") (unit 1)
+          (reference "R16") (unit 1)
         )
       )
     )
@@ -5518,13 +5435,13 @@
   (symbol (lib_id "Device:R") (at 172.72 171.45 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b0bfae54-aa21-4d51-ad67-5c3fc9a4254d)
-    (property "Reference" "R18" (at 170.18 168.91 90)
+    (property "Reference" "R12" (at 170.18 168.91 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "27R" (at 175.26 168.91 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 172.72 169.672 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 172.72 169.672 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 172.72 171.45 0)
@@ -5535,7 +5452,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R18") (unit 1)
+          (reference "R12") (unit 1)
         )
       )
     )
@@ -5544,7 +5461,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:+V") (at 68.58 35.56 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b2f8aacb-a61d-466f-930f-21a5ca88bc12)
-    (property "Reference" "#PWR031" (at 68.58 39.37 0)
+    (property "Reference" "#PWR01" (at 68.58 39.37 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+V" (at 68.58 31.75 0)
@@ -5560,7 +5477,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR031") (unit 1)
+          (reference "#PWR01") (unit 1)
         )
       )
     )
@@ -5595,7 +5512,7 @@
   (symbol (lib_id "power:+3V3") (at 35.56 176.53 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b660ba07-9d44-4f07-95c2-4604d69ded4a)
-    (property "Reference" "#PWR017" (at 35.56 180.34 0)
+    (property "Reference" "#PWR025" (at 35.56 180.34 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (at 35.56 172.72 0)
@@ -5611,7 +5528,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR017") (unit 1)
+          (reference "#PWR025") (unit 1)
         )
       )
     )
@@ -5620,7 +5537,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:SS54") (at 48.26 33.02 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b6ccfaf3-d7ff-4d9e-bfe9-964a330787fa)
-    (property "Reference" "D1" (at 50.8 31.75 90)
+    (property "Reference" "D2" (at 50.8 31.75 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "SS54" (at 50.8 34.29 90)
@@ -5637,13 +5554,13 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "D1") (unit 1)
+          (reference "D2") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 90.17 248.92 0) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 90.17 248.92 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b721a70b-d2c3-4f34-b6b3-b8974e06e935)
     (property "Reference" "J21" (at 87.63 248.92 0)
@@ -5652,7 +5569,7 @@
     (property "Value" "SWDIO" (at 81.28 248.92 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 90.17 248.92 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 90.17 248.92 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 90.17 248.92 0)
@@ -5671,13 +5588,13 @@
   (symbol (lib_id "Device:C") (at 346.71 146.05 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid bcc78168-ee00-43fb-9d68-ad4ba3b74ed5)
-    (property "Reference" "C21" (at 350.52 143.51 0)
+    (property "Reference" "C6" (at 350.52 143.51 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "22n" (at 350.52 146.05 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 343.789 143.7386 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 343.789 143.7386 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 346.71 146.05 0)
@@ -5691,7 +5608,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C21") (unit 1)
+          (reference "C6") (unit 1)
         )
       )
     )
@@ -5700,13 +5617,13 @@
   (symbol (lib_id "Device:R") (at 285.75 165.1 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c062460d-3477-4f5b-bb65-e51740c3ad44)
-    (property "Reference" "R10" (at 281.94 163.83 0)
+    (property "Reference" "R9" (at 281.94 163.83 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "6k8" (at 281.94 166.37 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 287.528 165.1 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 287.528 165.1 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 285.75 165.1 0)
@@ -5717,22 +5634,22 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R10") (unit 1)
+          (reference "R9") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 90.17 246.38 0) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 90.17 246.38 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c2ea7c23-cfe1-4946-9fe4-469295211eda)
-    (property "Reference" "J19" (at 87.63 246.38 0)
+    (property "Reference" "J20" (at 87.63 246.38 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "SWDIO" (at 81.28 246.38 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 90.17 246.38 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 90.17 246.38 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 90.17 246.38 0)
@@ -5742,7 +5659,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J19") (unit 1)
+          (reference "J20") (unit 1)
         )
       )
     )
@@ -5751,7 +5668,7 @@
   (symbol (lib_id "power:GND") (at 273.05 59.69 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c4997eb1-06ae-4f83-9e38-b7ee7b95b936)
-    (property "Reference" "#PWR04" (at 273.05 66.04 0)
+    (property "Reference" "#PWR06" (at 273.05 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 273.05 63.5 0)
@@ -5767,7 +5684,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR04") (unit 1)
+          (reference "#PWR06") (unit 1)
         )
       )
     )
@@ -5776,7 +5693,7 @@
   (symbol (lib_id "power:+3V3") (at 125.73 140.97 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c66e9674-ff78-456d-a82f-de1c7e16d087)
-    (property "Reference" "#PWR010" (at 125.73 144.78 0)
+    (property "Reference" "#PWR019" (at 125.73 144.78 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (at 125.73 137.16 0)
@@ -5792,7 +5709,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR010") (unit 1)
+          (reference "#PWR019") (unit 1)
         )
       )
     )
@@ -5859,13 +5776,13 @@
   (symbol (lib_id "Device:R") (at 88.9 171.45 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c8ea0ad5-6b95-4c01-abb5-835ef36fa817)
-    (property "Reference" "R17" (at 85.09 170.18 0)
+    (property "Reference" "R11" (at 85.09 170.18 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 85.09 172.72 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 90.678 171.45 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 90.678 171.45 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 88.9 171.45 0)
@@ -5876,7 +5793,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R17") (unit 1)
+          (reference "R11") (unit 1)
         )
       )
     )
@@ -5885,7 +5802,7 @@
   (symbol (lib_id "power:GND") (at 96.52 153.67 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d2b6e7b3-ee1b-44b2-bba8-66b8bd16072b)
-    (property "Reference" "#PWR011" (at 96.52 160.02 0)
+    (property "Reference" "#PWR020" (at 96.52 160.02 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 96.52 157.48 0)
@@ -5901,13 +5818,13 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR011") (unit 1)
+          (reference "#PWR020") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 314.96 38.1 270) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 314.96 38.1 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d5334551-c751-4aad-b6e2-9d23f08b857e)
     (property "Reference" "J4" (at 314.96 36.83 90)
@@ -5916,7 +5833,7 @@
     (property "Value" "1" (at 314.96 31.75 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 314.96 38.1 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" (at 314.96 38.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 314.96 38.1 0)
@@ -5935,13 +5852,13 @@
   (symbol (lib_id "Device:R") (at 261.62 158.75 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d5a15de5-6e13-4076-9446-1add0dfd948e)
-    (property "Reference" "R3" (at 257.81 157.48 0)
+    (property "Reference" "R7" (at 257.81 157.48 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "0R" (at 257.81 160.02 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 263.398 158.75 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 263.398 158.75 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 261.62 158.75 0)
@@ -5952,7 +5869,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R3") (unit 1)
+          (reference "R7") (unit 1)
         )
       )
     )
@@ -5961,7 +5878,7 @@
   (symbol (lib_id "power:GND") (at 104.14 57.15 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d61e261e-ead3-42b5-95df-2229676889e2)
-    (property "Reference" "#PWR08" (at 104.14 63.5 0)
+    (property "Reference" "#PWR04" (at 104.14 63.5 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 104.14 60.96 0)
@@ -5977,7 +5894,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR08") (unit 1)
+          (reference "#PWR04") (unit 1)
         )
       )
     )
@@ -5986,7 +5903,7 @@
   (symbol (lib_id "RP2040-Decoder_Additional_Symbols:+V") (at 328.93 212.09 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid da361872-5f9f-426c-a81c-5f942ef75cc9)
-    (property "Reference" "#PWR020" (at 328.93 215.9 0)
+    (property "Reference" "#PWR028" (at 328.93 215.9 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+V" (at 328.93 208.28 0)
@@ -6002,7 +5919,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR020") (unit 1)
+          (reference "#PWR028") (unit 1)
         )
       )
     )
@@ -6011,13 +5928,13 @@
   (symbol (lib_id "Device:R") (at 337.82 175.26 0) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid dc0c5a5b-255d-4cb3-8e34-490a35a21f5e)
-    (property "Reference" "R8" (at 341.63 173.99 0)
+    (property "Reference" "R17" (at 341.63 173.99 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 341.63 176.53 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 336.042 175.26 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 336.042 175.26 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 337.82 175.26 0)
@@ -6028,7 +5945,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R8") (unit 1)
+          (reference "R17") (unit 1)
         )
       )
     )
@@ -6037,7 +5954,7 @@
   (symbol (lib_id "power:GND") (at 331.47 59.69 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid dc529de2-ed48-4fd9-9e8e-e4247a358145)
-    (property "Reference" "#PWR06" (at 331.47 66.04 0)
+    (property "Reference" "#PWR08" (at 331.47 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 331.47 63.5 0)
@@ -6053,22 +5970,22 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR06") (unit 1)
+          (reference "#PWR08") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 180.34 191.77 180) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 180.34 191.77 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid e2dd5f1b-b2fd-4f42-a2ec-dfbac16ad4c9)
-    (property "Reference" "J12" (at 181.61 191.77 0)
+    (property "Reference" "J13" (at 181.61 191.77 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "4" (at 186.69 191.77 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm" (at 180.34 191.77 0)
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm" (at 180.34 191.77 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 180.34 191.77 0)
@@ -6078,7 +5995,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J12") (unit 1)
+          (reference "J13") (unit 1)
         )
       )
     )
@@ -6087,7 +6004,7 @@
   (symbol (lib_id "power:GND") (at 43.18 49.53 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid e39ab39f-4d4c-4281-ae27-fa81d365a175)
-    (property "Reference" "#PWR01" (at 43.18 55.88 0)
+    (property "Reference" "#PWR03" (at 43.18 55.88 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 43.18 53.34 0)
@@ -6103,7 +6020,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR01") (unit 1)
+          (reference "#PWR03") (unit 1)
         )
       )
     )
@@ -6112,13 +6029,13 @@
   (symbol (lib_id "Device:C") (at 132.08 147.32 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid e9afc2cf-7658-41ad-88e3-627ff5590fcf)
-    (property "Reference" "C13" (at 135.001 146.1516 0)
+    (property "Reference" "C10" (at 135.001 146.1516 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 135.001 148.463 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric" (at 135.001 149.6314 0)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:C_0603_1608Metric_Removed_Silkscreen" (at 135.001 149.6314 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "~" (at 132.08 147.32 0)
@@ -6129,16 +6046,16 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "C13") (unit 1)
+          (reference "C10") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 335.28 213.36 0) (mirror y) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 335.28 213.36 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid ec1f61aa-498a-4f37-9616-9e5d4d3c9322)
-    (property "Reference" "J14" (at 337.82 213.36 0)
+    (property "Reference" "J15" (at 337.82 213.36 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "+V" (at 345.44 213.36 0)
@@ -6154,7 +6071,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J14") (unit 1)
+          (reference "J15") (unit 1)
         )
       )
     )
@@ -6163,7 +6080,7 @@
   (symbol (lib_id "power:GND") (at 281.94 123.19 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f21f03e1-f65d-423b-8144-8550fe392cbe)
-    (property "Reference" "#PWR026" (at 281.94 129.54 0)
+    (property "Reference" "#PWR016" (at 281.94 129.54 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 281.94 128.27 0)
@@ -6179,16 +6096,16 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "#PWR026") (unit 1)
+          (reference "#PWR016") (unit 1)
         )
       )
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x01_Male") (at 335.28 218.44 0) (mirror y) (unit 1)
+  (symbol (lib_id "Connector:Conn_01x01_Pin") (at 335.28 218.44 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f6b2bd02-bf4c-42be-afbb-1ab3bb06e318)
-    (property "Reference" "J16" (at 337.82 218.44 0)
+    (property "Reference" "J17" (at 337.82 218.44 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "M_OUT_A" (at 345.44 218.44 0)
@@ -6204,7 +6121,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "J16") (unit 1)
+          (reference "J17") (unit 1)
         )
       )
     )
@@ -6213,13 +6130,13 @@
   (symbol (lib_id "Device:R") (at 353.06 160.02 0) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid fa7f94b6-d375-4cad-9f88-622e2f596559)
-    (property "Reference" "R6" (at 356.87 158.75 0)
+    (property "Reference" "R8" (at 356.87 158.75 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k2" (at 356.87 161.29 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric" (at 351.282 160.02 90)
+    (property "Footprint" "RP2040-Decoder_Additional_Footprints:R_0603_1608Metric_Removed_Silkscreen" (at 351.282 160.02 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 353.06 160.02 0)
@@ -6230,7 +6147,7 @@
     (instances
       (project "RP2040-Decoder"
         (path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-          (reference "R6") (unit 1)
+          (reference "R8") (unit 1)
         )
       )
     )
