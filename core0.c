@@ -79,7 +79,7 @@ void adc_offset_adjustment(uint32_t n){
     float overall_avg = (offset_avg_fwd+offset_avg_rev)/2;
     uint8_t offset = (uint8_t)roundf(overall_avg);
 
-    LOG(1, "new adc offset CV[171] (%f): (uint8_t)%d\n", overall_avg, offset);
+    LOG(1, "new adc offset CV[171] (%f): (uint8_t)%d", overall_avg, offset);
 
     // Create temporary array -> change CV 172 in temp array -> erase flash -> write temp array to flash
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
@@ -543,7 +543,7 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
     for (int i = 0; i < iterations; ++i) {
         uint16_t max_level = _125M/(CV_ARRAY_FLASH[8]*100+10000);
         uint16_t level = max_level/20;
-        LOG(3, "iteration %d: maxlevel %d level %d\n", i, max_level, level);
+        LOG(3, "iteration %d: maxlevel %d level %d", i, max_level, level);
         float measurement;
         do {
             pwm_set_gpio_level(gpio, level);
@@ -554,20 +554,20 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
                                   CV_ARRAY_FLASH[62],
                                   CV_ARRAY_FLASH[63],
                                   direction);
-            LOG(3, "level %d measurement %f loop-cond: %f\n", level, measurement, measurement-(float)CV_ARRAY_FLASH[171]);
+            LOG(3, "level %d measurement %f loop-cond: %f", level, measurement, measurement-(float)CV_ARRAY_FLASH[171]);
             if (level > max_level) {
                 // Abort measurement and write default value of 0 to flash
                 LOG(1, "measure_base_pwm: abort measurement and return 0");
                 return 0;
             }
         } while((measurement - (float)CV_ARRAY_FLASH[171]) < 5.0f);
-        LOG(3, "level_arr[%d] = %f\n", i, level);
+        LOG(3, "level_arr[%d] = %f", i, level);
         level_arr[i] = (float)level;
         busy_wait_ms(100);
     }
     // Find and return overall average discarding outliers in measurement - multiply with 0.9
     float retVal = 0.9f*two_std_dev(level_arr,5);
-    LOG(1, "measure_base_pwm: %d(%f)\n", (uint16_t)retVal, retVal);
+    LOG(1, "measure_base_pwm: %d(%f)", (uint16_t)retVal, retVal);
     return (uint16_t)(retVal);
 }
 
@@ -613,8 +613,8 @@ void cv_setup_check(){
         uint8_t arr1[4] = {125,base_pwm_rev_low_byte,178,124};
         program_mode(4,arr1);
     }
-    LOG(1, "int_lim_max %d\n", CV_ARRAY_FLASH[51]);
-    LOG(1, "int_lim_min %d\n", CV_ARRAY_FLASH[52]);
+    LOG(1, "int_lim_max %d", CV_ARRAY_FLASH[51]);
+    LOG(1, "int_lim_min %d", CV_ARRAY_FLASH[52]);
 }
 
 
@@ -640,7 +640,7 @@ void init_motor_pwm(uint8_t gpio) {
     pwm_set_gpio_level(gpio,0);
     pwm_set_enabled(slice_num, true);
 
-    LOG(2, "init motor(%d): wrapCounter %d clkdiv %d\n", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
+    LOG(2, "init motor(%d): wrapCounter %d clkdiv %d", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
 }
 
 
