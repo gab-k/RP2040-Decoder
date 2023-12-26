@@ -242,7 +242,8 @@ void set_outputs(uint32_t functions_to_set_bitmask) {
     uint32_t temp_mask = 1;
     for (uint8_t i = 0; i < 32; i++) {
         if (temp_mask & functions_to_set_bitmask ){
-            outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * get_direction(0));
+            bool dir = get_direction(0);
+            outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * dir);
         }
         temp_mask<<=1;
     }
@@ -384,7 +385,7 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_a
                 update_active_functions((command_byte_n << 9),2,false);
                 break;
             default:            // F0-F4
-                update_active_functions(((command_byte_n << 1) + (command_byte_n >> 4)),0,false);
+                update_active_functions((((command_byte_n & 0b00001111) << 1) + ((command_byte_n & 0b00010000) >> 4)),0,false);
                 break;
         }
     }
@@ -624,8 +625,13 @@ bool get_direction(bool *direction_ptr){
     static bool set_flag;
     static bool *dir_ptr;
     if(!set_flag) {
-        dir_ptr = direction_ptr;
-        set_flag = true;
+        if (direction_ptr == NULL){
+            LOG(0, "Error! Direction pointer argument is NULL-pointer!")
+        }
+        else {
+            set_flag = true;
+            dir_ptr = direction_ptr;
+        }
     }
     return *dir_ptr;
 }

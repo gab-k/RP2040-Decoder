@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../../../Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../../../Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/lib/btstack" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../../../Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/lib/cyw43-driver" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../../../Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/lib/lwip" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../../../Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/lib/mbedtls" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../../../Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/lib/tinyusb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../../../Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/lib/tinyusb/hw/mcu/raspberry_pi/Pico-PIO-USB" vcs="Git" />
+  </component>
+</project>
