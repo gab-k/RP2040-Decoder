@@ -25,7 +25,7 @@
 //   outside world (this is configure automatically for you below!)
 // - IMPORTANT: you have to enable uart in the cmakelists.txt to enable logging!
 #define LOGLEVEL 0
-#define LOG(level, ...)  { if(level <= LOGLEVEL) {printf(__VA_ARGS__, "\n");}}
+#define LOG(level, ...) { if(level <= LOGLEVEL) {printf(__VA_ARGS__);}}
 
 // Constant Value of 125 x 10⁶
 #define _125M 125000000
