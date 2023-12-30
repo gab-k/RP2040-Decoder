@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(PICO_DECODER_PATH ${PROJECT_SOURCE_DIR})
 
+# Stop the compiler from inling method calls making it easier to debug
+set(PICO_DEOPTIMIZED_DEBUG 1)
+
 # Initialize the SDK
 pico_sdk_init()
 
