@@ -79,7 +79,7 @@ void adc_offset_adjustment(uint32_t n){
     float overall_avg = (offset_avg_fwd+offset_avg_rev)/2;
     uint8_t offset = (uint8_t)roundf(overall_avg);
 
-    LOG(1, "new adc offset CV[171] (%f): (uint8_t)%d", overall_avg, offset);
+    LOG(1, "new adc offset CV[171] (%f): (uint8_t)%d\n", overall_avg, offset);
 
     // Create temporary array -> change CV 172 in temp array -> erase flash -> write temp array to flash
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
@@ -144,7 +144,7 @@ void write_cv_handler(uint16_t cv_index, uint8_t cv_data){
             // Read only (CV_7 - Version no.)
             // ADC offset Adjustment (CV_7; Value = 7);
             if (cv_data == 7) {
-                LOG(1, "trigger adc offset adjustment via cv7 => 7");
+                LOG(1, "trigger adc offset adjustment via cv7 => 7\n");
                 adc_offset_adjustment(8192);
             }
             break;
@@ -152,7 +152,7 @@ void write_cv_handler(uint16_t cv_index, uint8_t cv_data){
             // Read only (CV_8 - Manufacturer ID)
             // Reset all CVs to Default (CV_8; Value = 8)
             if (cv_data == 8){
-                LOG(1, "reset of flash triggered via cv8 => 8");
+                LOG(1, "reset of flash triggered via cv8 => 8\n");
                 flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
                 flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
             }
@@ -544,7 +544,7 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
     for (int i = 0; i < iterations; ++i) {
         uint16_t max_level = _125M/(CV_ARRAY_FLASH[8]*100+10000);
         uint16_t level = max_level/20;
-        LOG(3, "iteration %d: maxlevel %d level %d", i, max_level, level);
+        LOG(3, "iteration %d: maxlevel %d level %d\n", i, max_level, level);
         float measurement;
         do {
             pwm_set_gpio_level(gpio, level);
@@ -555,20 +555,20 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
                                   CV_ARRAY_FLASH[62],
                                   CV_ARRAY_FLASH[63],
                                   direction);
-            LOG(3, "level %d measurement %f loop-cond: %f", level, measurement, measurement-(float)CV_ARRAY_FLASH[171]);
+            LOG(3, "level %d measurement %f loop-cond: %f\n", level, measurement, measurement-(float)CV_ARRAY_FLASH[171]);
             if (level > max_level) {
                 // Abort measurement and write default value of 0 to flash
-                LOG(1, "measure_base_pwm: abort measurement and return 0");
+                LOG(1, "measure_base_pwm: abort measurement and return 0\n");
                 return 0;
             }
         } while((measurement - (float)CV_ARRAY_FLASH[171]) < 5.0f);
-        LOG(3, "level_arr[%d] = %f", i, level);
+        LOG(3, "level_arr[%d] = %f\n", i, level);
         level_arr[i] = (float)level;
         busy_wait_ms(100);
     }
     // Find and return overall average discarding outliers in measurement - multiply with 0.9
     float retVal = 0.9f*two_std_dev(level_arr,5);
-    LOG(1, "measure_base_pwm: %d(%f)", (uint16_t)retVal, retVal);
+    LOG(1, "measure_base_pwm: %d(%f)\n", (uint16_t)retVal, retVal);
     return (uint16_t)(retVal);
 }
 
@@ -579,14 +579,14 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
 void cv_setup_check(){
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
     if ( CV_ARRAY_FLASH[64] == 0xFF ){
-        LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)");
+        LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)\n");
         uint8_t arr[4] = {125,8,7,124};
         program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
 
     // Check for adc offset setup
     if ( CV_ARRAY_FLASH[171]  == 0xFF ){
-        LOG(1, "found cv[171] equals to 0xff, adc offset adjstments (and cr[7] = 7)");
+        LOG(1, "found cv[171] equals to 0xff, adc offset adjstments (and cr[7] = 7)\n");
         uint8_t arr[4] = {125,7,6,124};
         program_mode(4,arr);        //ADC offset adjustment  (write CV_7 = 7)
     }
@@ -594,7 +594,7 @@ void cv_setup_check(){
     // Check for base PWM configuration - used for feed-forward
     // Forward Direction
     if (get_16bit_CV(175) == 0){
-        LOG(1, "found cv[175] equals to 0, forward direction");
+        LOG(1, "found cv[175] equals to 0, forward direction\n");
         uint16_t base_pwm_fwd = measure_base_pwm(true,10);
         uint8_t base_pwm_fwd_high_byte = base_pwm_fwd>>8;
         uint8_t base_pwm_fwd_low_byte = base_pwm_fwd&0x00FF;
@@ -605,7 +605,7 @@ void cv_setup_check(){
     }
     // Reverse Direction
     if (get_16bit_CV(177) == 0){
-        LOG(1, "found cv[177] equals to 0, reverse direction");
+        LOG(1, "found cv[177] equals to 0, reverse direction\n");
         uint16_t base_pwm_rev = measure_base_pwm(false,10);
         uint8_t base_pwm_rev_high_byte = base_pwm_rev>>8;
         uint8_t base_pwm_rev_low_byte = base_pwm_rev&0x00FF;
@@ -614,8 +614,8 @@ void cv_setup_check(){
         uint8_t arr1[4] = {125,base_pwm_rev_low_byte,178,124};
         program_mode(4,arr1);
     }
-    LOG(1, "int_lim_max %d", CV_ARRAY_FLASH[51]);
-    LOG(1, "int_lim_min %d", CV_ARRAY_FLASH[52]);
+    LOG(1, "int_lim_max %d\n", CV_ARRAY_FLASH[51]);
+    LOG(1, "int_lim_min %d\n", CV_ARRAY_FLASH[52]);
 }
 
 
@@ -626,7 +626,7 @@ bool get_direction(bool *direction_ptr){
     static bool *dir_ptr;
     if(!set_flag) {
         if (direction_ptr == NULL){
-            LOG(0, "Error! Direction pointer argument is NULL-pointer!")
+            LOG(0, "Error! Direction pointer argument is NULL-pointer!\n")
         }
         else {
             set_flag = true;
@@ -646,7 +646,7 @@ void init_motor_pwm(uint8_t gpio) {
     pwm_set_gpio_level(gpio,0);
     pwm_set_enabled(slice_num, true);
 
-    LOG(2, "init motor(%d): wrapCounter %d clkdiv %d", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
+    LOG(2, "init motor(%d): wrapCounter %d clkdiv %d\n", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
 }
 
 
@@ -665,20 +665,20 @@ void init_gpio_adc(){
 
 int main() {
     stdio_init_all();
-    LOG(1, "\n\n======\ncore0 init");
+    LOG(1, "\n\n======\ncore0 init\n");
     init_gpio_adc();
-    LOG(1, "init motor pwms");
+    LOG(1, "init motor pwms\n");
     init_motor_pwm(MOTOR_FWD_PIN);
     init_motor_pwm(MOTOR_REV_PIN);
-    LOG(1, "check cvs");
+    LOG(1, "check cvs\n");
     cv_setup_check();
-    LOG(1, "init outputs");
+    LOG(1, "init outputs\n");
     init_outputs();
-    LOG(1, "init gpios");
+    LOG(1, "init gpios\n");
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     gpio_pull_up(DCC_INPUT_PIN);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
-    LOG(1, "core0 done");
+    LOG(1, "core0 done\n");
     while (1);
 }

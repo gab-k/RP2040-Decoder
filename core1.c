@@ -200,7 +200,7 @@ bool pid_control(struct repeating_timer *t){
         static int counter = 0;
         counter++;
         if(counter > 100) {
-            LOG(1, "pid error(%f) output(%f)", e, output);
+            LOG(1, "pid error(%f) output(%f)\n", e, output);
             counter = 0;            
         }
     }
@@ -240,7 +240,7 @@ void init_pid(pid_params *pid){
     double v_mid = (double)CV_ARRAY_FLASH[5]*16;
     double v_max = (double)CV_ARRAY_FLASH[4]*16;
 
-    LOG(1, "speedtable min(%f) mid(%f) max(%f)", v_min, v_mid, v_max);
+    LOG(1, "speedtable min(%f) mid(%f) max(%f)\n", v_min, v_mid, v_max);
 
     double delta_x = 63;
     double m_1 = (v_mid-v_min)/delta_x;
@@ -300,7 +300,7 @@ void init_pid(pid_params *pid){
 
 
 void core1_entry() {
-    LOG(1, "core1 init...");
+    LOG(1, "core1 init...\n");
     pid_params pid_parameters;
     pid_params *pid = &pid_parameters;
     init_pid(pid);
