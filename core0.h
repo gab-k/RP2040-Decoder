@@ -39,8 +39,8 @@ void write_cv_handler(uint16_t cv_index, uint8_t cv_data);
 
 void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]);
 void set_outputs(uint32_t functions_to_set_bitmask);
-void update_active_functions(uint32_t byte, uint8_t clr_bit_ind,bool direction_change);
-bool error_detection(int8_t number_of_bytes, const uint8_t byte_array[]);
+void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind, bool direction_change);
+bool error_detection(int8_t number_of_bytes, const uint8_t * byte_array);
 bool is_long_address(uint8_t number_of_bytes, const uint8_t byte_array[]);
 bool address_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]);
 void instruction_evaluation(uint8_t number_of_bytes,const uint8_t byte_array[]);
