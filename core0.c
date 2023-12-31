@@ -242,8 +242,7 @@ void set_outputs(uint32_t functions_to_set_bitmask) {
     uint32_t temp_mask = 1;
     for (uint8_t i = 0; i < 32; i++) {
         if (temp_mask & functions_to_set_bitmask ){
-            bool dir = get_direction(0);
-            outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * dir);
+            outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * get_direction(0));
         }
         temp_mask<<=1;
     }
@@ -272,7 +271,6 @@ void set_outputs(uint32_t functions_to_set_bitmask) {
 // Update functions F0 - F31 when function command is received or in case of direction change
 void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind, bool direction_change) {
     static uint32_t active_functions;
-    static uint32_t prev_active_func;
 
     // Outputs depend on direction
     // In case of a direction change every output needs to be set according to configuration for the other direction
@@ -284,7 +282,8 @@ void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind,
         new_function_bitmask &= ~(clr_bit_arr[clr_bit_ind]);    // Clear every bit except bits corresponding to group of functions
         active_functions &= clr_bit_arr[clr_bit_ind];           // Clear bits corresponding to group of functions
         active_functions |= new_function_bitmask;               // Write bits corresponding to group of functions
-        uint32_t changes = active_functions ^ prev_active_func; // Checks for changes from previous state
+        static uint32_t prev_active_func = 0;
+        const uint32_t changes = active_functions ^ prev_active_func; // Checks for changes from previous state
         if(changes) set_outputs(active_functions);
         prev_active_func = active_functions;
     }
@@ -292,7 +291,7 @@ void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind,
 
 
 // Bitwise XOR for all Bytes -> Successful result is: "0000 0000"
-bool error_detection(int8_t number_of_bytes, const uint8_t * const byte_array) {
+bool error_detection(const int8_t number_of_bytes, const uint8_t * const byte_array) {
     uint8_t xor_byte = 0;
     for (int i = 0; i < number_of_bytes; i++) {
         xor_byte = xor_byte ^ byte_array[i];
@@ -302,14 +301,14 @@ bool error_detection(int8_t number_of_bytes, const uint8_t * const byte_array) {
 
 
 // Check for long address. Function returns true for long address.
-bool is_long_address(uint8_t number_of_bytes, const uint8_t * const byte_array) {
+bool is_long_address(const uint8_t number_of_bytes, const uint8_t * const byte_array) {
     if ((byte_array[number_of_bytes - 1]>>6) == 0b00000011) return true;
     return false;
 }
 
 
 // First checks for idle package and then evaluates address included in byte_array[]
-bool address_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_array) {
+bool address_evaluation(const uint8_t number_of_bytes,const uint8_t * const byte_array) {
     // Check for Idle Package
     if (byte_array[number_of_bytes - 1] == 255)
     {
@@ -317,7 +316,7 @@ bool address_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_array
     }
 
     // Long/extended address decoder configuration (CV_29 Bit5)
-    bool CV_29_bit5 = (CV_ARRAY_FLASH[28]&0b00100000)>>5;
+    const bool CV_29_bit5 = (CV_ARRAY_FLASH[28]&0b00100000)>>5;
     uint16_t read_address;
     // Decoder configured to receive long/extended address
     if (CV_29_bit5){
@@ -325,10 +324,10 @@ bool address_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_array
         if (is_long_address(number_of_bytes, byte_array))
         {
             // start of transmission -> address_byte_1 -> address_byte_0 -> ... -> end of transmission
-            uint16_t address_byte_1 = (byte_array[number_of_bytes - 1]) - 192;  // Remove long address identifier bits
-            uint16_t address_byte_0 = (byte_array[number_of_bytes - 2]);
+            const uint16_t address_byte_1 = (byte_array[number_of_bytes - 1]) - 192;  // Remove long address identifier bits
+            const uint16_t address_byte_0 = (byte_array[number_of_bytes - 2]);
             read_address = (address_byte_1 << 8) + address_byte_0;
-            uint16_t long_address = get_16bit_CV(16) & 0x3FFF;      // &Mask to remove long address identifier bits
+            const uint16_t long_address = get_16bit_CV(16) & 0x3FFF;      // &Mask to remove long address identifier bits
             return (long_address == read_address);
         }
         // Package received does not contain a long address
@@ -348,10 +347,9 @@ bool address_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_array
 
 
 // Evaluate the type of instruction
-void instruction_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_array) {
+void instruction_evaluation(const uint8_t number_of_bytes,const uint8_t * const byte_array) {
     // start of transmission -> ... -> command_byte_n -> ... -> command_byte_0 -> ... -> end of transmission
     // The position of command bytes depend on whether the address is long or not
-    uint8_t command_byte_n;
     uint8_t command_byte_start_index;
     if (is_long_address(number_of_bytes,byte_array)) {
         command_byte_start_index = number_of_bytes - 3;
@@ -359,12 +357,12 @@ void instruction_evaluation(uint8_t number_of_bytes,const uint8_t * const byte_a
     else {
         command_byte_start_index = number_of_bytes - 2;
     }
-    command_byte_n = byte_array[command_byte_start_index];
+    const uint8_t command_byte_n = byte_array[command_byte_start_index];
 
     //0011-1111 (128 Speed Step Control) - 2 Byte length
     if (command_byte_n == 0b00111111){
         static bool prev_dir;
-        uint32_t speed_step = byte_array[command_byte_start_index - 1];
+        const uint32_t speed_step = byte_array[command_byte_start_index - 1];
 //        LOG(1, "new speed %d", speed_step);
         multicore_fifo_push_blocking(speed_step);
 //        LOG(1, " submitted to list");
@@ -423,11 +421,11 @@ bool reset_package_check(uint8_t number_of_bytes,const uint8_t * const byte_arra
 
 // Checks for valid package - looking for correct preamble
 int8_t check_for_package() {  //returns number of bytes if valid bit-pattern is found. Otherwise -1 is returned.
-    uint64_t package3Masked = input_bit_buffer & PACKAGE_MASK_3_BYTES;
+    const uint64_t package3Masked = input_bit_buffer & PACKAGE_MASK_3_BYTES;
     if (package3Masked == PACKAGE_3_BYTES) return 3;
-    uint64_t package4Masked = input_bit_buffer & PACKAGE_MASK_4_BYTES;
+    const uint64_t package4Masked = input_bit_buffer & PACKAGE_MASK_4_BYTES;
     if (package4Masked == PACKAGE_4_BYTES) return 4;
-    uint64_t package5Masked = input_bit_buffer & PACKAGE_MASK_5_BYTES;
+    const uint64_t package5Masked = input_bit_buffer & PACKAGE_MASK_5_BYTES;
     if (package5Masked == PACKAGE_5_BYTES) return 5;
     return -1;
 }
@@ -445,7 +443,7 @@ void bits_to_byte_array(int8_t number_of_bytes,uint8_t byte_array[]) {
 void evaluation(){
     static bool core1_launched = false;
     static bool reset_package_flag;
-    int8_t number_of_bytes = check_for_package();
+    const int8_t number_of_bytes = check_for_package();
     // number_of_bytes contains the amount of bytes when the package is valid, otherwise -1
     if (number_of_bytes != -1) {
         // Split data into 8Bit array
@@ -492,7 +490,7 @@ void track_signal_fall(unsigned int gpio, long unsigned int events) {
     // Save current timer value
     falling_edge_time = get_absolute_time();
     // Time difference is equal to the time the signal was in a logical high state
-    int64_t time_logical_high  = absolute_time_diff_us(rising_edge_time,falling_edge_time);
+    const int64_t time_logical_high  = absolute_time_diff_us(rising_edge_time,falling_edge_time);
     // When logical high was longer than 87us write 0 bit into buffer otherwise 1
     bool bit;
     if(time_logical_high > 87) bit = 0;
@@ -511,18 +509,15 @@ void track_signal_fall(unsigned int gpio, long unsigned int events) {
 void init_outputs(){
     gpio_init_mask(GPIO_ALLOWED_OUTPUTS);
     gpio_set_dir_out_masked(GPIO_ALLOWED_OUTPUTS);  // Note: This might also disable UART on GPIO0 & GPIO1
-    uint32_t PWM_enabled_outputs = get_32bit_CV(111) & GPIO_ALLOWED_OUTPUTS;
-    uint32_t slice, channel;
-    uint16_t wrap, level;
-    uint8_t clock_divider;
+    const uint32_t PWM_enabled_outputs = get_32bit_CV(111) & GPIO_ALLOWED_OUTPUTS;
     uint32_t mask = 1;
     for (uint8_t i = 0; i < 32; ++i) {
         if (PWM_enabled_outputs & mask){
-            slice = pwm_gpio_to_slice_num(i);
-            channel = pwm_gpio_to_channel(i);   // Channel A = "0"; Channel B = "1"
-            wrap = get_16bit_CV(115 + 7*slice);
-            level = get_16bit_CV(118 + 7*slice + 2*channel);
-            clock_divider = CV_ARRAY_FLASH[117+7*slice] + 1;
+            const uint32_t slice = pwm_gpio_to_slice_num(i);
+            const uint32_t channel = pwm_gpio_to_channel(i);   // Channel A = "0"; Channel B = "1"
+            const uint16_t wrap = get_16bit_CV(115 + 7*slice);
+            const uint16_t level = get_16bit_CV(118 + 7*slice + 2*channel);
+            const uint8_t clock_divider = CV_ARRAY_FLASH[117+7*slice] + 1;
             gpio_set_function(i,GPIO_FUNC_PWM);
             pwm_set_wrap(slice,wrap);
             pwm_set_gpio_level(i,0);
@@ -542,7 +537,7 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
     else gpio = MOTOR_REV_PIN;
     float level_arr[iterations];
     for (int i = 0; i < iterations; ++i) {
-        uint16_t max_level = _125M/(CV_ARRAY_FLASH[8]*100+10000);
+        const uint16_t max_level = _125M/(CV_ARRAY_FLASH[8]*100+10000);
         uint16_t level = max_level/20;
         LOG(3, "iteration %d: maxlevel %d level %d\n", i, max_level, level);
         float measurement;
@@ -567,7 +562,7 @@ uint16_t measure_base_pwm(bool direction, uint8_t iterations){
         busy_wait_ms(100);
     }
     // Find and return overall average discarding outliers in measurement - multiply with 0.9
-    float retVal = 0.9f*two_std_dev(level_arr,5);
+    const float retVal = 0.9f*two_std_dev(level_arr,5);
     LOG(1, "measure_base_pwm: %d(%f)\n", (uint16_t)retVal, retVal);
     return (uint16_t)(retVal);
 }
@@ -580,14 +575,14 @@ void cv_setup_check(){
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
     if ( CV_ARRAY_FLASH[64] == 0xFF ){
         LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)\n");
-        uint8_t arr[4] = {125,8,7,124};
+        const uint8_t arr[4] = {125,8,7,124};
         program_mode(4,arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
 
     // Check for adc offset setup
     if ( CV_ARRAY_FLASH[171]  == 0xFF ){
         LOG(1, "found cv[171] equals to 0xff, adc offset adjstments (and cr[7] = 7)\n");
-        uint8_t arr[4] = {125,7,6,124};
+        const uint8_t arr[4] = {125,7,6,124};
         program_mode(4,arr);        //ADC offset adjustment  (write CV_7 = 7)
     }
 
@@ -595,23 +590,23 @@ void cv_setup_check(){
     // Forward Direction
     if (get_16bit_CV(175) == 0){
         LOG(1, "found cv[175] equals to 0, forward direction\n");
-        uint16_t base_pwm_fwd = measure_base_pwm(true,10);
-        uint8_t base_pwm_fwd_high_byte = base_pwm_fwd>>8;
-        uint8_t base_pwm_fwd_low_byte = base_pwm_fwd&0x00FF;
-        uint8_t arr0[4] = {125,base_pwm_fwd_high_byte,175,124};
+        const uint16_t base_pwm_fwd = measure_base_pwm(true,10);
+        const uint8_t base_pwm_fwd_high_byte = base_pwm_fwd>>8;
+        const uint8_t base_pwm_fwd_low_byte = base_pwm_fwd&0x00FF;
+        const uint8_t arr0[4] = {125,base_pwm_fwd_high_byte,175,124};
         program_mode(4,arr0);
-        uint8_t arr1[4] = {125,base_pwm_fwd_low_byte,176,124};
+        const uint8_t arr1[4] = {125,base_pwm_fwd_low_byte,176,124};
         program_mode(4,arr1);
     }
     // Reverse Direction
     if (get_16bit_CV(177) == 0){
         LOG(1, "found cv[177] equals to 0, reverse direction\n");
-        uint16_t base_pwm_rev = measure_base_pwm(false,10);
-        uint8_t base_pwm_rev_high_byte = base_pwm_rev>>8;
-        uint8_t base_pwm_rev_low_byte = base_pwm_rev&0x00FF;
-        uint8_t arr0[4] = {125,base_pwm_rev_high_byte,177,124};
+        const uint16_t base_pwm_rev = measure_base_pwm(false,10);
+        const uint8_t base_pwm_rev_high_byte = base_pwm_rev>>8;
+        const uint8_t base_pwm_rev_low_byte = base_pwm_rev&0x00FF;
+        const uint8_t arr0[4] = {125,base_pwm_rev_high_byte,177,124};
         program_mode(4,arr0);
-        uint8_t arr1[4] = {125,base_pwm_rev_low_byte,178,124};
+        const uint8_t arr1[4] = {125,base_pwm_rev_low_byte,178,124};
         program_mode(4,arr1);
     }
     LOG(1, "int_lim_max %d\n", CV_ARRAY_FLASH[51]);
@@ -639,8 +634,8 @@ bool get_direction(bool *direction_ptr){
 
 // Motor PWM initialization
 void init_motor_pwm(uint8_t gpio) {
-    uint16_t wrap_counter = (_125M/(CV_ARRAY_FLASH[8]*100+10000)) - 1;
-    uint32_t slice_num = pwm_gpio_to_slice_num(gpio);
+    const uint16_t wrap_counter = (_125M/(CV_ARRAY_FLASH[8]*100+10000)) - 1;
+    const uint32_t slice_num = pwm_gpio_to_slice_num(gpio);
     pwm_set_clkdiv_int_frac(slice_num,CV_ARRAY_FLASH[173],0);
     pwm_set_wrap(slice_num, wrap_counter);
     pwm_set_gpio_level(gpio,0);
