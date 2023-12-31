@@ -318,7 +318,7 @@ void core1_entry() {
     // Send direction pointer for access and to let core0 know that core1 is done with initialization,
     // Note: Pointer will be cast into uint32_t and then back into bool * on core0 (Both 32-Bit Datatype).
     // This is done only to accommodate the correct data type associated with multicore_fifo_push_blocking().
-    multicore_fifo_push_blocking((uint32_t) &(pid->direction));
+    multicore_fifo_push_blocking((uint32_t) &(pid->direction))
     const uint64_t packet_timeout_threshold_in_us = CV_ARRAY_FLASH[10]*1000000;
     absolute_time_t time_last_update = get_absolute_time();
 //    printf("core1 done\n");
