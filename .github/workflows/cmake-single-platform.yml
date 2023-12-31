@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install build packages
-      run: apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
+      run: sudo apt-get update && sudo apt-get install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
     - name: get sdk
       run: cd /tmp && git clone https://github.com/raspberrypi/pico-sdk.git && "PICO_SDK_PATH=/tmp/pico-sdk" >> $GITHUB_ENV
       
