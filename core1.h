@@ -62,10 +62,10 @@ typedef struct pid_params{
 
 void update_speed_dir(pid_params *pid, uint32_t speed_step_target);
 bool speed_helper(struct repeating_timer *t);
-void adjust_pwm_level(uint16_t level, pid_params *pid);
+void adjust_pwm_level(uint16_t level, const pid_params *pid);
 void update_m(pid_params *pid);
 void update_y(pid_params *pid,float i);
-float get_ff_val(pid_params *pid);
-float get_kp(pid_params *pid);
+float get_ff_val(const pid_params *pid);
+float get_kp(const pid_params *pid);
 bool pid_control(struct repeating_timer *t);
-void init_pid(pid_params *pid);
+void init_pid( pid_params * pid);

@@ -12,7 +12,7 @@ struct repeating_timer pid_control_timer,speed_helper_timer;
 void update_speed_dir(pid_params *pid, uint32_t speed_step_target){
     pid->speed_step_target = speed_step_target;
     // When CV_29 Bit 0 is set direction is reversed
-    bool reverse_dir = CV_ARRAY_FLASH[28] & 0b00000001;
+    const bool reverse_dir = CV_ARRAY_FLASH[28] & 0b00000001;
     // Forward
     if(speed_step_target > 127) {
         pid->direction = true^reverse_dir;
@@ -34,12 +34,12 @@ void update_speed_dir(pid_params *pid, uint32_t speed_step_target){
 
 // This function gets called every x milliseconds where x is CV_175.
 // The purpose of this function is to implement a time delay in acceleration or deceleration
-bool speed_helper(struct repeating_timer *t) {
+bool speed_helper(struct repeating_timer *const t) {
     // pid->setpoint only gets adjusted when the speed_helper_counter is equal to the accel_rate/decel_rate
     // -> Time for 1 Speed Step := (speed_helper timer delay)*(accel_rate) or CV_175*CV_3 or CV_175*CV_4
     pid_params *pid = (pid_params *)(t->user_data);
-    uint8_t accel_rate = CV_ARRAY_FLASH[2];
-    uint8_t decel_rate = CV_ARRAY_FLASH[3];
+    const uint8_t accel_rate = CV_ARRAY_FLASH[2];
+    const uint8_t decel_rate = CV_ARRAY_FLASH[3];
     static bool prev_dir;
     static uint8_t speed_helper_counter;
     static uint8_t speed_table_index;
@@ -89,7 +89,7 @@ bool speed_helper(struct repeating_timer *t) {
 
 
 // Helper function to adjust pwm level/duty cycle.
-void adjust_pwm_level(uint16_t level, pid_params *pid) {
+void adjust_pwm_level(const uint16_t level, const pid_params *pid) {
     // Forward
     if (pid->direction) {
         pwm_set_gpio_level(MOTOR_REV_PIN, 0);
@@ -104,14 +104,14 @@ void adjust_pwm_level(uint16_t level, pid_params *pid) {
 
 
 // Update feed-forward slope/gradient for both directions
-void update_m(pid_params *pid){
+void update_m(pid_params *const pid){
     pid->m_fwd = (pid->y_2_fwd-pid->y_1_fwd)/(pid->x_2_fwd-pid->x_1_fwd);
     pid->m_rev = (pid->y_2_rev-pid->y_1_rev)/(pid->x_2_rev-pid->x_1_rev);
 }
 
 
 // Update feedforward function value y_2 in both directions
-void update_y(pid_params *pid,float i){
+void update_y(pid_params *const pid, const float i){
     // Forward
     if(pid->direction) {
         pid->y_2_fwd += i*pid->k_ff;
@@ -132,7 +132,7 @@ void update_y(pid_params *pid,float i){
 
 
 // Returns feedforward value corresponding to current setpoint
-float get_ff_val(pid_params *pid){
+float get_ff_val(const pid_params *const pid){
     float val;
     // Forward
     if(pid->direction){
@@ -147,7 +147,7 @@ float get_ff_val(pid_params *pid){
 
 
 // Returns proportional gain value corresponding to current setpoint
-float get_kp(pid_params *pid){
+float get_kp(const pid_params *const pid){
     float sp = (float)pid->setpoint;
     if (sp < pid->k_p_x_1){
         return pid->k_p_m_1 * sp + pid->k_p_y_0;
@@ -171,7 +171,7 @@ bool pid_control(struct repeating_timer *t){
     }
 
     // Get feed-forward and proportional gain values
-    float feed_fwd = get_ff_val(pid);
+    const float feed_fwd = get_ff_val(pid);
     pid->k_p = get_kp(pid);
 
     // Measure BEMF voltage and compute error
@@ -180,16 +180,16 @@ bool pid_control(struct repeating_timer *t){
                                pid->l_side_arr_cutoff,
                                pid->r_side_arr_cutoff,
                                pid->direction);
-    float e = (float)pid->setpoint - (pid->measurement - pid->adc_offset);
+    const float e = (float)pid->setpoint - (pid->measurement - pid->adc_offset);
 
     // Proportional part, integral part and derivative part (including digital low-pass-filter with time constant tau)
-    float p = pid->k_p * e;
+    const float p = pid->k_p * e;
     float i = pid->ci_0*(e + pid->e_prev) + pid->i_prev;
-    float d = pid->cd_0*(pid->measurement-pid->measurement_prev)+pid->cd_1*pid->d_prev;
+    const float d = pid->cd_0*(pid->measurement-pid->measurement_prev)+pid->cd_1*pid->d_prev;
 
     // Check for limits on the integral part
-    if (i > pid->int_lim_max)i = pid->int_lim_max;
-    else if (i < pid->int_lim_min)i = pid->int_lim_min;
+    if (i > pid->int_lim_max) i = pid->int_lim_max;
+    else if (i < pid->int_lim_min) i = pid->int_lim_min;
 
     // Sum feed forward + all controller terms (p+i+d). Limit Output from 0% to 100% duty cycle
     float output = feed_fwd+p+i+d;
@@ -226,7 +226,7 @@ bool pid_control(struct repeating_timer *t){
 
 
 // PID controller and measurement parameter, and speed_table initialization
-void init_pid(pid_params *pid){
+void init_pid(pid_params *const pid){
     // Measurement variables initialization
     pid->adc_offset = (float)CV_ARRAY_FLASH[171];
     pid->msr_total_iterations = CV_ARRAY_FLASH[60];
@@ -236,15 +236,15 @@ void init_pid(pid_params *pid){
 
     // Speed table initialization
     // Calculate speed setpoint table according to V_min, V_max and V_mid CVs
-    double v_min = (double)CV_ARRAY_FLASH[1];
-    double v_mid = (double)CV_ARRAY_FLASH[5]*16;
-    double v_max = (double)CV_ARRAY_FLASH[4]*16;
+    const double v_min = (double)CV_ARRAY_FLASH[1];
+    const double v_mid = (double)CV_ARRAY_FLASH[5]*16;
+    const double v_max = (double)CV_ARRAY_FLASH[4]*16;
 
     LOG(1, "speedtable min(%f) mid(%f) max(%f)\n", v_min, v_mid, v_max);
 
-    double delta_x = 63;
-    double m_1 = (v_mid-v_min)/delta_x;
-    double m_2 = (v_max-v_mid)/delta_x;
+    const double delta_x = 63;
+    const double m_1 = (v_mid-v_min)/delta_x;
+    const double m_2 = (v_max-v_mid)/delta_x;
     pid->speed_table[0] = 0;
     for (uint8_t i = 1; i < 64; ++i) {
         pid->speed_table[i] = (uint16_t)lround(m_1*(i-1)+v_min);
@@ -319,7 +319,7 @@ void core1_entry() {
     // Note: Pointer will be cast into uint32_t and then back into bool * on core0 (Both 32-Bit Datatype).
     // This is done only to accommodate the correct data type associated with multicore_fifo_push_blocking().
     multicore_fifo_push_blocking((uint32_t) &(pid->direction));
-    uint64_t packet_timeout_threshold_in_us = CV_ARRAY_FLASH[10]*1000000;
+    const uint64_t packet_timeout_threshold_in_us = CV_ARRAY_FLASH[10]*1000000;
     absolute_time_t time_last_update = get_absolute_time();
 //    printf("core1 done\n");
     while (1){
