@@ -44,6 +44,7 @@ target_link_libraries(
         hardware_adc
         hardware_flash
         pico_multicore
+        pico_platform
         )
 
 # disable usb stack

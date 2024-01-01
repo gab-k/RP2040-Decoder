@@ -14,6 +14,7 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b01100100,         //CV_5  -    V_max               -   Default = 100*16
    0b00111111,         //CV_6  -    V_mid               -   Default = 63*16
    0b00000001,         //CV_7  -    Version no.                                                         (read-only)
+    // Writing a value of 8 to CV_8 resets all CV values to the default values in CV.h
    0b00001101,         //CV_8  -    Manufacturer (13 = Public Domain & Do-It-Yourself Decoders)         (read-only)
    0b10010110,         //CV_9  -    PWM frequency in Hz = CV_9*100+10000    - Default = (150*100+10000)Hz = 25kHz
    0b00000001,         //CV_10  -

@@ -2,6 +2,9 @@
 .vscode
 .idea
 
+# Doxygen generated files
+doxygen
+
 # Build folders
 build
 cmake-build-debug
@@ -13,3 +16,4 @@ KiCad/*/*.bak
 KiCad/*/fp-info-cache
 KiCad/*/_autosave-*
 KiCad/*/*.kicad_prl
+
