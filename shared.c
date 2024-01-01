@@ -6,8 +6,10 @@
 
 #include "shared.h"
 
-// Functions in shared.c can be accessed by both cores
+uint8_t speed_step_target = 0;
+uint8_t speed_step_target_prev = 0;
 
+// Functions in shared.c can be accessed by both cores
 // Measures Back-EMF voltage (proportional to the rotational speed of the motor) on GPIO 28 and GPIO 29 respectively (depending on direction)
 float measure(uint8_t total_iterations,
               uint8_t measurement_delay_us,
@@ -60,4 +62,9 @@ uint16_t get_16bit_CV (uint16_t CV_start_index){
     uint8_t byte_1 = CV_ARRAY_FLASH[CV_start_index];
     uint8_t byte_0 = CV_ARRAY_FLASH[CV_start_index+1];
     return (byte_0) + (byte_1<<8);
+}
+
+bool get_direction_of_speed_step(uint8_t speed_step){
+    // Shift by 7 Bytes to move bit7 into bit0 position and return
+    return speed_step >> 7;
 }
