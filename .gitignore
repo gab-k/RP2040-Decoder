@@ -3,7 +3,8 @@
 .idea
 
 # Doxygen generated files
-doxygen
+html
+latex
 
 # Build folders
 build
