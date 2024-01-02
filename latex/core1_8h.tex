@@ -1,0 +1,48 @@
+\doxysection{core1.\+h File Reference}
+\hypertarget{core1_8h}{}\label{core1_8h}\index{core1.h@{core1.h}}
+{\ttfamily \#include "{}shared.\+h"{}}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structpid__params}{pid\+\_\+params}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{core1_8h_acd754e2414babeb0774ccce5ec805c2c}\label{core1_8h_acd754e2414babeb0774ccce5ec805c2c} 
+typedef struct pid\+\_\+params {\bfseries pid\+\_\+params}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{core1_8h_ad15a9b1bde5e8add464971f292fec1b4}\label{core1_8h_ad15a9b1bde5e8add464971f292fec1b4} 
+uint8\+\_\+t {\bfseries get\+\_\+speed\+\_\+step\+\_\+table\+\_\+index\+\_\+of\+\_\+speed\+\_\+step} (uint8\+\_\+t speed\+\_\+step)
+\item 
+\Hypertarget{core1_8h_abf0e710f65cc80280ed489c5f67cdddb}\label{core1_8h_abf0e710f65cc80280ed489c5f67cdddb} 
+bool {\bfseries speed\+\_\+helper} (struct repeating\+\_\+timer \texorpdfstring{$\ast$}{*}t)
+\item 
+\Hypertarget{core1_8h_ab1cbb775c3da8f7890db76d05fa0a584}\label{core1_8h_ab1cbb775c3da8f7890db76d05fa0a584} 
+void {\bfseries adjust\+\_\+pwm\+\_\+level} (uint16\+\_\+t level)
+\item 
+\Hypertarget{core1_8h_a7dccc11c188fe473bf26636eba3bbab2}\label{core1_8h_a7dccc11c188fe473bf26636eba3bbab2} 
+void {\bfseries update\+\_\+m} (\mbox{\hyperlink{structpid__params}{pid\+\_\+params}} \texorpdfstring{$\ast$}{*}pid)
+\item 
+\Hypertarget{core1_8h_a726591c5210610d90ccbb7592a0848be}\label{core1_8h_a726591c5210610d90ccbb7592a0848be} 
+void {\bfseries update\+\_\+y} (\mbox{\hyperlink{structpid__params}{pid\+\_\+params}} \texorpdfstring{$\ast$}{*}pid, float i)
+\item 
+\Hypertarget{core1_8h_aa0bfd03631ef1c72ba6228a1358fcc56}\label{core1_8h_aa0bfd03631ef1c72ba6228a1358fcc56} 
+float {\bfseries get\+\_\+ff\+\_\+val} (const \mbox{\hyperlink{structpid__params}{pid\+\_\+params}} \texorpdfstring{$\ast$}{*}pid)
+\item 
+\Hypertarget{core1_8h_a72f0d985d6753d049540c77163b6650c}\label{core1_8h_a72f0d985d6753d049540c77163b6650c} 
+float {\bfseries get\+\_\+kp} (const \mbox{\hyperlink{structpid__params}{pid\+\_\+params}} \texorpdfstring{$\ast$}{*}pid)
+\item 
+\Hypertarget{core1_8h_a850fcb90e37168eee7b86e64fe57070e}\label{core1_8h_a850fcb90e37168eee7b86e64fe57070e} 
+bool {\bfseries pid\+\_\+control} (struct repeating\+\_\+timer \texorpdfstring{$\ast$}{*}t)
+\item 
+\Hypertarget{core1_8h_a85149135899d7c2e2808877c682ce26f}\label{core1_8h_a85149135899d7c2e2808877c682ce26f} 
+void {\bfseries init\+\_\+pid} (\mbox{\hyperlink{structpid__params}{pid\+\_\+params}} \texorpdfstring{$\ast$}{*}pid)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Used exclusively by core1 

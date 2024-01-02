@@ -1,0 +1,140 @@
+\doxysection{shared.\+h File Reference}
+\hypertarget{shared_8h}{}\label{shared_8h}\index{shared.h@{shared.h}}
+{\ttfamily \#include "{}string.\+h"{}}\newline
+{\ttfamily \#include "{}pico/float.\+h"{}}\newline
+{\ttfamily \#include "{}pico/stdlib.\+h"{}}\newline
+{\ttfamily \#include "{}pico/multicore.\+h"{}}\newline
+{\ttfamily \#include "{}pico/printf.\+h"{}}\newline
+{\ttfamily \#include "{}hardware/pwm.\+h"{}}\newline
+{\ttfamily \#include "{}hardware/adc.\+h"{}}\newline
+{\ttfamily \#include "{}hardware/flash.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{shared_8h_a6c6fd5e242df15a7a42e9b75d55d5d3c}\label{shared_8h_a6c6fd5e242df15a7a42e9b75d55d5d3c} 
+\#define {\bfseries LOGLEVEL}~0
+\item 
+\Hypertarget{shared_8h_acaa1c3fa56061380a29889d703236251}\label{shared_8h_acaa1c3fa56061380a29889d703236251} 
+\#define {\bfseries LOG}(level, ...)~\{ if(level $<$= LOGLEVEL) \{printf(\+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+);\}\}
+\item 
+\Hypertarget{shared_8h_a11ae1c54493c00fc571ead5bca55d269}\label{shared_8h_a11ae1c54493c00fc571ead5bca55d269} 
+\#define {\bfseries \+\_\+125M}~125000000
+\item 
+\Hypertarget{shared_8h_ac71e492f5f272f07b812ebe18757a2f4}\label{shared_8h_ac71e492f5f272f07b812ebe18757a2f4} 
+\#define {\bfseries DCC\+\_\+\+INPUT\+\_\+\+PIN}~21u
+\item 
+\Hypertarget{shared_8h_a480d8c98b645b4e4f17d894f550c3626}\label{shared_8h_a480d8c98b645b4e4f17d894f550c3626} 
+\#define {\bfseries MOTOR\+\_\+\+FWD\+\_\+\+PIN}~23u
+\item 
+\Hypertarget{shared_8h_a313656e92150fc5f9203726df3a8a68c}\label{shared_8h_a313656e92150fc5f9203726df3a8a68c} 
+\#define {\bfseries MOTOR\+\_\+\+REV\+\_\+\+PIN}~22u
+\item 
+\Hypertarget{shared_8h_adbc76b66e92d86f9cfe27f51253a5038}\label{shared_8h_adbc76b66e92d86f9cfe27f51253a5038} 
+\#define {\bfseries FWD\+\_\+\+V\+\_\+\+EMF\+\_\+\+ADC\+\_\+\+PIN}~28u
+\item 
+\Hypertarget{shared_8h_af7c9c4bc8bfd08aa5169978af9bf17c9}\label{shared_8h_af7c9c4bc8bfd08aa5169978af9bf17c9} 
+\#define {\bfseries REV\+\_\+\+V\+\_\+\+EMF\+\_\+\+ADC\+\_\+\+PIN}~29u
+\item 
+\Hypertarget{shared_8h_a613516de560d9a5355520b76b256a58d}\label{shared_8h_a613516de560d9a5355520b76b256a58d} 
+\#define {\bfseries GPIO\+\_\+\+OUTPUT\+\_\+\+PIN\+\_\+\+MASK}~(1u$<$$<$24) \texorpdfstring{$\vert$}{|} (1u$<$$<$25) \texorpdfstring{$\vert$}{|} (1u$<$$<$26) \texorpdfstring{$\vert$}{|} (1u$<$$<$27) \texorpdfstring{$\vert$}{|} (1u$<$$<$5) \texorpdfstring{$\vert$}{|} (1u$<$$<$4) \texorpdfstring{$\vert$}{|} (1u$<$$<$3) \texorpdfstring{$\vert$}{|} (1u$<$$<$2) \texorpdfstring{$\vert$}{|} (1u$<$$<$1) \texorpdfstring{$\vert$}{|} (1u$<$$<$0)
+\item 
+\Hypertarget{shared_8h_a544001c09a62a396743e564a9e0bd9d4}\label{shared_8h_a544001c09a62a396743e564a9e0bd9d4} 
+\#define {\bfseries GPIO\+\_\+\+ILLEGAL\+\_\+\+MASK}~(1u$<$$<$DCC\+\_\+\+INPUT\+\_\+\+PIN) \texorpdfstring{$\vert$}{|} (1u$<$$<$MOTOR\+\_\+\+FWD\+\_\+\+PIN) \texorpdfstring{$\vert$}{|} (1u$<$$<$MOTOR\+\_\+\+REV\+\_\+\+PIN) \texorpdfstring{$\vert$}{|} (1u$<$$<$FWD\+\_\+\+V\+\_\+\+EMF\+\_\+\+ADC\+\_\+\+PIN) \texorpdfstring{$\vert$}{|} (1u$<$$<$REV\+\_\+\+V\+\_\+\+EMF\+\_\+\+ADC\+\_\+\+PIN)
+\item 
+\Hypertarget{shared_8h_ae4b0910bc8b035c26ded8b9498bf4f50}\label{shared_8h_ae4b0910bc8b035c26ded8b9498bf4f50} 
+\#define {\bfseries GPIO\+\_\+\+ALLOWED\+\_\+\+OUTPUTS}~(GPIO\+\_\+\+OUTPUT\+\_\+\+PIN\+\_\+\+MASK) \& \texorpdfstring{$\sim$}{\string~}(GPIO\+\_\+\+ILLEGAL\+\_\+\+MASK)
+\item 
+\Hypertarget{shared_8h_a21df7978a7e635eaa5037d4c853cd15d}\label{shared_8h_a21df7978a7e635eaa5037d4c853cd15d} 
+\#define {\bfseries FLASH\+\_\+\+TARGET\+\_\+\+OFFSET}~(PICO\+\_\+\+FLASH\+\_\+\+SIZE\+\_\+\+BYTES-\/FLASH\+\_\+\+SECTOR\+\_\+\+SIZE)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{shared_8h_a9f153132b8b4afad133b952111e18bd9}\label{shared_8h_a9f153132b8b4afad133b952111e18bd9} 
+void {\bfseries core1\+\_\+entry} ()
+\item 
+\Hypertarget{shared_8h_a58018bb4ac50fbe1d7df43baa1decc82}\label{shared_8h_a58018bb4ac50fbe1d7df43baa1decc82} 
+void {\bfseries write\+\_\+cv\+\_\+handler} (uint16\+\_\+t cv\+\_\+index, uint8\+\_\+t cv\+\_\+data)
+\item 
+\Hypertarget{shared_8h_a10fb56d0c68ae9f38512204e089fe026}\label{shared_8h_a10fb56d0c68ae9f38512204e089fe026} 
+float {\bfseries measure} (uint8\+\_\+t total\+\_\+iterations, uint8\+\_\+t measurement\+\_\+delay\+\_\+us, uint8\+\_\+t l\+\_\+side\+\_\+arr\+\_\+cutoff, uint8\+\_\+t r\+\_\+side\+\_\+arr\+\_\+cutoff, bool direction)
+\item 
+\Hypertarget{shared_8h_affc14a889b226b8ebcbf64774a5e1c53}\label{shared_8h_affc14a889b226b8ebcbf64774a5e1c53} 
+uint32\+\_\+t {\bfseries get\+\_\+32bit\+\_\+\+CV} (uint16\+\_\+t CV\+\_\+start\+\_\+index)
+\item 
+\Hypertarget{shared_8h_a32beddf80bbca0e114f8d72ed3937889}\label{shared_8h_a32beddf80bbca0e114f8d72ed3937889} 
+uint16\+\_\+t {\bfseries get\+\_\+16bit\+\_\+\+CV} (uint16\+\_\+t CV\+\_\+start\+\_\+index)
+\item 
+bool \mbox{\hyperlink{shared_8h_aed72641466dd9da550e446ad104607d0}{get\+\_\+direction\+\_\+of\+\_\+speed\+\_\+step}} (uint8\+\_\+t speed\+\_\+step)
+\begin{DoxyCompactList}\small\item\em Get direction Function calculates direction.\+Direction is based on speed\+\_\+step byte. ~\newline
+ Refers to "{}128 Speed Control"{} -\/ NMRA Standard 9.\+2.\+1 section 2.\+3.\+2.\+1 or RCN-\/212 section 2.\+2.\+2. ~\newline
+ \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{shared_8h_acb0acf1449e6540098ea12180e946d48}\label{shared_8h_acb0acf1449e6540098ea12180e946d48} 
+repeating\+\_\+timer\+\_\+t {\bfseries pid\+\_\+control\+\_\+timer}
+\item 
+\Hypertarget{shared_8h_a997c9c1785ccb1f19d61d96ddb9c6d1a}\label{shared_8h_a997c9c1785ccb1f19d61d96ddb9c6d1a} 
+repeating\+\_\+timer\+\_\+t {\bfseries speed\+\_\+helper\+\_\+timer}
+\item 
+\Hypertarget{shared_8h_ac1d1205049d95e5b1789bbabe78375df}\label{shared_8h_ac1d1205049d95e5b1789bbabe78375df} 
+const uint8\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries CV\+\_\+\+ARRAY\+\_\+\+FLASH}
+\item 
+\Hypertarget{shared_8h_afe526de436479f50bbbf21d68b132b5c}\label{shared_8h_afe526de436479f50bbbf21d68b132b5c} 
+uint8\+\_\+t {\bfseries speed\+\_\+step\+\_\+target}
+\item 
+\Hypertarget{shared_8h_af3e1c0713b69e9c5b7c71a01d4e5475c}\label{shared_8h_af3e1c0713b69e9c5b7c71a01d4e5475c} 
+uint8\+\_\+t {\bfseries speed\+\_\+step\+\_\+target\+\_\+prev}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Used by both cores 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{shared_8h_aed72641466dd9da550e446ad104607d0}\label{shared_8h_aed72641466dd9da550e446ad104607d0} 
+\index{shared.h@{shared.h}!get\_direction\_of\_speed\_step@{get\_direction\_of\_speed\_step}}
+\index{get\_direction\_of\_speed\_step@{get\_direction\_of\_speed\_step}!shared.h@{shared.h}}
+\doxysubsubsection{\texorpdfstring{get\_direction\_of\_speed\_step()}{get\_direction\_of\_speed\_step()}}
+{\footnotesize\ttfamily bool get\+\_\+direction\+\_\+of\+\_\+speed\+\_\+step (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{speed\+\_\+step }\end{DoxyParamCaption})}
+
+
+
+Get direction Function calculates direction.\+Direction is based on speed\+\_\+step byte. ~\newline
+ Refers to "{}128 Speed Control"{} -\/ NMRA Standard 9.\+2.\+1 section 2.\+3.\+2.\+1 or RCN-\/212 section 2.\+2.\+2. ~\newline
+ 
+
+The following speed steps exist\+:
+\begin{DoxyItemize}
+\item DEC \texorpdfstring{$\vert$}{|} BIN \texorpdfstring{$\vert$}{|} DIRECTION \texorpdfstring{$\vert$}{|} DEFINITION
+\item 000 \texorpdfstring{$\vert$}{|} 0000 0000 \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} STOP
+\item 001 \texorpdfstring{$\vert$}{|} 0000 0001 \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} EMERGENCY STOP
+\item 002 \texorpdfstring{$\vert$}{|} 0000 0010 \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} Speed step 001 (Lowest speed)
+\item 003 \texorpdfstring{$\vert$}{|} 0000 0011 \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} Speed step 002
+\item 004 \texorpdfstring{$\vert$}{|} 0000 0100 \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} Speed step 003
+\item ... \texorpdfstring{$\vert$}{|} .... .... \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} .....
+\item ... \texorpdfstring{$\vert$}{|} .... .... \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} .....
+\item ... \texorpdfstring{$\vert$}{|} .... .... \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} .....
+\item 126 \texorpdfstring{$\vert$}{|} 0111 1110 \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} Speed step 125
+\item 127 \texorpdfstring{$\vert$}{|} 0111 1111 \texorpdfstring{$\vert$}{|} Reverse \texorpdfstring{$\vert$}{|} Speed step 126 (Full speed)
+\item 128 \texorpdfstring{$\vert$}{|} 1000 0000 \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} STOP
+\item 129 \texorpdfstring{$\vert$}{|} 1000 0001 \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} EMERGENCY STOP
+\item 130 \texorpdfstring{$\vert$}{|} 1000 0010 \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} Speed step 001 (Lowest speed)
+\item 131 \texorpdfstring{$\vert$}{|} 1000 0011 \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} Speed step 002
+\item 132 \texorpdfstring{$\vert$}{|} 1000 0100 \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} Speed step 003
+\item ... \texorpdfstring{$\vert$}{|} .... .... \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} .....
+\item ... \texorpdfstring{$\vert$}{|} .... .... \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} .....
+\item ... \texorpdfstring{$\vert$}{|} .... .... \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} .....
+\item 254 \texorpdfstring{$\vert$}{|} 1111 1110 \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} Speed step 125
+\item 255 \texorpdfstring{$\vert$}{|} 1111 1111 \texorpdfstring{$\vert$}{|} Forward \texorpdfstring{$\vert$}{|} Speed step 126 (Full speed)
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em speed\+\_\+step} & speed step byte \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+direction; false for reverse; true for forward; 
+\end{DoxyReturn}

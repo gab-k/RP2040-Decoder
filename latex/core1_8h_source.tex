@@ -1,0 +1,68 @@
+\doxysection{core1.\+h}
+\hypertarget{core1_8h_source}{}\label{core1_8h_source}\mbox{\hyperlink{core1_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{shared_8h}{shared.h}}"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structpid__params}{pid\_params}}\{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{comment}{//\ Controller\ variables\ -\/\ won't\ change\ after\ init}}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_i;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Integral\ gain}}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_d;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Derivative\ gain}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{float}\ t;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Sampling\ time}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordtype}{float}\ tau;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Low-\/pass-\/filter\ time\ constant}}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_ff;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Feed-\/Forward\ gain}}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{float}\ ci\_0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (k\_i*t)/2}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{float}\ cd\_0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (k\_d*2)/(2*tau+t)}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{float}\ cd\_1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (2*tau-\/t)/(2*tau+t)}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{float}\ int\_lim\_max;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ max\ limit\ for\ integrator}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{float}\ int\_lim\_min;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ min\ limit\ for\ integrator}}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{float}\ max\_output;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ max\ possible\ pwm\ output\ value}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p\_x\_1\_shift;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p\_x\_1;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p\_x\_2;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p\_y\_0;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p\_y\_1;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p\_y\_2;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p\_m\_1;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p\_m\_2;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{//\ Controller\ variables\ -\/\ might\ change\ on\ runtime}}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{float}\ k\_p;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Proportional\ gain}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{float}\ e\_prev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Previous\ Error}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{float}\ i\_prev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Previous\ Integral\ Value}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{float}\ d\_prev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Previous\ Derivative\ Value}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{float}\ measurement\_prev;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Previous\ Measurement}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{float}\ x\_1\_fwd;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Base\ Speed;\ forward\ direction}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{float}\ x\_2\_fwd;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ High\ Speed;\ forward\ direction}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{float}\ y\_1\_fwd;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Base\ PWM;\ forward\ direction}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{float}\ y\_2\_fwd;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ High\ PWM;\ forward\ direction}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{float}\ x\_1\_rev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Base\ Speed;\ reverse\ direction}}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{float}\ x\_2\_rev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ High\ Speed;\ reverse\ direction}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{float}\ y\_1\_rev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Base\ PWM;\ reverse\ direction}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{float}\ y\_2\_rev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ High\ PWM;\ reverse\ direction}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_fwd;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Slope\ forward\ direction}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_rev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Slope\ reverse\ direction}}
+\DoxyCodeLine{00048\ \ \ \ \ uint16\_t\ speed\_table[127];\ \ \ \ \ \ \textcolor{comment}{//\ Array\ with\ setpoint\ values\ corresponding\ to\ every\ speed\ step}}
+\DoxyCodeLine{00049\ \ \ \ \ uint32\_t\ speed\_step\_target;\ \ \ \ \ \textcolor{comment}{//\ End\ target\ speed\ step}}
+\DoxyCodeLine{00050\ \ \ \ \ uint32\_t\ setpoint;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Current\ setpoint}}
+\DoxyCodeLine{00051\ \ \ \ \ uint32\_t\ setpoint\_prev;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Previous\ setpoint}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//\ Measurement\ Variables}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{float}\ measurement;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Newest\ Measurement\ value}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{float}\ adc\_offset;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ADC\ offset\ value}}
+\DoxyCodeLine{00055\ \ \ \ \ uint8\_t\ msr\_delay\_in\_us;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Delay\ before\ VEMF\ Measurement}}
+\DoxyCodeLine{00056\ \ \ \ \ uint8\_t\ msr\_total\_iterations;\ \ \ \textcolor{comment}{//\ Amount\ of\ samples}}
+\DoxyCodeLine{00057\ \ \ \ \ uint8\_t\ l\_side\_arr\_cutoff;\ \ \ \ \ \ \textcolor{comment}{//\ Discarded\ samples\ (left\ side)}}
+\DoxyCodeLine{00058\ \ \ \ \ uint8\_t\ r\_side\_arr\_cutoff;\ \ \ \ \ \ \textcolor{comment}{//\ Discarded\ samples\ (right\ side)}}
+\DoxyCodeLine{00059\ \}\mbox{\hyperlink{structpid__params}{pid\_params}};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ uint8\_t\ get\_speed\_step\_table\_index\_of\_speed\_step(uint8\_t\ speed\_step);}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{bool}\ speed\_helper(\textcolor{keyword}{struct}\ repeating\_timer\ *t);}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ adjust\_pwm\_level(uint16\_t\ level);}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ update\_m(\mbox{\hyperlink{structpid__params}{pid\_params}}\ *pid);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ update\_y(\mbox{\hyperlink{structpid__params}{pid\_params}}\ *pid,\textcolor{keywordtype}{float}\ i);}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{float}\ get\_ff\_val(\textcolor{keyword}{const}\ \mbox{\hyperlink{structpid__params}{pid\_params}}\ *pid);}
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{float}\ get\_kp(\textcolor{keyword}{const}\ \mbox{\hyperlink{structpid__params}{pid\_params}}\ *pid);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{bool}\ pid\_control(\textcolor{keyword}{struct}\ repeating\_timer\ *t);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ init\_pid(\ \mbox{\hyperlink{structpid__params}{pid\_params}}\ *\ pid);}
+
+\end{DoxyCode}
