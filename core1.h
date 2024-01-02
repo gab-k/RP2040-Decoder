@@ -59,7 +59,7 @@ typedef struct pid_params{
 
 uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step);
 bool speed_helper(struct repeating_timer *t);
-void adjust_pwm_level(uint16_t level, const pid_params *pid);
+void adjust_pwm_level(uint16_t level);
 void update_m(pid_params *pid);
 void update_y(pid_params *pid,float i);
 float get_ff_val(const pid_params *pid);

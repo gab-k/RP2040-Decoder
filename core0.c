@@ -45,7 +45,7 @@ float two_std_dev(const float arr[], const uint32_t length) {
 
 
 // Measures constant adc offset and programs the offset into flash
-void adc_offset_adjustment(uint32_t n) {
+void adc_offset_adjustment(const uint32_t n) {
     LOG(1, "adc_offset_adjustment");
 
     float offsets_fwd[n];
@@ -105,7 +105,7 @@ void acknowledge() {
 
 
 // When bit matches sent byte -> acknowledge()
-void verify_cv_bit(const uint16_t cv_address, bool bit_val, uint8_t bit_pos) {
+void verify_cv_bit(const uint16_t cv_address, const bool bit_val, const uint8_t bit_pos) {
     const uint8_t mask = 0b00000001;
     const bool res = ((CV_ARRAY_FLASH[cv_address] >> bit_pos) & mask) == bit_val;
     if (res) {
@@ -250,7 +250,7 @@ void set_outputs(const uint32_t functions_to_set_bitmask) {
     uint32_t temp_mask = 1;
     for (uint8_t i = 0; i < 32; i++) {
         if (temp_mask & functions_to_set_bitmask) {
-            bool direction = get_direction_of_speed_step(speed_step_target);
+            const bool direction = get_direction_of_speed_step(speed_step_target);
             outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * direction);
         }
         temp_mask <<= 1;
@@ -278,7 +278,7 @@ void set_outputs(const uint32_t functions_to_set_bitmask) {
 
 
 // Update functions F0 - F31 when function command is received or in case of direction change
-void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind, bool direction_change) {
+void update_active_functions(uint32_t new_function_bitmask, const uint8_t clr_bit_ind, const bool direction_change) {
     static uint32_t active_functions;
     static uint32_t prev_active_func;
 
@@ -294,7 +294,7 @@ void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind,
         new_function_bitmask &= ~(clr_bit_arr[clr_bit_ind]);    // Clear every bit except bits corresponding to group of functions
         active_functions &= clr_bit_arr[clr_bit_ind];           // Clear bits corresponding to group of functions
         active_functions |= new_function_bitmask;               // Write bits corresponding to group of functions
-        uint32_t changes = active_functions ^ prev_active_func; // Checks for changes from previous state
+        const uint32_t changes = active_functions ^ prev_active_func; // Checks for changes from previous state
         if (changes) {
             set_outputs(active_functions);
         }
@@ -363,7 +363,6 @@ bool address_evaluation(const uint8_t number_of_bytes, const uint8_t *const byte
 void instruction_evaluation(const uint8_t number_of_bytes, const uint8_t *const byte_array) {
     // start of transmission -> ... -> command_byte_n -> ... -> command_byte_0 -> ... -> end of transmission
     // The position of command bytes depend on whether the address is long or not
-    uint8_t command_byte_n;
     uint8_t command_byte_start_index;
     if (is_long_address(number_of_bytes, byte_array)) {
         command_byte_start_index = number_of_bytes - 3;
@@ -371,14 +370,14 @@ void instruction_evaluation(const uint8_t number_of_bytes, const uint8_t *const 
     else {
         command_byte_start_index = number_of_bytes - 2;
     }
-    command_byte_n = byte_array[command_byte_start_index];
+    const uint8_t command_byte_n = byte_array[command_byte_start_index];
 
     if (command_byte_n == 0b00111111) {
         // 0011-1111 (128 Speed Step Control) - 2 Byte length
         speed_step_target_prev = speed_step_target;
         speed_step_target = byte_array[command_byte_start_index - 1];
         // Check for direction change
-        bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
+        const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
                                  get_direction_of_speed_step(speed_step_target_prev);
         // In case of a direction change, functions need to be updated because functions depend on direction
         if (direction_changed) {
@@ -423,12 +422,16 @@ void instruction_evaluation(const uint8_t number_of_bytes, const uint8_t *const 
 // Check for reset message - When reset message is found, stop the motor and disable all functions.
 bool reset_message_check(const uint8_t number_of_bytes, const uint8_t *const byte_array) {
     if (byte_array[number_of_bytes - 1] == 0b00000000 && byte_array[number_of_bytes - 2] == 0b00000000) {
-        const uint32_t speed_step = 1;
-        multicore_fifo_push_blocking(speed_step);                           // Emergency Stop
+        const bool direction = get_direction_of_speed_step(speed_step_target);
+        // Set previous speed step target to current speed step target
+        speed_step_target_prev = speed_step_target;
+        // Set speed step target to emergency stop speed step ( 1 for Reverse direction / 129 for forward direction)
+        // for details see get_direction_of_speed_step() doxygen comment in "shared.h"
+        speed_step_target = 1 + 128*direction;
         update_active_functions(0,0,0);  // Disables all functions
         return true;
     }
-    else return false;
+    return false;
 }
 
 
@@ -447,7 +450,7 @@ int8_t verify_dcc_message() {
 
 
 //start of transmission -> byte_n(address byte) -> ... -> byte_0(error detection byte) -> end of transmission
-void bits_to_byte_array(int8_t number_of_bytes, uint8_t byte_array[]) {
+void bits_to_byte_array(const int8_t number_of_bytes, uint8_t byte_array[]) {
     for (uint8_t i = 0; i < number_of_bytes; i++) {
         byte_array[i] = input_bit_buffer >> (i * 9 + 1);
     }
@@ -565,7 +568,7 @@ uint16_t measure_base_pwm(const bool direction, const uint8_t iterations) {
                 return 0;
             }
         } while ((measurement - (float) CV_ARRAY_FLASH[171]) < 5.0f);
-        LOG(3, "level_arr[%d] = %f\n", i, level);
+        LOG(3, "level_arr[%d] = %d\n", i, level);
         level_arr[i] = (float) level;
         busy_wait_ms(100);
     }

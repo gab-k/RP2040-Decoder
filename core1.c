@@ -11,24 +11,14 @@ struct repeating_timer pid_control_timer, speed_helper_timer;
 
 // Get speed_step_table_index depending on speed_step
 uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step) {
-    if (speed_step > 127) {
-        // Forward
-        if (speed_step == 128) {
-            return 0;
-        }
-        else {
-            return (speed_step - 129);
-        }
+    // Clear direction information in bit7
+    speed_step = speed_step & 0b01111111;
+    // Check for Stop or Emergency Stop speed step
+    if (speed_step == 0 || speed_step == 1) {
+        return 0;
     }
-    else {
-        // Reverse
-        if (speed_step == 0) {
-            return 0;
-        }
-        else {
-            return (speed_step - 1);
-        }
-    }
+    // In any other case i.e. speed steps 1 to 126:
+    return speed_step-1;
 }
 
 
@@ -37,16 +27,16 @@ uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step) {
 bool speed_helper(struct repeating_timer *const t) {
     // pid->setpoint only gets adjusted when the speed_helper_counter is equal to the accel_rate/decel_rate
     // -> Time for 1 Speed Step := (speed_helper timer delay)*(accel_rate) or CV_175*CV_3 or CV_175*CV_4
-    pid_params *pid = (pid_params *) (t->user_data);
+    pid_params *const pid = (pid_params *) (t->user_data);
     const uint8_t accel_rate = CV_ARRAY_FLASH[2];
     const uint8_t decel_rate = CV_ARRAY_FLASH[3];
     static uint8_t speed_helper_counter;
     static uint8_t speed_table_index;
 
     // Get speed_step_table_end_index corresponding to current speed_step_target
-    uint8_t speed_step_table_end_index = get_speed_step_table_index_of_speed_step(speed_step_target);
-    bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
-                             get_direction_of_speed_step(speed_step_target_prev);
+    const uint8_t speed_step_table_end_index = get_speed_step_table_index_of_speed_step(speed_step_target);
+    const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
+                                   get_direction_of_speed_step(speed_step_target_prev);
 
     if (pid->speed_step_target == 129 || pid->speed_step_target == 1) {
         // Emergency Stop
@@ -56,32 +46,28 @@ bool speed_helper(struct repeating_timer *const t) {
     }
     else if (speed_step_table_end_index > speed_table_index && speed_helper_counter == accel_rate) {
         // Acceleration
-        if (!accel_rate) speed_table_index = speed_step_table_end_index;  // directly accelerate to end target speed
+        if (!accel_rate) speed_table_index = speed_step_table_end_index; // directly accelerate to end target speed
         else speed_table_index++;
         pid->setpoint = pid->speed_table[speed_table_index];
         speed_helper_counter = 0;
     }
-
     else if (speed_step_table_end_index < speed_table_index && speed_helper_counter == decel_rate) {
         // Deceleration
-        if (!decel_rate) speed_table_index = speed_step_table_end_index;    // directly decelerate to end target speed
+        if (!decel_rate) speed_table_index = speed_step_table_end_index; // directly decelerate to end target speed
         else speed_table_index--;
         pid->setpoint = pid->speed_table[speed_table_index];
         speed_helper_counter = 0;
     }
-
     else if (direction_changed) {
         // Change of direction while decelerating -> jump to most recent speed_step without delay (other direction)
         speed_table_index = speed_step_table_end_index;
         pid->setpoint = pid->speed_table[speed_table_index];
         speed_helper_counter = 0;
     }
-
     else if (speed_step_table_end_index != speed_table_index) {
         // Acceleration/Deceleration "scheduled"
         speed_helper_counter++;
     }
-
     else {
         // Target reached -> Reset Counter
         speed_helper_counter = 0;
@@ -93,8 +79,8 @@ bool speed_helper(struct repeating_timer *const t) {
 
 
 // Helper function to adjust pwm level/duty cycle.
-void adjust_pwm_level(const uint16_t level, const pid_params *pid) {
-    if (get_direction_of_speed_step(speed_step_target) == true) {
+void adjust_pwm_level(const uint16_t level) {
+    if (get_direction_of_speed_step(speed_step_target)) {
         // Forward
         pwm_set_gpio_level(MOTOR_REV_PIN, 0);
         pwm_set_gpio_level(MOTOR_FWD_PIN, level);
@@ -116,7 +102,7 @@ void update_m(pid_params *const pid) {
 
 // Update feedforward function value y_2 in both directions
 void update_y(pid_params *const pid, const float i) {
-    if (get_direction_of_speed_step(speed_step_target) == true) {
+    if (get_direction_of_speed_step(speed_step_target)) {
         // Forward
         pid->y_2_fwd += i * pid->k_ff;
         // Limit y_2_fwd
@@ -137,7 +123,7 @@ void update_y(pid_params *const pid, const float i) {
 // Returns feedforward value corresponding to current setpoint
 float get_ff_val(const pid_params *const pid) {
     float val;
-    if (get_direction_of_speed_step(speed_step_target) == true) {
+    if (get_direction_of_speed_step(speed_step_target)) {
         // Forward
         val = pid->m_fwd * ((float) pid->setpoint - pid->x_1_fwd) + pid->y_1_fwd;
     }
@@ -151,24 +137,22 @@ float get_ff_val(const pid_params *const pid) {
 
 // Returns proportional gain value corresponding to current setpoint
 float get_kp(const pid_params *const pid) {
-    float sp = (float) pid->setpoint;
+    const float sp = (float) pid->setpoint;
     if (sp < pid->k_p_x_1) {
         return pid->k_p_m_1 * sp + pid->k_p_y_0;
     }
-    else {
-        return pid->k_p_m_2 * (sp - pid->k_p_x_1) + pid->k_p_y_1;
-    }
+    return pid->k_p_m_2 * (sp - pid->k_p_x_1) + pid->k_p_y_1;
 }
 
 
 // PID controller function gets called every x milliseconds where x is CV_49 aka sampling time (pid->t)
-bool pid_control(struct repeating_timer *t) {
+bool pid_control(struct repeating_timer *const t) {
     // Cast (void *) to (pid_params *)
-    pid_params *pid = (pid_params *) (t->user_data);
+    pid_params *const pid = (pid_params *) (t->user_data);
 
     // Acceleration from standstill or change in direction -> reset previous derivative, error and integral parts
-    bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
-                             get_direction_of_speed_step(speed_step_target_prev);
+    const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
+                                   get_direction_of_speed_step(speed_step_target_prev);
     if ((!pid->setpoint_prev && !pid->setpoint) || direction_changed) {
         pid->d_prev = 0.0f;
         pid->i_prev = 0.0f;
@@ -195,13 +179,21 @@ bool pid_control(struct repeating_timer *t) {
     const float d = pid->cd_0 * (pid->measurement - pid->measurement_prev) + pid->cd_1 * pid->d_prev;
 
     // Check for limits on the integral part
-    if (i > pid->int_lim_max) { i = pid->int_lim_max; }
-    else if (i < pid->int_lim_min) { i = pid->int_lim_min; }
+    if (i > pid->int_lim_max) {
+        i = pid->int_lim_max;
+    }
+    else if (i < pid->int_lim_min) {
+        i = pid->int_lim_min;
+    }
 
     // Sum feed forward + all controller terms (p+i+d). Limit Output from 0% to 100% duty cycle
     float output = feed_fwd + p + i + d;
-    if (output < 0 || !pid->setpoint) output = 0.0f;
-    else if (output > pid->max_output) output = pid->max_output;
+    if (output < 0 || !pid->setpoint) {
+        output = 0.0f;
+    }
+    else if (output > pid->max_output) {
+        output = pid->max_output;
+    }
 
     if (LOGLEVEL >= 1) {
         static int counter = 0;
@@ -213,7 +205,7 @@ bool pid_control(struct repeating_timer *t) {
     }
 
     // Set PWM Level and discard results in adc fifo
-    adjust_pwm_level((uint16_t) roundf(output), pid);
+    adjust_pwm_level((uint16_t) roundf(output));
     adc_fifo_drain();
 
     // Check for High or Low Integrator values -> Update x,y values of feedforward function
