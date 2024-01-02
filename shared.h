@@ -1,8 +1,9 @@
-//////////////////////////
-//   RP2040-Decoder     //
-// Gabriel Koppenstein  //
-//      shared.h        //
-//////////////////////////
+/*!
+*
+ * \file shared.h
+ * Used by both cores
+ *
+ */
 
 #pragma once
 #include "string.h"
@@ -10,11 +11,9 @@
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "pico/printf.h"
-#include "pico/platform.h"
 #include "hardware/pwm.h"
 #include "hardware/adc.h"
 #include "hardware/flash.h"
-#include "hardware/irq.h"
 
 
 // here you can enable printf debugging (needs extra soldering and you have to enable uart in the cmake configuration)

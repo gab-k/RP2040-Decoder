@@ -1,8 +1,9 @@
-//////////////////////////
-//   RP2040-Decoder     //
-// Gabriel Koppenstein  //
-//      core1.h         //
-//////////////////////////
+/*!
+*
+ * \file core1.h
+ * Used exclusively by core1
+ *
+ */
 
 #pragma once
 #include "shared.h"

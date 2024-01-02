@@ -185,7 +185,6 @@ void write_cv_handler(const uint16_t cv_index, const uint8_t cv_data) {
 }
 
 
-// CV Programming function resets core1 and evaluates the type of programming instruction (e.g. write byte)
 void program_mode(const uint8_t number_of_bytes, const uint8_t *const byte_array) {
     //First check for valid programming command ("address" 112-127)
     if (byte_array[number_of_bytes - 1] < 128 && byte_array[number_of_bytes - 1] > 111) {
@@ -516,8 +515,6 @@ void track_signal_fall( const unsigned int gpio, const long unsigned int events)
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
 }
 
-
-// Output initialization function - Configures pwm frequency and clock divider according to CV_111 - CV_171
 void init_outputs() {
     gpio_init_mask(GPIO_ALLOWED_OUTPUTS);
     gpio_set_dir_out_masked(GPIO_ALLOWED_OUTPUTS);  // Note: This might also disable UART on GPIO0 & GPIO1
@@ -541,7 +538,6 @@ void init_outputs() {
     }
 }
 
-// Measures "base" pwm duty cycle needed to overcome friction
 uint16_t measure_base_pwm(const bool direction, const uint8_t iterations) {
     uint gpio;
     if (direction) gpio = MOTOR_FWD_PIN;
@@ -575,13 +571,11 @@ uint16_t measure_base_pwm(const bool direction, const uint8_t iterations) {
     // Find and return overall average discarding outliers in measurement - multiply with 0.9
     const float retVal = 0.9f * two_std_dev(level_arr, 5);
     LOG(1, "measure_base_pwm: %d(%f)\n", (uint16_t) retVal, retVal);
-    return (uint16_t) (retVal);
+    return (uint16_t) retVal;
 }
 
 
-// Check for flash memory factory condition and adc offset setup
-// When factory condition is found the CV_ARRAY_DEFAULT will be written into flash
-// When ADC Setup is not configured run adc offset adjustment function and write adc offset into flash
+
 void cv_setup_check() {
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
     if (CV_ARRAY_FLASH[64] == 0xFF) {
@@ -590,11 +584,12 @@ void cv_setup_check() {
         program_mode(4, arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
 
-    // Check for adc offset setup
+    // Check for existing ADC offset setup
     if (CV_ARRAY_FLASH[171] == 0xFF) {
+        // Write a value of 7 to read-only CV_7 in order to trigger a ADC offset measurement
         LOG(1, "found cv[171] equals to 0xff, adc offset adjstments (and cr[7] = 7)\n");
         const uint8_t arr[4] = {125, 7, 6, 124};
-        program_mode(4, arr); //ADC offset adjustment  (write CV_7 = 7)
+        program_mode(4, arr); // ADC offset adjustment  (write CV_7 = 7)
     }
 
     // Check for base PWM configuration - used for feed-forward
@@ -627,37 +622,38 @@ void cv_setup_check() {
 
 // Motor PWM initialization
 void init_motor_pwm(const uint8_t gpio) {
+    // Set GPIO pin to PWM functionality
+    gpio_set_function(gpio, GPIO_FUNC_PWM);
+    // Set wrap counter value saved in CV
     const uint16_t wrap_counter = (_125M / (CV_ARRAY_FLASH[8] * 100 + 10000)) - 1;
     const uint32_t slice_num = pwm_gpio_to_slice_num(gpio);
     pwm_set_clkdiv_int_frac(slice_num, CV_ARRAY_FLASH[173], 0);
     pwm_set_wrap(slice_num, wrap_counter);
+    // Set initial level to 0
     pwm_set_gpio_level(gpio, 0);
+    // Enable PWM
     pwm_set_enabled(slice_num, true);
-
     LOG(2, "init motor(%d): wrapCounter %d clkdiv %d\n", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
 }
 
-
-// Main initialization  -  GPIO Config / ADC Config
-void init_gpio_adc() {
-    if (gpio_get_function(MOTOR_FWD_PIN) != 4) {
-        gpio_set_function(MOTOR_FWD_PIN, GPIO_FUNC_PWM);
-        gpio_set_function(MOTOR_REV_PIN, GPIO_FUNC_PWM);
-        adc_init();
-        adc_gpio_init(FWD_V_EMF_ADC_PIN);
-        adc_gpio_init(REV_V_EMF_ADC_PIN);
-        adc_fifo_setup(true, false, 0, false, false);
-    }
+void init_adc() {
+    // Initialize ADC
+    adc_init();
+    // Set ADC GPIO pins to ADC functionality
+    adc_gpio_init(FWD_V_EMF_ADC_PIN);
+    adc_gpio_init(REV_V_EMF_ADC_PIN);
+    // Configure ADC FIFO
+    adc_fifo_setup(true, false, 0, false, false);
 }
-
 
 int main() {
     stdio_init_all();
     LOG(1, "\n\n======\ncore0 init\n");
-    init_gpio_adc();
-    LOG(1, "init motor pwms\n");
+    LOG(1, "Init motor PWM\n");
     init_motor_pwm(MOTOR_FWD_PIN);
     init_motor_pwm(MOTOR_REV_PIN);
+    LOG(1, "Init ADC")
+    init_adc();
     LOG(1, "check cvs\n");
     cv_setup_check();
     LOG(1, "init outputs\n");
