@@ -1,8 +1,9 @@
-//////////////////////////
-//   RP2040-Decoder     //
-// Gabriel Koppenstein  //
-//      core1.h         //
-//////////////////////////
+/*!
+*
+ * \file core1.h
+ * Used exclusively by core1
+ *
+ */
 
 #pragma once
 #include "shared.h"
@@ -46,11 +47,8 @@ typedef struct pid_params{
     float m_rev;                    // Slope reverse direction
     uint16_t speed_table[127];      // Array with setpoint values corresponding to every speed step
     uint32_t speed_step_target;     // End target speed step
-    uint16_t end_target_index;      // Index for speed table array corresponding to end target speed step
     uint32_t setpoint;              // Current setpoint
     uint32_t setpoint_prev;         // Previous setpoint
-    bool direction;                 // Current Direction
-    bool direction_prev;            // Previous Direction
     // Measurement Variables
     float measurement;              // Newest Measurement value
     float adc_offset;               // ADC offset value
@@ -60,12 +58,12 @@ typedef struct pid_params{
     uint8_t r_side_arr_cutoff;      // Discarded samples (right side)
 }pid_params;
 
-void update_speed_dir(pid_params *pid, uint32_t speed_step_target);
+uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step);
 bool speed_helper(struct repeating_timer *t);
-void adjust_pwm_level(uint16_t level, pid_params *pid);
+void adjust_pwm_level(uint16_t level);
 void update_m(pid_params *pid);
 void update_y(pid_params *pid,float i);
-float get_ff_val(pid_params *pid);
-float get_kp(pid_params *pid);
+float get_ff_val(const pid_params *pid);
+float get_kp(const pid_params *pid);
 bool pid_control(struct repeating_timer *t);
-void init_pid(pid_params *pid);
+void init_pid( pid_params * pid);

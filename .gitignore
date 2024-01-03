@@ -2,6 +2,10 @@
 .vscode
 .idea
 
+# Doxygen generated files
+html
+latex
+
 # Build folders
 build
 cmake-build-debug
