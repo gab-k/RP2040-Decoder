@@ -27,7 +27,7 @@
 #define LOGLEVEL 0
 #define LOG(level, ...) { if(level <= LOGLEVEL) {printf(__VA_ARGS__);}}
 
-// Constant Value of 125 x 10⁶
+// Constant Value of 125 x 10^6
 #define _125M 125000000
 
 // GPIO used for DCC-Signal, Motor PWM or ADC

@@ -1,7 +1,7 @@
 #pragma once
 #define CV_ARRAY_SIZE 512
-// All CVs are 8-bit numbers ranging from (0 - 255)dec ≙ (0b00000000 - 0b11111111)bin ≙ (0x00 - 0xFF)hex
-// Note : CV_1 ≙ index 0, CV_2 ≙ index 1, CV_3 ≙ index 2, ...
+// All CVs are 8-bit numbers ranging from (0 - 255)dec = (0b00000000 - 0b11111111)bin = (0x00 - 0xFF)hex
+// Note : CV_1 = index 0, CV_2 = index 1, CV_3 = index 2, ...
 
 uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000011,         //CV_1  -    Basic address       -   CV_1 = 0 and CV_1 > 127 are not valid - Default = 3
@@ -60,20 +60,20 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_45  -
    0b00000000,         //CV_46  -
     // Speed controller - Configuration ////////////////////////////////////////////////////////////////////////////////
-   0b00110010,         //CV_47  -   Feed-forward gain k_ff      ≙   CV_47/10000     Default = 50 -> 0.005             //
+   0b00110010,         //CV_47  -   Feed-forward gain k_ff      =   CV_47/10000     Default = 50 -> 0.005             //
    0b00001010,         //CV_48  -   PID Control low pass filter time constant (tau) in ms                             //
    0b00000101,         //CV_49  -   PID Control sampling time t in ms                                                 //
-   0b00011001,         //CV_50  -   PID Control I_Factor        ≙   CV_50/10        Default = 25 -> 2.5               //
-   0b00110010,         //CV_51  -   PID Control D_Factor        ≙   CV_51/10000     Default = 50 -> 0.005             //
-   0b01100100,         //CV_52  -   PID Integral Limit positive ≙   CV_52*10        Default = 100 -> +1000            //
-   0b01100100,         //CV_53  -   PID Integral Limit negative ≙   CV_53*(-10)     Default = 100 -> -1000            //
+   0b00011001,         //CV_50  -   PID Control I_Factor        =   CV_50/10        Default = 25 -> 2.5               //
+   0b00110010,         //CV_51  -   PID Control D_Factor        =   CV_51/10000     Default = 50 -> 0.005             //
+   0b01100100,         //CV_52  -   PID Integral Limit positive =   CV_52*10        Default = 100 -> +1000            //
+   0b01100100,         //CV_53  -   PID Integral Limit negative =   CV_53*(-10)     Default = 100 -> -1000            //
    0b00000111,         //CV_54  -   k_p @ x0 - High Byte (Bits 8-15)                divided by 100                    //
    0b11010000,         //CV_55  -   k_p @ x0 - Low Byte (Bits 0-7)                  Default = 2000 -> 20              //
    0b00000000,         //CV_56  -   k_p @ x1 - High Byte (Bits 8-15)                divided by 100                    //
    0b11111010,         //CV_57  -   k_p @ x1 - Low Byte (Bits 0-7)                  Default = 250 -> 2.5              //
    0b00000000,         //CV_58  -   k_p @ x2 - High Byte (Bits 8-15)                divided by 100                    //
    0b10010110,         //CV_59  -   k_p @ x2 - Low Byte (Bits 0-7)                  Default = 150 -> 1.5              //
-   0b00001101,         //CV_60  -   x_1 shift in % ≙ CV_60/255                                                        //
+   0b00001101,         //CV_60  -   x_1 shift in % = CV_60/255                                                        //
    // V_EMF Measurement Configuration //////////////////////////////////////////////////////////////////////////////////
    0b01100100,         //CV_61  -   V_EMF Total amount of Measurement Iterations    -   Default = 100 iterations      //
    0b01100100,         //CV_62  -   V_EMF Delay before Measuring                    -   Default = 100us               //
