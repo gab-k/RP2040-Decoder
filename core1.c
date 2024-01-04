@@ -27,7 +27,7 @@ uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step) {
 bool speed_helper(struct repeating_timer *const t) {
     // pid->setpoint only gets adjusted when the speed_helper_counter is equal to the accel_rate/decel_rate
     // -> Time for 1 Speed Step := (speed_helper timer delay)*(accel_rate) or CV_175*CV_3 or CV_175*CV_4
-    pid_params *const pid = (pid_params *) (t->user_data);
+    controller_parameter_t *const pid = (controller_parameter_t *) (t->user_data);
     const uint8_t accel_rate = CV_ARRAY_FLASH[2];
     const uint8_t decel_rate = CV_ARRAY_FLASH[3];
     static uint8_t speed_helper_counter;
@@ -38,7 +38,7 @@ bool speed_helper(struct repeating_timer *const t) {
     const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
                                    get_direction_of_speed_step(speed_step_target_prev);
 
-    if (pid->speed_step_target == 129 || pid->speed_step_target == 1) {
+    if (speed_step_target == 129 || speed_step_target == 1) {
         // Emergency Stop
         speed_table_index = 0;
         speed_helper_counter = 0;
@@ -77,7 +77,6 @@ bool speed_helper(struct repeating_timer *const t) {
     return true;
 }
 
-
 // Helper function to adjust pwm level/duty cycle.
 void adjust_pwm_level(const uint16_t level) {
     if (get_direction_of_speed_step(speed_step_target)) {
@@ -93,50 +92,8 @@ void adjust_pwm_level(const uint16_t level) {
 }
 
 
-// Update feed-forward slope/gradient for both directions
-void update_m(pid_params *const pid) {
-    pid->m_fwd = (pid->y_2_fwd - pid->y_1_fwd) / (pid->x_2_fwd - pid->x_1_fwd);
-    pid->m_rev = (pid->y_2_rev - pid->y_1_rev) / (pid->x_2_rev - pid->x_1_rev);
-}
-
-
-// Update feedforward function value y_2 in both directions
-void update_y(pid_params *const pid, const float i) {
-    if (get_direction_of_speed_step(speed_step_target)) {
-        // Forward
-        pid->y_2_fwd += i * pid->k_ff;
-        // Limit y_2_fwd
-        if (pid->y_2_fwd > pid->max_output) pid->y_2_fwd = pid->max_output;
-        else if (pid->y_2_fwd < pid->y_1_fwd) pid->y_2_fwd = pid->y_1_fwd;
-    }
-    else {
-        // Reverse
-        pid->y_2_rev += i * pid->k_ff;
-        // Limit y_2_rev
-        if (pid->y_2_rev > pid->max_output) pid->y_2_rev = pid->max_output;
-        else if (pid->y_2_rev < pid->y_1_rev) pid->y_2_rev = pid->y_1_rev;
-    }
-    update_m(pid);
-}
-
-
-// Returns feedforward value corresponding to current setpoint
-float get_ff_val(const pid_params *const pid) {
-    float val;
-    if (get_direction_of_speed_step(speed_step_target)) {
-        // Forward
-        val = pid->m_fwd * ((float) pid->setpoint - pid->x_1_fwd) + pid->y_1_fwd;
-    }
-    else {
-        // Reverse
-        val = pid->m_rev * ((float) pid->setpoint - pid->x_1_rev) + pid->y_1_rev;
-    }
-    return val;
-}
-
-
 // Returns proportional gain value corresponding to current setpoint
-float get_kp(const pid_params *const pid) {
+float get_kp(const controller_parameter_t *const pid) {
     const float sp = (float) pid->setpoint;
     if (sp < pid->k_p_x_1) {
         return pid->k_p_m_1 * sp + pid->k_p_y_0;
@@ -145,81 +102,133 @@ float get_kp(const pid_params *const pid) {
 }
 
 
-// PID controller function gets called every x milliseconds where x is CV_49 aka sampling time (pid->t)
-bool pid_control(struct repeating_timer *const t) {
-    // Cast (void *) to (pid_params *)
-    pid_params *const pid = (pid_params *) (t->user_data);
-
-    // Acceleration from standstill or change in direction -> reset previous derivative, error and integral parts
-    const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
-                                   get_direction_of_speed_step(speed_step_target_prev);
-    if ((!pid->setpoint_prev && !pid->setpoint) || direction_changed) {
-        pid->d_prev = 0.0f;
-        pid->i_prev = 0.0f;
-        pid->e_prev = 0.0f;
+uint16_t get_initial_level(controller_parameter_t *const ctrl_par){
+    uint32_t sum = 0;
+    uint32_t i = 0;
+    while (i < 16) {
+        if (ctrl_par->base_pwm_arr[i] > 0) {
+            sum += ctrl_par->base_pwm_arr[i];
+            i++;
+        }
+        else {
+            break;
+        }
     }
+    return  ((sum / i)*2)/3;
+}
 
-    // Get feed-forward and proportional gain values
-    const float feed_fwd = get_ff_val(pid);
-    pid->k_p = get_kp(pid);
+// Controller - Startup mode
+void controller_startup_mode(controller_parameter_t *const ctrl_par) {
+    if(ctrl_par->output == 0) {
+        ctrl_par->output = get_initial_level(ctrl_par);
+    }
+    if (ctrl_par->measurement_corrected < 7.5f){
+        const uint16_t max_level = _125M / (CV_ARRAY_FLASH[8] * 100 + 10000);
+        adjust_pwm_level(ctrl_par->output);
+        ctrl_par->output += max_level / 250;
+        if (ctrl_par->output > max_level) {
+            // Try again with half val...
+            ctrl_par->output = get_initial_level(ctrl_par)/2;
+        }
+    }
+    else {
+        // Save level value in array
+        ctrl_par->base_pwm_arr[ctrl_par->base_pwm_arr_i] = ctrl_par->output;
+        // Update index
+        ctrl_par->base_pwm_arr_i = (ctrl_par->base_pwm_arr_i+1)%16;
+        // Set ramp_up_mode flag to true
+        ctrl_par->mode = PID_MODE;
+        // multiply with constant value of 0.9
+        ctrl_par->feed_fwd = 0.9f * (float)ctrl_par->output;
+    }
+}
 
-    // Measure BEMF voltage and compute error
-    pid->measurement = measure(pid->msr_total_iterations,
-                               pid->msr_delay_in_us,
-                               pid->l_side_arr_cutoff,
-                               pid->r_side_arr_cutoff,
-                               get_direction_of_speed_step(speed_step_target));
-
-    const float measurement_corrected = pid->measurement - pid->adc_offset;
-    const float e = (float) pid->setpoint - measurement_corrected;
-
+// Controller - PID control mode
+void controller_pid_mode(controller_parameter_t *const ctrl_par) {
+    ctrl_par->k_p = get_kp(ctrl_par);
     // Proportional part, integral part and derivative part (including digital low-pass-filter with time constant tau)
-    const float p = pid->k_p * e;
-    float i = pid->ci_0 * (e + pid->e_prev) + pid->i_prev;
-    const float d = pid->cd_0 * (pid->measurement - pid->measurement_prev) + pid->cd_1 * pid->d_prev;
+    float p = ctrl_par->k_p * ctrl_par->e;
+    float i = ctrl_par->ci_0 * (ctrl_par->e + ctrl_par->e_prev) + ctrl_par->i_prev;
+    float d = ctrl_par->cd_0 * (ctrl_par->measurement - ctrl_par->measurement_prev) + ctrl_par->cd_1 * ctrl_par->d_prev;
 
     // Check for limits on the integral part
-    if (i > pid->int_lim_max) {
-        i = pid->int_lim_max;
+    if (i > ctrl_par->int_lim_max) {
+        i = ctrl_par->int_lim_max;
     }
-    else if (i < pid->int_lim_min) {
-        i = pid->int_lim_min;
+    else if (i < ctrl_par->int_lim_min) {
+        i = ctrl_par->int_lim_min;
     }
 
     // Sum feed forward + all controller terms (p+i+d). Limit Output from 0% to 100% duty cycle
-    float output = feed_fwd + p + i + d;
-    if (output < 0 || !pid->setpoint) {
-        output = 0.0f;
+    float output_f = ctrl_par->feed_fwd + p + i + d;
+    if (output_f < 0) {
+        output_f = 0.0f;
     }
-    else if (output > pid->max_output) {
-        output = pid->max_output;
+    else if (output_f > ctrl_par->max_output) {
+        output_f = ctrl_par->max_output;
     }
 
     if (LOGLEVEL >= 1) {
         static int counter = 0;
         counter++;
         if (counter > 100) {
-            LOG(1, "pid error(%f) output(%f)\n", e, output);
+            LOG(1, "ctrl_par error(%f) output(%f)\n", ctrl_par->e, output_f);
             counter = 0;
         }
     }
 
     // Set PWM Level and discard results in adc fifo
-    adjust_pwm_level((uint16_t) roundf(output));
-    adc_fifo_drain();
+    ctrl_par->output = (uint16_t) roundf(output_f);
+    adjust_pwm_level(ctrl_par->output);
+    // Save previous error, integrator, differentiator values
+    ctrl_par->e_prev = ctrl_par->e;
+    ctrl_par->i_prev = i;
+    ctrl_par->d_prev = d;
+}
 
-    // Check for High or Low Integrator values -> Update x,y values of feedforward function
-    if ((output < pid->max_output && output > pid->max_output / 2) &&
-        ((i > pid->int_lim_max / 2) || (i < pid->int_lim_min / 2))) {
-        update_y(pid, i);
+// General controller function gets called every x milliseconds where x is CV_49 i.e. sampling time (pid->t)
+// TODO: fixed point arithmetic to improve performance...
+bool controller_general(struct repeating_timer *const t) {
+    // Cast (void *) to (controller_parameter_t *)
+    controller_parameter_t *const ctrl_par = (controller_parameter_t *) (t->user_data);
+
+    // Change in direction -> reset previous derivative, error and integral parts and pwm_base_done
+    const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
+                                   get_direction_of_speed_step(speed_step_target_prev);
+    // When setpoint == 0 there is nothing to control -> set output to 0, reset values and return
+    if (!ctrl_par->setpoint || direction_changed) {
+        ctrl_par->d_prev = 0.0f;
+        ctrl_par->i_prev = 0.0f;
+        ctrl_par->e_prev = 0.0f;
+        ctrl_par->mode = STARTUP_MODE;
+        ctrl_par->output = 0;
+        adjust_pwm_level(0);
+        // return true exits and schedule the repeating timer again
+        return true;
     }
 
-    // Save previous error, integrator, differentiator, direction, setpoint and measured value also sum error to e_sum
-    pid->e_prev = e;
-    pid->i_prev = i;
-    pid->d_prev = d;
-    pid->setpoint_prev = pid->setpoint;
-    pid->measurement_prev = pid->measurement;
+    // Measure BEMF voltage and compute error
+    ctrl_par->measurement = measure(ctrl_par->msr_total_iterations,
+                                    ctrl_par->msr_delay_in_us,
+                                    ctrl_par->l_side_arr_cutoff,
+                                    ctrl_par->r_side_arr_cutoff,
+                                    get_direction_of_speed_step(speed_step_target));
+    ctrl_par->measurement_corrected = ctrl_par->measurement - ctrl_par->adc_offset;
+    ctrl_par->e = (float) ctrl_par->setpoint - ctrl_par->measurement_corrected;
+
+    switch (ctrl_par->mode){
+        case STARTUP_MODE:
+            controller_startup_mode(ctrl_par);
+            break;
+        case PID_MODE:
+            controller_pid_mode(ctrl_par);
+            break;
+    }
+
+    adc_fifo_drain();
+
+    // Save measurement value
+    ctrl_par->measurement_prev = ctrl_par->measurement;
 
     // return true to schedule the repeating timer again
     return true;
@@ -227,13 +236,21 @@ bool pid_control(struct repeating_timer *const t) {
 
 
 // PID controller and measurement parameter, and speed_table initialization
-void init_pid(pid_params *const pid) {
+void init_controller(controller_parameter_t *const ctrl_par) {
+    // General controller variables
+    ctrl_par->feed_fwd = 0;
+    ctrl_par->mode = STARTUP_MODE;
+    ctrl_par->base_pwm_arr_i = 0;
+    for (int i = 0; i < BASE_PWM_ARR_LEN; ++i) {
+        ctrl_par->base_pwm_arr[i] = 0;
+    }
+
     // Measurement variables initialization
-    pid->adc_offset = (float) CV_ARRAY_FLASH[171];
-    pid->msr_total_iterations = CV_ARRAY_FLASH[60];
-    pid->msr_delay_in_us = CV_ARRAY_FLASH[61];
-    pid->l_side_arr_cutoff = CV_ARRAY_FLASH[62];
-    pid->r_side_arr_cutoff = CV_ARRAY_FLASH[63];
+    ctrl_par->adc_offset = (float) CV_ARRAY_FLASH[171];
+    ctrl_par->msr_total_iterations = CV_ARRAY_FLASH[60];
+    ctrl_par->msr_delay_in_us = CV_ARRAY_FLASH[61];
+    ctrl_par->l_side_arr_cutoff = CV_ARRAY_FLASH[62];
+    ctrl_par->r_side_arr_cutoff = CV_ARRAY_FLASH[63];
 
     // Speed table initialization
     // Calculate speed setpoint table according to V_min, V_max and V_mid CVs
@@ -246,64 +263,55 @@ void init_pid(pid_params *const pid) {
     const double delta_x = 63;
     const double m_1 = (v_mid - v_min) / delta_x;
     const double m_2 = (v_max - v_mid) / delta_x;
-    pid->speed_table[0] = 0;
+    ctrl_par->speed_table[0] = 0;
     for (uint8_t i = 1; i < 64; ++i) {
-        pid->speed_table[i] = (uint16_t) lround(m_1 * (i - 1) + v_min);
+        ctrl_par->speed_table[i] = (uint16_t) lround(m_1 * (i - 1) + v_min);
     }
     for (uint8_t i = 64; i < 127; ++i) {
-        pid->speed_table[i] = (uint16_t) lround(m_2 * (i - 63) + v_mid);
+        ctrl_par->speed_table[i] = (uint16_t) lround(m_2 * (i - 63) + v_mid);
     }
 
     // Controller constants initialization
-    pid->k_i = (float) CV_ARRAY_FLASH[49] / 10;
-    pid->k_d = (float) CV_ARRAY_FLASH[50] / 10000;
-    pid->tau = (float) CV_ARRAY_FLASH[47] / 1000;
-    pid->t = (float) CV_ARRAY_FLASH[48] / 1000;
-    pid->ci_0 = (pid->k_i * pid->t) / 2;
-    pid->cd_0 = -(2 * pid->k_d) / (2 * pid->tau + pid->t);
-    pid->cd_1 = (2 * pid->tau - pid->t) / (2 * pid->tau + pid->t);
-    pid->int_lim_max = 10 * (float) CV_ARRAY_FLASH[51];
-    pid->int_lim_min = -10 * (float) CV_ARRAY_FLASH[52];
-    pid->k_ff = (float) CV_ARRAY_FLASH[46] / 10000;
-    pid->max_output = (float) (_125M / (CV_ARRAY_FLASH[8] * 100 + 10000));
-    pid->x_1_rev = 0.0f;
-    pid->x_1_fwd = 0.0f;
-    pid->y_1_fwd = (float) get_16bit_CV(175);
-    pid->y_1_rev = (float) get_16bit_CV(177);
-    pid->x_2_rev = (float) pid->speed_table[126];
-    pid->x_2_fwd = (float) pid->speed_table[126];
+    ctrl_par->k_i = (float) CV_ARRAY_FLASH[49] / 10;
+    ctrl_par->k_d = (float) CV_ARRAY_FLASH[50] / 10000;
+    ctrl_par->tau = (float) CV_ARRAY_FLASH[47] / 1000;
+    ctrl_par->t = (float) CV_ARRAY_FLASH[48] / 1000;
+    ctrl_par->ci_0 = (ctrl_par->k_i * ctrl_par->t) / 2;
+    ctrl_par->cd_0 = -(2 * ctrl_par->k_d) / (2 * ctrl_par->tau + ctrl_par->t);
+    ctrl_par->cd_1 = (2 * ctrl_par->tau - ctrl_par->t) / (2 * ctrl_par->tau + ctrl_par->t);
+    ctrl_par->int_lim_max = 10 * (float) CV_ARRAY_FLASH[51];
+    ctrl_par->int_lim_min = -10 * (float) CV_ARRAY_FLASH[52];
+    ctrl_par->max_output = (float) (_125M / (CV_ARRAY_FLASH[8] * 100 + 10000));
 
     // Controller variables initialization
-    pid->y_2_fwd = pid->max_output;
-    pid->y_2_rev = pid->max_output;
-    pid->measurement = 0.0f;
-    pid->measurement_prev = 0.0f;
-    pid->e_prev = 0.0f;
-    pid->i_prev = 0.0f;
-    pid->d_prev = 0.0f;
-    pid->setpoint = 0;
+    ctrl_par->output = 0;
+    ctrl_par->measurement = 0.0f;
+    ctrl_par->measurement_prev = 0.0f;
+    ctrl_par->measurement_corrected = 0.0f;
+    ctrl_par->e_prev = 0.0f;
+    ctrl_par->i_prev = 0.0f;
+    ctrl_par->d_prev = 0.0f;
+    ctrl_par->setpoint = 0;
 
     // Gain scheduling initialization
-    pid->k_p_x_1_shift = (float) CV_ARRAY_FLASH[59] / 255.0f;
-    pid->k_p_x_1 = (float) pid->speed_table[126] * pid->k_p_x_1_shift;
-    pid->k_p_x_2 = (float) pid->speed_table[126] * (1.0f - pid->k_p_x_1_shift);
-    pid->k_p_y_0 = (float) get_16bit_CV(53) / 100.0f;
-    pid->k_p_y_1 = (float) get_16bit_CV(55) / 100.0f;
-    pid->k_p_y_2 = (float) get_16bit_CV(57) / 100.0f;
-    pid->k_p_m_1 = (pid->k_p_y_1 - pid->k_p_y_0) / pid->k_p_x_1;
-    pid->k_p_m_2 = (pid->k_p_y_2 - pid->k_p_y_1) / pid->k_p_x_2;
-
-    update_m(pid);
+    ctrl_par->k_p_x_1_shift = (float) CV_ARRAY_FLASH[59] / 255.0f;
+    ctrl_par->k_p_x_1 = (float) ctrl_par->speed_table[126] * ctrl_par->k_p_x_1_shift;
+    ctrl_par->k_p_x_2 = (float) ctrl_par->speed_table[126] * (1.0f - ctrl_par->k_p_x_1_shift);
+    ctrl_par->k_p_y_0 = (float) get_16bit_CV(53) / 100.0f;
+    ctrl_par->k_p_y_1 = (float) get_16bit_CV(55) / 100.0f;
+    ctrl_par->k_p_y_2 = (float) get_16bit_CV(57) / 100.0f;
+    ctrl_par->k_p_m_1 = (ctrl_par->k_p_y_1 - ctrl_par->k_p_y_0) / ctrl_par->k_p_x_1;
+    ctrl_par->k_p_m_2 = (ctrl_par->k_p_y_2 - ctrl_par->k_p_y_1) / ctrl_par->k_p_x_2;
 }
 
 void core1_entry() {
     LOG(1, "core1 init...\n");
-    pid_params pid_parameters;
-    pid_params *pid = &pid_parameters;
-    init_pid(pid);
+    controller_parameter_t pid_parameters;
+    controller_parameter_t *pid = &pid_parameters;
+    init_controller(pid);
     alarm_pool_add_repeating_timer_ms(alarm_pool_create(0, 1),
                                       CV_ARRAY_FLASH[48],
-                                      pid_control,
+                                      controller_general,
                                       pid,
                                       &pid_control_timer);
     // Set TIMER_IRQ_0 to highest priority of 0x00
@@ -314,5 +322,5 @@ void core1_entry() {
                                       pid,
                                       &speed_helper_timer);
     LOG(1, "core1 done\n");
-    while (true);
+    while (true); //sleep_ms(100); //TODO: any potential issues when using sleep?
 }

@@ -584,7 +584,7 @@ void cv_setup_check() {
         program_mode(4, arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
 
-    // Check for existing ADC offset setup
+    // Check for existing ADC offset setup TODO: always measure?
     if (CV_ARRAY_FLASH[171] == 0xFF) {
         // Write a value of 7 to read-only CV_7 in order to trigger a ADC offset measurement
         LOG(1, "found cv[171] equals to 0xff, adc offset adjstments (and cr[7] = 7)\n");
@@ -594,6 +594,7 @@ void cv_setup_check() {
 
     // Check for base PWM configuration - used for feed-forward
     // Forward Direction
+    /*
     if (get_16bit_CV(175) == 0) {
         LOG(1, "found cv[175] equals to 0, forward direction\n");
         const uint16_t base_pwm_fwd = measure_base_pwm(true, 10);
@@ -615,6 +616,7 @@ void cv_setup_check() {
         const uint8_t arr1[4] = {125, base_pwm_rev_low_byte, 178, 124};
         program_mode(4, arr1);
     }
+     */
     LOG(1, "int_lim_max %d\n", CV_ARRAY_FLASH[51]);
     LOG(1, "int_lim_min %d\n", CV_ARRAY_FLASH[52]);
 }
@@ -666,5 +668,5 @@ int main() {
     LOG(1, "core0 done\n");
     busy_wait_ms(100);
     multicore_launch_core1(core1_entry);
-    while (true);
+    while (true); //sleep_ms(100); //TODO: any potential issues when using sleep?
 }
