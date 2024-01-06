@@ -15,16 +15,13 @@ typedef enum {
     PID_MODE,
 } controller_mode_t;
 
-typedef struct pid_params{
-    // General Controller variables
-    controller_mode_t mode;
-
-    // Startup mode variables
-    float feed_fwd;
+typedef struct startup_parameters_t {
+    uint16_t level;
     uint16_t base_pwm_arr[BASE_PWM_ARR_LEN];
     uint16_t base_pwm_arr_i;
+}startup_parameters_t;
 
-
+typedef struct pid_parameters_t{
     // PID Controller variables
     float k_i;                      // Integral gain
     float k_d;                      // Derivative gain
@@ -41,20 +38,6 @@ typedef struct pid_params{
     float e_prev;                   // Previous Error
     float i_prev;                   // Previous Integral Value
     float d_prev;                   // Previous Derivative Value
-    uint32_t setpoint;              // Current setpoint
-    uint16_t output;
-    uint16_t speed_table[127];      // Array with setpoint values corresponding to every speed step
-
-    // Measurement Variables
-    float measurement;              // Newest Measurement value
-    float measurement_prev;         // Previous Measurement
-    float measurement_corrected;
-    float adc_offset;               // ADC offset value
-    uint8_t msr_delay_in_us;        // Delay before VEMF Measurement
-    uint8_t msr_total_iterations;   // Amount of samples
-    uint8_t l_side_arr_cutoff;      // Discarded samples (left side)
-    uint8_t r_side_arr_cutoff;      // Discarded samples (right side)
-
     // Variable gain variables
     float k_p_x_1_shift;
     float k_p_x_1;
@@ -64,13 +47,47 @@ typedef struct pid_params{
     float k_p_y_2;
     float k_p_m_1;
     float k_p_m_2;
+} pid_parameter_t;
+
+typedef struct controller_parameter_t{
+    /*!
+     * General Variables
+     */
+    controller_mode_t mode;         // Controller mode
+    float feed_fwd;                 // Feed forward value
+    uint32_t setpoint;              // Current setpoint
+    uint16_t speed_table[127];      // Array with setpoint values corresponding to every speed step
+
+    /*!
+     * Startup controller mode specific variables
+     */
+    startup_parameters_t startup;
+
+    /*!
+     * PID Controller variables
+     */
+    pid_parameter_t pid;
+
+    /*!
+     * Measurement Variables
+     */
+    float measurement;              // Newest Measurement value
+    float measurement_prev;         // Previous Measurement
+    float measurement_corrected;    // measurement - adc_offset = measurement_corrected
+    float adc_offset;               // ADC offset value
+    uint8_t msr_delay_in_us;        // Delay before VEMF Measurement
+    uint8_t msr_total_iterations;   // Amount of samples
+    uint8_t l_side_arr_cutoff;      // Discarded samples (left side)
+    uint8_t r_side_arr_cutoff;      // Discarded samples (right side)
+
 } controller_parameter_t;
+
 
 
 uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step);
 bool speed_helper(struct repeating_timer *t);
 void adjust_pwm_level(uint16_t level);
-float get_kp(const controller_parameter_t *pid);
+float get_kp(const controller_parameter_t *ctrl_par);
 uint16_t get_initial_level(controller_parameter_t * ctrl_par);
 void controller_startup_mode(controller_parameter_t * ctrl_par);
 bool controller_general(struct repeating_timer * t);
