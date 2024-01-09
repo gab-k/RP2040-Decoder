@@ -13,7 +13,6 @@ uint16_t level_table[32] = {0};
 absolute_time_t falling_edge_time, rising_edge_time;
 
 
-// Function returns average of values deviating less than twice the standard deviation from original average
 float two_std_dev(const float arr[], const uint32_t length) {
     // Calculate arithmetic average
     float sum = 0;
@@ -91,8 +90,6 @@ void adc_offset_adjustment(const uint32_t n) {
 }
 
 
-// Confirmation after writing or verifying a CV
-// Works by creating a spike in current consumption, this is detected by the command station
 void acknowledge() {
     const uint16_t max_lvl = _125M / (CV_ARRAY_FLASH[8] * 100 + 10000);
     pwm_set_gpio_level(MOTOR_FWD_PIN, max_lvl);
@@ -104,8 +101,8 @@ void acknowledge() {
 }
 
 
-// When bit matches sent byte -> acknowledge()
 void verify_cv_bit(const uint16_t cv_address, const bool bit_val, const uint8_t bit_pos) {
+    // Check for matching bit, when found call acknowledge()
     const uint8_t mask = 0b00000001;
     const bool res = ((CV_ARRAY_FLASH[cv_address] >> bit_pos) & mask) == bit_val;
     if (res) {
@@ -114,17 +111,17 @@ void verify_cv_bit(const uint16_t cv_address, const bool bit_val, const uint8_t 
 }
 
 
-// When byte matches sent byte -> acknowledge()
 void verify_cv_byte(const uint16_t cv_address, const uint8_t cv_data) {
+    // Check for matching byte, when found call acknowledge()
     if (CV_ARRAY_FLASH[cv_address] == cv_data) acknowledge();
 }
 
 
-// CV writing function first erases necessary amount of  blocks in flash and then rewrites to flash
-void regular_cv_write(const uint16_t cv_index, const uint8_t cv_data) {
+void write_cv_byte(uint16_t cv_address, uint8_t cv_data) {
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
-    CV_ARRAY_TEMP[cv_index] = cv_data;
+    CV_ARRAY_TEMP[cv_address] = cv_data;
+    // First erase necessary amount of  blocks in flash and then rewrite to flash
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
     flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
     acknowledge();
@@ -140,7 +137,7 @@ void write_cv_handler(const uint16_t cv_index, const uint8_t cv_data) {
                 break;
             }
             else {
-                regular_cv_write(cv_index, cv_data);
+                write_cv_byte(cv_index, cv_data);
             }
             break;
         case 6: //CV_7
@@ -166,13 +163,13 @@ void write_cv_handler(const uint16_t cv_index, const uint8_t cv_data) {
             if ((cv_data < 192 || cv_data > 231) || (CV_ARRAY_FLASH[17] == 0 && cv_data == 192)) {
                 break;
             }
-            regular_cv_write(cv_index, cv_data);
+            write_cv_byte(cv_index, cv_data);
             break;
         case 17: //CV_18
             if(CV_ARRAY_FLASH[16] == 192 && cv_data == 0){
                 break;
             }
-            regular_cv_write(cv_index, cv_data);
+            write_cv_byte(cv_index, cv_data);
             break;
             // CV_31 & CV_32 Index high byte isn't implemented and shall not be set
         case 30:    //CV_31
@@ -180,7 +177,7 @@ void write_cv_handler(const uint16_t cv_index, const uint8_t cv_data) {
             break;
             // Regular CV write is carried out
         default:
-            regular_cv_write(cv_index, cv_data);
+            write_cv_byte(cv_index, cv_data);
     }
 }
 
@@ -238,7 +235,6 @@ void program_mode(const uint8_t number_of_bytes, const uint8_t *const byte_array
 }
 
 
-// Set outputs according to configuration (PWM on/off, PWM duty cycle/level, ...)
 void set_outputs(const uint32_t functions_to_set_bitmask) {
     // Get outputs with pwm enabled and preset outputs_to_set_PWM variable with resulting GPIO Bitmask
     const uint32_t PWM_enabled_outputs = get_32bit_CV(111);
@@ -537,44 +533,6 @@ void init_outputs() {
         mask <<= 1;
     }
 }
-
-uint16_t measure_base_pwm(const bool direction, const uint8_t iterations) {
-    uint gpio;
-    if (direction) gpio = MOTOR_FWD_PIN;
-    else gpio = MOTOR_REV_PIN;
-    float level_arr[iterations];
-    for (int i = 0; i < iterations; ++i) {
-        const uint16_t max_level = _125M / (CV_ARRAY_FLASH[8] * 100 + 10000);
-        uint16_t level = max_level / 20;
-        LOG(3, "iteration %d: maxlevel %d level %d\n", i, max_level, level);
-        float measurement;
-        do {
-            pwm_set_gpio_level(gpio, level);
-            busy_wait_ms(30);
-            level += max_level / 500;
-            measurement = measure(CV_ARRAY_FLASH[60],
-                                  CV_ARRAY_FLASH[61],
-                                  CV_ARRAY_FLASH[62],
-                                  CV_ARRAY_FLASH[63],
-                                  direction);
-            LOG(3, "level %d measurement %f loop-cond: %f\n", level, measurement, measurement - (float) CV_ARRAY_FLASH[171]);
-            if (level > max_level) {
-                // Abort measurement and write default value of 0 to flash
-                LOG(1, "measure_base_pwm: abort measurement and return 0\n");
-                return 0;
-            }
-        } while ((measurement - (float) CV_ARRAY_FLASH[171]) < 5.0f);
-        LOG(3, "level_arr[%d] = %d\n", i, level);
-        level_arr[i] = (float) level;
-        busy_wait_ms(100);
-    }
-    // Find and return overall average discarding outliers in measurement - multiply with 0.9
-    const float retVal = 0.9f * two_std_dev(level_arr, 5);
-    LOG(1, "measure_base_pwm: %d(%f)\n", (uint16_t) retVal, retVal);
-    return (uint16_t) retVal;
-}
-
-
 
 void cv_setup_check() {
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
