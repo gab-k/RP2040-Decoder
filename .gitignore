@@ -12,8 +12,18 @@ cmake-build-debug
 cmake-build-release
 
 # KiCad ignored files
+KiCad/RP2040-Decoder-backups
+KiCad/*.bak
+KiCad/fp-info-cache
+KiCad/_autosave-*
+KiCad/*.kicad_prl
 KiCad/*/RP2040-Decoder-backups
 KiCad/*/*.bak
 KiCad/*/fp-info-cache
 KiCad/*/_autosave-*
 KiCad/*/*.kicad_prl
+KiCad/*.kicad_sch-bak
+KiCad/*.kicad_pcb-bak
+KiCad/*.kicad_pcb.lck
+KiCad/production
+KiCad/fabrication-toolkit-options.json

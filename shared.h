@@ -14,6 +14,7 @@
 #include "hardware/pwm.h"
 #include "hardware/adc.h"
 #include "hardware/flash.h"
+#include "hardware/gpio.h"
 
 
 // here you can enable printf debugging (needs extra soldering and you have to enable uart in the cmake configuration)
@@ -72,34 +73,34 @@ float measure(uint8_t total_iterations,
 uint32_t get_32bit_CV (uint16_t CV_start_index);
 uint16_t get_16bit_CV (uint16_t CV_start_index);
 /*!
- * @brief Get direction
- * Function calculates direction.Direction is based on speed_step byte. <br>
- * Refers to "128 Speed Control" - NMRA Standard 9.2.1 section 2.3.2.1 or RCN-212 section 2.2.2. <br>
+ * @brief Calculates the direction based on a speed step byte.
  *
- * The following speed steps exist:
- * * DEC | BIN	   | DIRECTION | DEFINITION
- * * 000 | 0000 0000 | Reverse   | STOP
- * * 001 | 0000 0001 | Reverse   | EMERGENCY STOP
- * * 002 | 0000 0010 | Reverse   | Speed step 001 (Lowest speed)
- * * 003 | 0000 0011 | Reverse   | Speed step 002
- * * 004 | 0000 0100 | Reverse   | Speed step 003
- * * ... | .... .... | Reverse   | .....
- * * ... | .... .... | Reverse   | .....
- * * ... | .... .... | Reverse   | .....
- * * 126 | 0111 1110 | Reverse   | Speed step 125
- * * 127 | 0111 1111 | Reverse   | Speed step 126 (Full speed)
- * * 128 | 1000 0000 | Forward   | STOP
- * * 129 | 1000 0001 | Forward   | EMERGENCY STOP
- * * 130 | 1000 0010 | Forward   | Speed step 001 (Lowest speed)
- * * 131 | 1000 0011 | Forward   | Speed step 002
- * * 132 | 1000 0100 | Forward   | Speed step 003
- * * ... | .... .... | Forward   | .....
- * * ... | .... .... | Forward   | .....
- * * ... | .... .... | Forward   | .....
- * * 254 | 1111 1110 | Forward   | Speed step 125
- * * 255 | 1111 1111 | Forward   | Speed step 126 (Full speed)
+ * This function calculates the direction of movement based on the value of 
+ * the `speed_step` byte. It refers to the "128 Speed Control" standard as outlined 
+ * in NMRA Standard 9.2.1 section 2.3.2.1 or RCN-212 section 2.2.2.
  *
- * @param speed_step speed step byte
- * @return direction; false for reverse; true for forward;
+ * The following speed steps are defined:
+ *
+ * | DEC | BIN       | DIRECTION | DEFINITION           |
+ * |-----|-----------|-----------|----------------------|
+ * | 000 | 0000 0000 | Reverse   | STOP                 |
+ * | 001 | 0000 0001 | Reverse   | EMERGENCY STOP       |
+ * | 002 | 0000 0010 | Reverse   | Speed step 001       |
+ * | 003 | 0000 0011 | Reverse   | Speed step 002       |
+ * | 004 | 0000 0100 | Reverse   | Speed step 003       |
+ * | ... | .... .... | Reverse   | ...                  |
+ * | 126 | 0111 1110 | Reverse   | Speed step 125       |
+ * | 127 | 0111 1111 | Reverse   | Speed step 126       |
+ * | 128 | 1000 0000 | Forward   | STOP                 |
+ * | 129 | 1000 0001 | Forward   | EMERGENCY STOP       |
+ * | 130 | 1000 0010 | Forward   | Speed step 001       |
+ * | 131 | 1000 0011 | Forward   | Speed step 002       |
+ * | 132 | 1000 0100 | Forward   | Speed step 003       |
+ * | ... | .... .... | Forward   | ...                  |
+ * | 254 | 1111 1110 | Forward   | Speed step 125       |
+ * | 255 | 1111 1111 | Forward   | Speed step 126       |
+ *
+ * @param speed_step The speed step byte.
+ * @return `true` for forward direction, `false` for reverse direction.
  */
 bool get_direction_of_speed_step(uint8_t speed_step);
