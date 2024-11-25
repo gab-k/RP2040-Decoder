@@ -319,6 +319,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "768f6689-21a7-49f3-af1b-b48b9fe8b241")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/02f6a232-6127-471e-95e2-7e7ed97deb66")
 		(sheetname "Root")
@@ -566,6 +579,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3fb46ff7-8f8b-4079-94bf-32037dd0f989")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b15578fb-3ff7-495a-aac9-0b3ad0d79129")
 			(effects
 				(font
 					(size 1 1)
@@ -827,6 +853,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7217fc66-9b75-4db4-8128-6a8d1d745ce0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/3ab24c8b-1b3f-48ce-b2ea-0ae9e60c96f2")
 		(sheetname "Root")
@@ -1074,6 +1113,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9338133d-13ec-4753-b50d-d4d5f53ebda2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "09f7e8b0-fc4b-4c98-a4c6-cd62a9bb5c8e")
 			(effects
 				(font
 					(size 1 1)
@@ -1335,6 +1387,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a0247b22-f108-4ec4-af41-efb673055bef")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/670d343c-b372-4737-bbf4-cefac1ba9bb4")
 		(sheetname "Root")
@@ -1582,6 +1647,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3b91e2f6-99a8-411b-a93c-ba26f883a979")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "faab1ea4-3ed8-4f9c-a929-fec58ffd23d0")
 			(effects
 				(font
 					(size 1 1)
@@ -1843,6 +1921,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "85cd43c1-deda-4085-86f1-d979f66695e4")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/720a0f39-92bc-4432-8a12-dc653e56ddea")
 		(sheetname "Root")
@@ -2096,6 +2187,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2232fcd0-5458-410a-8321-0a41de8f3ca5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/68cb39ec-5f82-4d77-b2b3-f744fb6fd4f6")
 		(sheetname "Root")
@@ -2329,6 +2433,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ab4da315-c404-4859-b6dd-66a0be1cabed")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" "-90"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "434b6965-6555-4312-a9d1-06a9da26f629")
 			(effects
 				(font
 					(size 1 1)
@@ -3253,6 +3370,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4470d33d-660d-4bdd-bca8-d691d3a12ce2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-0000623ce830")
 		(sheetname "Root")
@@ -3500,6 +3630,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "27614e3d-f1c6-4615-9c60-898e56438031")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "fd2f1966-ae86-4367-b87d-7e9daf27d226")
 			(effects
 				(font
 					(size 1 1)
@@ -3761,6 +3904,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "62a27544-6371-4eec-b917-cf4f839dadcb")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/f07f1d0e-cc39-4555-9cbc-9c58936b6e69")
 		(sheetname "Root")
@@ -4001,12 +4157,12 @@
 				)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "7fedb011-8030-4494-a2fd-7e3d81a77d50")
+			(uuid "3da52444-3fc2-4957-b784-b49b188e2e0f")
 			(effects
 				(font
 					(size 1 1)
@@ -4152,6 +4308,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "34c2070a-556f-4a31-8ec3-ccff2818b559")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5f697939-b2dd-4476-8083-3c3953a6c788")
 			(effects
 				(font
 					(size 1 1)
@@ -4399,12 +4568,12 @@
 				)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "61f34f67-8ca4-4211-9aa1-1c4c15de74e3")
+			(uuid "3e00930b-b8e0-47d2-8f86-affc347c5f7f")
 			(effects
 				(font
 					(size 1 1)
@@ -4549,6 +4718,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "f5075be7-f1f7-4149-a2aa-b1ed30c5c002")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "caf1e206-5772-42a6-8799-38bfdba1d03f")
 			(effects
 				(font
 					(size 1 1)
@@ -4790,6 +4972,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "4894a9df-ccb5-415a-8ade-d09ca0bbbc11")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" "180"
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3c3bbfde-7bab-4bf9-a455-2543397f9ff4")
 			(effects
 				(font
 					(size 1 1)
@@ -5105,6 +5300,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "cf94b48e-4d31-4c69-a0bd-c3ba32697366")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/78ed41f9-93ea-48e8-ae13-b6d359df1f88")
 		(sheetname "Root")
@@ -5339,6 +5547,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "fbac5241-6aa5-4bd1-88fe-e123c8a22007")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "952457bf-1ee8-4ba9-8ac6-e0caae4d6ca6")
 			(effects
 				(font
 					(size 1 1)
@@ -5622,6 +5843,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "db7c04c1-5a8f-4d45-a104-cebd2ba3cd87")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/7d28e843-8764-40ee-911a-fff6bdfe5d0c")
 		(sheetname "Root")
@@ -5868,6 +6102,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "7cc691e6-3adc-4112-a79e-934bbd3648de")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ee24ce80-1be6-4ba6-a52f-d3977625320e")
 			(effects
 				(font
 					(size 1 1)
@@ -6128,6 +6375,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "10096295-580f-4052-bce8-efe95ff78338")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/a43e77c3-bddf-4f2c-8bcc-5258d115f7a1")
 		(sheetname "Root")
@@ -6359,6 +6619,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9032f86a-0645-462f-a5c5-a2a1e5be9741")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "68aa46f7-3443-4210-a595-56c766cd1d08")
 			(effects
 				(font
 					(size 1 1)
@@ -6833,6 +7106,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" "180"
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "22026258-82b3-4e1e-b1d6-de7485c07df3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "SOT?323*")
 		(path "/5c4d4e85-bf0d-450d-add9-0ae6ba8425f4")
 		(sheetname "Root")
@@ -7140,6 +7426,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "19776b25-bff4-49e4-a451-14fb574fc2e7")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/387ce66c-1a74-4eb3-9779-0285f708a3ce")
 		(sheetname "Root")
@@ -7374,6 +7673,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "6d079576-f200-40c5-9934-0aceedd6e4b2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" "180"
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0d063e00-bdd7-4a4e-87bd-7f8229665efc")
 			(effects
 				(font
 					(size 1 1)
@@ -7671,6 +7983,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "59380e66-828d-4b5f-bfaf-f632abcadc4b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6cf7d6b6-3ae2-404b-b048-9fa5e2f33aee")
 			(effects
 				(font
 					(size 1 1)
@@ -8096,6 +8421,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1c34e847-5927-4d2e-948f-535589752ad3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/c559dc07-3250-4d54-a083-3019c420fc61")
 		(sheetname "Root")
@@ -8342,6 +8680,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "6ed736f7-a449-4f74-bd60-ac86401a511e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f7c72b6b-e85f-4c90-a34b-f76b767cba3f")
 			(effects
 				(font
 					(size 1 1)
@@ -8603,6 +8954,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "25274059-6d18-429b-bb5f-c3c3b735f3f3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/56366b67-75e3-401e-9c17-9a405eee36b9")
 		(sheetname "Root")
@@ -8857,6 +9221,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "12ed8d1e-5da5-457d-98fc-ba9a26e7c7d3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/ea8bac25-8f05-4c0e-a705-50b3a136c2cc")
 		(sheetname "Root")
@@ -9084,12 +9461,12 @@
 				)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "2fd619e7-4650-461f-b378-266c72178001")
+			(uuid "498f1cbb-52de-4c64-ae5e-d3a0442430b7")
 			(effects
 				(font
 					(size 1 1)
@@ -9337,12 +9714,12 @@
 				)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "c1dfd331-6c91-4fee-b218-a9449351765d")
+			(uuid "d16718d4-d872-48f6-8de9-d15d6d44e34f")
 			(effects
 				(font
 					(size 1 1)
@@ -9487,6 +9864,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "0d58e23c-844f-4e17-932a-62b9c6f667a5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ee441114-5e23-4751-b0e8-88129f785b01")
 			(effects
 				(font
 					(size 1 1)
@@ -9728,6 +10118,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "819c0cd4-0cf4-4c47-abc9-07a1c14c0bde")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" "180"
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "462242c5-cb03-49d2-a7c9-fbbb6a38f873")
 			(effects
 				(font
 					(size 1 1)
@@ -10029,12 +10432,12 @@
 				)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "ba97c617-7fc7-4a71-8f47-31372a6e541e")
+			(uuid "1e172d75-058f-4ae3-8f90-158f222ce215")
 			(effects
 				(font
 					(size 1 1)
@@ -10180,6 +10583,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "04d2c035-3cf3-4264-a0d4-798b248b6995")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "10a0759e-0af3-4b7a-87f7-03360a31df54")
 			(effects
 				(font
 					(size 1 1)
@@ -10469,6 +10885,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d849fa2c-767e-4f58-bc9f-4dde31b6b63e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/621580e0-6b28-428b-a0cf-602ccbe8f607")
 		(sheetname "Root")
@@ -10723,6 +11152,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f80b04fc-d0ca-4c37-818b-46510e8577ad")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/b9036b09-1411-4f45-a161-d486477bc9de")
 		(sheetname "Root")
@@ -10963,12 +11405,12 @@
 				)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "b96bc961-afbf-4900-a742-6fe77b079c89")
+			(uuid "67efbd23-63f2-47b8-bcb0-0ed325b3b919")
 			(effects
 				(font
 					(size 1 1)
@@ -11113,6 +11555,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "e814ff82-5cdf-46a2-a1a6-88b93a479179")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3f9bd47e-8347-4d48-a675-7d770b89aafe")
 			(effects
 				(font
 					(size 1 1)
@@ -11354,6 +11809,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "363aa089-919d-40e9-9d28-6720a321cdbb")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" "180"
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f00a12bf-2abd-4d8a-a17d-8c37999cde40")
 			(effects
 				(font
 					(size 1 1)
@@ -11668,6 +12136,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3671a5db-447d-4561-a9f0-31a2b7965f6c")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/7905b2c9-3dea-4b39-8132-56398ab6a84a")
 		(sheetname "Root")
@@ -11922,6 +12403,19 @@
 				)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6ae34861-556d-4fa6-9488-671aefacfedb")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/2e3e3201-9a7f-46b1-be72-e168aa2e7173")
 		(sheetname "Root")
@@ -12152,6 +12646,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "5b7f2478-82d0-4f83-838a-81f820d0f7a1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "62589e23-74d4-4d6e-b88d-5964759394a1")
 			(effects
 				(font
 					(size 1 1)
@@ -12543,12 +13050,12 @@
 				)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "9354a257-3f4d-4b18-930a-0046f3cafeef")
+			(uuid "fdcec8f0-e0db-4ebf-8ded-1c78613ad6a5")
 			(effects
 				(font
 					(size 1 1)
@@ -12680,12 +13187,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "772cb592-c37c-42ce-9e29-a67ffcc40387")
+			(uuid "12e8a252-8cbe-404b-9c8c-ab4b4ae8e0d9")
 			(effects
 				(font
 					(size 1 1)
@@ -12818,12 +13325,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "982ec009-0de4-4da7-b182-4705ed4a6836")
+			(uuid "62144ae6-bd5c-4901-8d15-e9ff1fc8d867")
 			(effects
 				(font
 					(size 1 1)
@@ -12956,12 +13463,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "267fa6ed-9c31-4496-8cd8-443b67376df6")
+			(uuid "57cf98e1-9e4e-4f0b-901c-4dd34d838dfb")
 			(effects
 				(font
 					(size 1 1)
@@ -13094,12 +13601,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "cdaf805e-e059-4e59-a8f3-19380500ac0f")
+			(uuid "2c3da5fd-0b3f-4b32-b129-23c3546690cb")
 			(effects
 				(font
 					(size 1 1)
@@ -13233,12 +13740,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "97921553-1a51-41b4-89c5-e498521faf60")
+			(uuid "5cb012b6-343a-4727-9338-087cff1edfad")
 			(effects
 				(font
 					(size 1 1)
@@ -13429,12 +13936,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "44f0c467-02eb-456e-afbb-41f33fc41460")
+			(uuid "12866c58-68d6-4958-bac4-a6db29c36d5d")
 			(effects
 				(font
 					(size 1 1)
@@ -13587,6 +14094,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "f9914f09-7470-4c5f-b2ae-8da0206c4177")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "dcbb07bf-e504-466b-b5a4-85117f39bee1")
 			(effects
 				(font
 					(size 1 1)
@@ -13829,12 +14350,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "d8af930c-1e67-4f73-af10-f1631bb42f95")
+			(uuid "c423d521-ea82-4e6e-b923-0caf472b036e")
 			(effects
 				(font
 					(size 1 1)
@@ -13987,6 +14508,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "eb4befe3-bd67-4518-9da3-8db7c199dcd5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 -90)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "b1a92f59-7aa4-44ec-8247-ee314d760515")
 			(effects
 				(font
 					(size 1 1)
@@ -14229,12 +14764,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "b31eea98-93dc-4231-8d52-eeb2a78707af")
+			(uuid "c79a28f5-a92b-4b91-9e76-e74c65c0091b")
 			(effects
 				(font
 					(size 1 1)
@@ -14385,6 +14920,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "cb03e0c3-0716-4246-bbfc-eb603fdf30ee")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "08e0b7b5-ecae-4a64-b417-124492ebcd87")
 			(effects
 				(font
 					(size 1 1)
@@ -14743,6 +15292,20 @@
 				(justify mirror)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "4e2add88-30e6-4916-af6a-fcf8e94f354d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "SOT?23*")
 		(path "/20b0044d-762e-4c64-a945-0532cdc563ca")
 		(sheetname "Root")
@@ -15041,12 +15604,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "9b73808b-7d35-41ce-b237-f247de275158")
+			(uuid "b0f29589-8e7d-48e5-9434-b18775bf83c7")
 			(effects
 				(font
 					(size 1 1)
@@ -15180,12 +15743,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "09b8abc7-1756-4a13-b3c2-212b9ea1d9ad")
+			(uuid "66619427-d067-4357-b48c-67a2be86af9b")
 			(effects
 				(font
 					(size 1 1)
@@ -15376,12 +15939,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "dbdc5823-0e3d-4a5b-ac14-31e284669f93")
+			(uuid "feed8b62-05b7-4f46-abe1-103248c138f6")
 			(effects
 				(font
 					(size 1 1)
@@ -15514,12 +16077,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "95a0ff86-bd12-401e-bf8f-84fc041922c9")
+			(uuid "eaa330d8-0bb6-4dfc-be53-47601dbcfc84")
 			(effects
 				(font
 					(size 1 1)
@@ -15672,6 +16235,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "751c13c5-934f-4ae9-b7ad-41a58c76682a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "cd709e4d-9eeb-4aa6-be72-4da7b0235e4a")
 			(effects
 				(font
 					(size 1 1)
@@ -15920,6 +16497,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "970d8ede-6c8b-4722-a4ef-74307b9211b1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "65ae1d28-e479-4bd6-90df-193a4976a923")
 			(effects
 				(font
 					(size 1 1)
@@ -16250,6 +16841,20 @@
 				(justify mirror)
 			)
 		)
+		(property "JLCPCB Rotation Offset" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "6fa7f818-31f9-400e-ab58-6a6895a9ef25")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-0000621f2298")
 		(sheetname "Root")
@@ -16484,12 +17089,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "1180fae3-61c8-48ad-80bc-7733ef91c458")
+			(uuid "65677832-1eba-4657-93fc-7c42df4c15b7")
 			(effects
 				(font
 					(size 1 1)
@@ -16790,12 +17395,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "9b2297f1-d34e-4267-9843-1b7332134dba")
+			(uuid "ca952e3d-94cb-4ba6-81db-2b26f4a50a52")
 			(effects
 				(font
 					(size 1 1)
@@ -16928,12 +17533,12 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC Part Number" ""
+		(property "JLCPCB Rotation Offset" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
-			(uuid "8e48c677-6bec-445f-a33a-28bf52a19d32")
+			(uuid "c274e025-1891-49c0-8857-5ccc6374b04c")
 			(effects
 				(font
 					(size 1 1)
@@ -17032,6 +17637,17 @@
 		)
 		(layer "B.SilkS")
 		(uuid "ff1542e5-b0ca-42a2-a9bb-aa1768ec24ac")
+	)
+	(gr_rect
+		(start 149.4 90)
+		(end 154.4 95)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill solid)
+		(layer "F.SilkS")
+		(uuid "a1abb2ba-4fc9-436c-924b-fa4f968c43a3")
 	)
 	(gr_line
 		(start 160.425 92.1)
