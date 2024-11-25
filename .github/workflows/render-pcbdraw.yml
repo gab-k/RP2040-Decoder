@@ -15,17 +15,18 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install KiCad 8.0.6 and Dependencies
-      env:
-        DISPLAY: :99
       run: |
-        # Install Xvfb
+        # Install required tools
         sudo apt-get update
-        sudo apt-get install -y xvfb
-        
-        # Start Xvfb if not running
-        if ! xdpyinfo -display :99 > /dev/null 2>&1; then
-          Xvfb :99 -screen 0 1024x768x16 &
+        sudo apt-get install -y xvfb xdotool
+
+        # Start Xvfb with dynamic display if :99 is occupied
+        DISPLAY_NUMBER=99
+        if [ -f /tmp/.X${DISPLAY_NUMBER}-lock ]; then
+          rm -f /tmp/.X${DISPLAY_NUMBER}-lock
         fi
+        Xvfb :${DISPLAY_NUMBER} -screen 0 1024x768x16 &
+        echo "Started Xvfb on DISPLAY=:$DISPLAY_NUMBER"
 
         # Add KiCad PPA and install KiCad
         sudo add-apt-repository --yes ppa:kicad/kicad-8.0-releases
@@ -39,13 +40,8 @@ jobs:
     - name: Render PCB Image
       env:
         PYTHONPATH: /usr/lib/kicad/lib/python3/dist-packages
-        DISPLAY: :99
+        DISPLAY: :99  # Use Xvfb DISPLAY
       run: |
-        # Start Xvfb if not running
-        if ! xdpyinfo -display :99 > /dev/null 2>&1; then
-          Xvfb :99 -screen 0 1024x768x16 &
-        fi
-
         # Render the PCB
         mkdir -p docs/images
         pcbdraw render KiCad/RP2040-Decoder.kicad_pcb docs/images/pcb_render.png
