@@ -16,29 +16,37 @@ jobs:
 
     - name: Install KiCad 8.0.6 and Dependencies
       env:
-        DISPLAY: :99  # Set DISPLAY for Xvfb
+        DISPLAY: :99
       run: |
-        # Install Xvfb for virtual display
+        # Install Xvfb
         sudo apt-get update
         sudo apt-get install -y xvfb
         
-        # Start Xvfb
-        Xvfb :99 -screen 0 1024x768x16 &
+        # Start Xvfb if not running
+        if ! xdpyinfo -display :99 > /dev/null 2>&1; then
+          Xvfb :99 -screen 0 1024x768x16 &
+        fi
 
         # Add KiCad PPA and install KiCad
         sudo add-apt-repository --yes ppa:kicad/kicad-8.0-releases
         sudo apt-get update
         sudo apt-get install -y kicad=8.0.6-0* kicad-footprints kicad-packages3d kicad-symbols python3-wxgtk4.0 python3-pip
 
-        # Install pcbdraw
+        # Install pcbdraw and fix mistune compatibility
         pip install pcbdraw
+        pip install "mistune<3"
 
     - name: Render PCB Image
       env:
         PYTHONPATH: /usr/lib/kicad/lib/python3/dist-packages
-        DISPLAY: :99  # Use the same Xvfb display
+        DISPLAY: :99
       run: |
-        Xvfb :99 -screen 0 1024x768x16 &  # Ensure Xvfb is running
+        # Start Xvfb if not running
+        if ! xdpyinfo -display :99 > /dev/null 2>&1; then
+          Xvfb :99 -screen 0 1024x768x16 &
+        fi
+
+        # Render the PCB
         mkdir -p docs/images
         pcbdraw render KiCad/RP2040-Decoder.kicad_pcb docs/images/pcb_render.png
 
