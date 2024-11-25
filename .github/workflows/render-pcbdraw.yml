@@ -1,0 +1,44 @@
+name: Render KiCad PCB with pcbdraw
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  render-pcbdraw:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y kicad kicad-footprints kicad-packages3d kicad-symbols
+        pip install pcbdraw
+
+    - name: Render PCB Image
+      run: |
+        mkdir -p docs/images
+        pcbdraw render KiCad/RP2040-Decoder.kicad_pcb docs/images/pcb_render.png
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Commit and Push Rendered Image
+      run: |
+        git add docs/images/pcb_render.png
+        git commit -m "Update PCB render image"
+        git push origin dev
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
