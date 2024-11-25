@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - dev
+    paths:
+      - '.github/workflows/render-pcbdraw.yml'  # Trigger if workflow file changes
+      - 'KiCad/**'  # Trigger if any file in KiCad directory changes
   workflow_dispatch:
 
 jobs:
@@ -18,7 +21,7 @@ jobs:
       run: |
         # Install required tools
         sudo apt-get update
-        sudo apt-get install -y xvfb xdotool
+        sudo apt-get install -y xvfb xdotool inkscape librsvg2-bin  # Add librsvg for compatibility
 
         # Start Xvfb with dynamic display if :99 is occupied
         DISPLAY_NUMBER=99
@@ -42,6 +45,12 @@ jobs:
         PYTHONPATH: /usr/lib/kicad/lib/python3/dist-packages
         DISPLAY: :99  # Use Xvfb DISPLAY
       run: |
+        # Ensure required tools are in PATH
+        if ! command -v inkscape >/dev/null 2>&1 && ! command -v rsvg-convert >/dev/null 2>&1; then
+          echo "Error: Neither inkscape nor rsvg-convert found in PATH"
+          exit 1
+        fi
+
         # Render the PCB
         mkdir -p docs/images
         pcbdraw render KiCad/RP2040-Decoder.kicad_pcb docs/images/pcb_render.png
