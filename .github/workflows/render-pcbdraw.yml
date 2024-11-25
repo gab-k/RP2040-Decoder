@@ -14,25 +14,27 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
-
-    - name: Install Dependencies
+    - name: Install KiCad 8.0.6 and Dependencies
       run: |
+        # Add KiCad 8 PPA and install KiCad
+        sudo add-apt-repository --yes ppa:kicad/kicad-8.0-releases
         sudo apt-get update
-        sudo apt-get install -y kicad kicad-footprints kicad-packages3d kicad-symbols
-        sudo apt-get install -y python3-wxgtk4.0 python3-pip
+        sudo apt-get install -y kicad=8.0.6-0* kicad-footprints kicad-packages3d kicad-symbols python3-wxgtk4.0 python3-pip
+        
+        # Verify KiCad version
+        kicad_version=$(kicad --version)
+        echo "KiCad version installed: $kicad_version"
+
+        # Install pcbdraw
         pip install pcbdraw
 
     - name: Render PCB Image
       env:
-        PYTHONPATH: /usr/lib/kicad-nightly/lib/python3/dist-packages
+        # Set PYTHONPATH to locate pcbnew bindings
+        PYTHONPATH: /usr/lib/kicad/lib/python3/dist-packages
       run: |
         mkdir -p docs/images
         pcbdraw render KiCad/RP2040-Decoder.kicad_pcb docs/images/pcb_render.png
-
 
     - name: Configure Git
       run: |
