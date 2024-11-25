@@ -27,3 +27,6 @@ KiCad/*.kicad_pcb-bak
 KiCad/*.kicad_pcb.lck
 KiCad/production
 KiCad/fabrication-toolkit-options.json
+
+# Temporary files
+scripts/temp
