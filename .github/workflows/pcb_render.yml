@@ -59,7 +59,8 @@ jobs:
 
       - name: Deploy to gh-pages branch (main)
         run: |
-          git checkout gh-pages
+          git fetch --all  # Ensure all branches are fetched
+          git checkout gh-pages || git checkout --orphan gh-pages  # Create gh-pages if it doesn't exist
           cp -r images/* .  # Copy the rendered images to the root directory
           git add .
           git commit -m "Deploy PCB images to gh-pages"
@@ -95,7 +96,8 @@ jobs:
 
       - name: Deploy to gh-pages-dev branch (dev)
         run: |
-          git checkout gh-pages-dev
+          git fetch --all  # Ensure all branches are fetched
+          git checkout gh-pages-dev || git checkout --orphan gh-pages-dev  # Create gh-pages-dev if it doesn't exist
           cp -r images/* .  # Copy the rendered images to the root directory
           git add .
           git commit -m "Deploy PCB images to gh-pages-dev"
