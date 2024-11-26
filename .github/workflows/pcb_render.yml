@@ -73,10 +73,6 @@ jobs:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
     runs-on: ubuntu-latest
     needs: render-image
-
-    permissions:
-      pages: write
-      id-token: write
     
     steps:
       - name: Download pcb-images artifact
@@ -85,14 +81,10 @@ jobs:
           name: pcb-images
           path: images/
       
-      - name: Move images to /img directory
-        run: |
-          mkdir -p img  # Create the img directory if it doesn't exist
-          cp -r images/* img/  # Move the images into the img directory
-      
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./images
           publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
+          destination_dir: img
