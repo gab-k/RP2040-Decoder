@@ -1,4 +1,4 @@
-name: pcb_image
+name: Render PCB images
 on:
   push:
     branches:
@@ -22,14 +22,12 @@ jobs:
           pcb_file: KiCad/RP2040-Decoder.kicad_pcb
           output_path: ${{ github.workspace }}/images
         
-      - name: Commit and push rendered images to the repository
-        if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'  # Run on both dev and main branches
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add images
-          git commit -m "Add rendered PCB images"
-          git push origin ${{ github.ref }}  # Push to the same branch that triggered the workflow
+      - name: Upload images as artifact
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+        uses: actions/upload-artifact@v3
+        with:
+          name: pcb-images
+          path: images/
 
   deploy-pages-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
@@ -46,11 +44,11 @@ jobs:
 
     steps:
       - name: Deploy to GitHub Pages (main)
-        id: deployment
+        if: github.ref == 'refs/heads/main'
         uses: actions/deploy-pages@v2
         with:
-          branch: main  # Ensure deployment is for the 'main' branch
-          folder: images  # Specify the folder to deploy (can be images or any other folder)
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: pcb-images  # Name of the uploaded artifact
 
   deploy-pages-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
@@ -67,8 +65,8 @@ jobs:
 
     steps:
       - name: Deploy to GitHub Pages (dev)
-        id: deployment
+        if: github.ref == 'refs/heads/dev'
         uses: actions/deploy-pages@v2
         with:
-          branch: dev  # Ensure deployment is for the 'dev' branch
-          folder: images  # Specify the folder to deploy (can be images or any other folder)
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: pcb-images  # Name of the uploaded artifact
