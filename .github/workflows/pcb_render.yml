@@ -5,7 +5,7 @@ on:
       - dev   # Trigger on push to 'dev' branch
       - main  # Trigger on push to 'main' branch
     paths:
-      - '.github/workflows/pcb_render.yaml'  # Trigger if this workflow file changes
+      - '.github/workflows/pcb_render.yml'  # Trigger if this workflow file changes
       - 'KiCad/**'  # Trigger if any file in the 'KiCad' directory changes
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       - name: Render PCB image
         uses: linalinn/kicad-render@main
         with:
-          pcb_file: <path from repo root to .kicad_pcb>
+          pcb_file: KiCad/RP2040-Decoder.kicad_pcb
           output_path: ${{ github.workspace }}/images
         
       - name: Commit and push rendered images to the repository
