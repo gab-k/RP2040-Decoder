@@ -24,7 +24,7 @@ jobs:
 
       - name: Upload images as artifact
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pcb-images
           path: images/
@@ -52,7 +52,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
 
       - name: Download pcb-images artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pcb-images
           path: images/
@@ -93,21 +93,21 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
+      - name: Checkout gh-pages-dev
+        run: |
+          git fetch --all  # Ensure all branches are fetched
+          git checkout gh-pages-dev
+          
       - name: Download pcb-images artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pcb-images
           path: images/
 
-      - name: Stash changes before switching branches
-        run: git stash
 
       - name: Deploy to gh-pages-dev branch (dev)
         run: |
-          git fetch --all  # Ensure all branches are fetched
-          git checkout gh-pages-dev || git checkout --orphan gh-pages-dev  # Create gh-pages-dev if it doesn't exist
-          git stash pop  # Apply stashed changes
           cp -r images/* .  # Copy the rendered images to the root directory
-          git add --all
+          git add .
           git commit -m "Deploy PCB images to gh-pages-dev"
           git push origin gh-pages-dev --force  # Force push to gh-pages-dev
