@@ -21,6 +21,7 @@ jobs:
         with:
           pcb_file: KiCad/RP2040-Decoder.kicad_pcb
           output_path: ${{ github.workspace }}/images
+          animation: gif
 
       - name: Upload images as artifact
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
