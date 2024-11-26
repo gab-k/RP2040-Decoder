@@ -51,11 +51,15 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-      - name: Create or update gh-pages branch (main)
+      - name: Download pcb-images artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: pcb-images
+          path: images/
+
+      - name: Deploy to gh-pages branch (main)
         run: |
-          git fetch origin gh-pages || echo "gh-pages branch does not exist"
-          git checkout -b gh-pages || git checkout gh-pages
-          git reset --hard origin/gh-pages
+          git checkout gh-pages
           cp -r images/* .  # Copy the rendered images to the root directory
           git add .
           git commit -m "Deploy PCB images to gh-pages"
@@ -83,11 +87,15 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-      - name: Create or update gh-pages-dev branch (dev)
+      - name: Download pcb-images artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: pcb-images
+          path: images/
+
+      - name: Deploy to gh-pages-dev branch (dev)
         run: |
-          git fetch origin gh-pages-dev || echo "gh-pages-dev branch does not exist"
-          git checkout -b gh-pages-dev || git checkout gh-pages-dev
-          git reset --hard origin/gh-pages-dev
+          git checkout gh-pages-dev
           cp -r images/* .  # Copy the rendered images to the root directory
           git add .
           git commit -m "Deploy PCB images to gh-pages-dev"
