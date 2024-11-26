@@ -57,14 +57,18 @@ jobs:
           name: pcb-images
           path: images/
 
+      - name: Stash changes before switching branches
+        run: git stash
+
       - name: Deploy to gh-pages branch (main)
         run: |
           git fetch --all  # Ensure all branches are fetched
           git checkout gh-pages || git checkout --orphan gh-pages  # Create gh-pages if it doesn't exist
+          git stash pop  # Apply stashed changes
           cp -r images/* .  # Copy the rendered images to the root directory
           git add .
           git commit -m "Deploy PCB images to gh-pages"
-          git push origin gh-pages --force
+          git push origin gh-pages --force  # Force push to gh-pages
 
   deploy-pages-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
@@ -72,9 +76,10 @@ jobs:
     needs: render-image
 
     permissions:
+      contents: write  # To allow writing to the repository (needed for pushing changes)
       pages: write
       id-token: write
-
+    
     environment:
       name: github-pages-dev
       url: ${{ steps.deployment.outputs.page_url }}
@@ -94,11 +99,15 @@ jobs:
           name: pcb-images
           path: images/
 
+      - name: Stash changes before switching branches
+        run: git stash
+
       - name: Deploy to gh-pages-dev branch (dev)
         run: |
           git fetch --all  # Ensure all branches are fetched
           git checkout gh-pages-dev || git checkout --orphan gh-pages-dev  # Create gh-pages-dev if it doesn't exist
+          git stash pop  # Apply stashed changes
           cp -r images/* .  # Copy the rendered images to the root directory
           git add .
           git commit -m "Deploy PCB images to gh-pages-dev"
-          git push origin gh-pages-dev --force
+          git push origin gh-pages-dev --force  # Force push to gh-pages-dev
