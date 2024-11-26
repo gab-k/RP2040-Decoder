@@ -34,40 +34,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: render-image
 
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-
-      - name: Set up git
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          
-      - name: Checkout gh-pages
-        run: |
-          git fetch --all  # Ensure all branches are fetched
-          git checkout gh-pages
-      
       - name: Download pcb-images artifact
         uses: actions/download-artifact@v4
         with:
           name: pcb-images
           path: images/
-
-      - name: Deploy to gh-pages branch (main)
-        run: |
-          cp -r images/* .  # Copy the rendered images to the root directory
-          git add images/*
-          git commit -m "Deploy PCB images to gh-pages-dev"
-          git push origin gh-pages
+      
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./images
+          publish_branch: gh-pages  # Specify the target branch (gh-pages in this case)
+          destination_dir: img
 
   deploy-pages-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
