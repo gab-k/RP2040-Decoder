@@ -50,25 +50,24 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-
+          
+      - name: Checkout gh-pages
+        run: |
+          git fetch --all  # Ensure all branches are fetched
+          git checkout gh-pages
+      
       - name: Download pcb-images artifact
         uses: actions/download-artifact@v4
         with:
           name: pcb-images
           path: images/
 
-      - name: Stash changes before switching branches
-        run: git stash
-
       - name: Deploy to gh-pages branch (main)
         run: |
-          git fetch --all  # Ensure all branches are fetched
-          git checkout gh-pages || git checkout --orphan gh-pages  # Create gh-pages if it doesn't exist
-          git stash pop  # Apply stashed changes
           cp -r images/* .  # Copy the rendered images to the root directory
-          git add --all
-          git commit -m "Deploy PCB images to gh-pages"
-          git push origin gh-pages --force  # Force push to gh-pages
+          git add images/*
+          git commit -m "Deploy PCB images to gh-pages-dev"
+          git push origin gh-pages
 
   deploy-pages-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
@@ -76,7 +75,6 @@ jobs:
     needs: render-image
 
     permissions:
-      contents: write  # To allow writing to the repository (needed for pushing changes)
       pages: write
       id-token: write
     
@@ -108,6 +106,6 @@ jobs:
       - name: Deploy to gh-pages-dev branch (dev)
         run: |
           cp -r images/* .  # Copy the rendered images to the root directory
-          git add .
+          git add images/*
           git commit -m "Deploy PCB images to gh-pages-dev"
-          git push origin gh-pages-dev --force  # Force push to gh-pages-dev
+          git push origin gh-pages-dev
