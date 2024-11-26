@@ -1,4 +1,4 @@
-name: Render PCB images
+name: pcb_image
 on:
   push:
     branches:
@@ -21,7 +21,7 @@ jobs:
         with:
           pcb_file: KiCad/RP2040-Decoder.kicad_pcb
           output_path: ${{ github.workspace }}/images
-        
+
       - name: Upload images as artifact
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
         uses: actions/upload-artifact@v3
@@ -43,12 +43,23 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy to GitHub Pages (main)
-        if: github.ref == 'refs/heads/main'
-        uses: actions/deploy-pages@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifact_name: pcb-images  # Name of the uploaded artifact
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Set up git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Create or update gh-pages branch (main)
+        run: |
+          git fetch origin gh-pages || echo "gh-pages branch does not exist"
+          git checkout -b gh-pages || git checkout gh-pages
+          git reset --hard origin/gh-pages
+          cp -r images/* .  # Copy the rendered images to the root directory
+          git add .
+          git commit -m "Deploy PCB images to gh-pages"
+          git push origin gh-pages --force
 
   deploy-pages-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
@@ -64,9 +75,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy to GitHub Pages (dev)
-        if: github.ref == 'refs/heads/dev'
-        uses: actions/deploy-pages@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifact_name: pcb-images  # Name of the uploaded artifact
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Set up git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Create or update gh-pages-dev branch (dev)
+        run: |
+          git fetch origin gh-pages-dev || echo "gh-pages-dev branch does not exist"
+          git checkout -b gh-pages-dev || git checkout gh-pages-dev
+          git reset --hard origin/gh-pages-dev
+          cp -r images/* .  # Copy the rendered images to the root directory
+          git add .
+          git commit -m "Deploy PCB images to gh-pages-dev"
+          git push origin gh-pages-dev --force
