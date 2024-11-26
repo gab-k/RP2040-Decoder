@@ -83,29 +83,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-
-      - name: Set up git
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-
-      - name: Checkout gh-pages-dev
-        run: |
-          git fetch --all  # Ensure all branches are fetched
-          git checkout gh-pages-dev
-          
       - name: Download pcb-images artifact
         uses: actions/download-artifact@v4
         with:
           name: pcb-images
           path: images/
-
-
-      - name: Deploy to gh-pages-dev branch (dev)
-        run: |
-          cp -r images/* .  # Copy the rendered images to the root directory
-          git add images/*
-          git commit -m "Deploy PCB images to gh-pages-dev"
-          git push origin gh-pages-dev
+      
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./images
