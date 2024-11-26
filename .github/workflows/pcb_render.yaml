@@ -1,0 +1,74 @@
+name: pcb_image
+on:
+  push:
+    branches:
+      - dev   # Trigger on push to 'dev' branch
+      - main  # Trigger on push to 'main' branch
+    paths:
+      - '.github/workflows/pcb_render.yml'  # Trigger if this workflow file changes
+      - 'KiCad/**'  # Trigger if any file in the 'KiCad' directory changes
+
+jobs:
+  render-image:
+    name: render-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Render PCB image
+        uses: linalinn/kicad-render@main
+        with:
+          pcb_file: <path from repo root to .kicad_pcb>
+          output_path: ${{ github.workspace }}/images
+        
+      - name: Commit and push rendered images to the repository
+        if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'  # Run on both dev and main branches
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add images
+          git commit -m "Add rendered PCB images"
+          git push origin ${{ github.ref }}  # Push to the same branch that triggered the workflow
+
+  deploy-pages-main:
+    if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
+    runs-on: ubuntu-latest
+    needs: render-image
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages (main)
+        id: deployment
+        uses: actions/deploy-pages@v2
+        with:
+          branch: main  # Ensure deployment is for the 'main' branch
+          folder: images  # Specify the folder to deploy (can be images or any other folder)
+
+  deploy-pages-dev:
+    if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
+    runs-on: ubuntu-latest
+    needs: render-image
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages-dev
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages (dev)
+        id: deployment
+        uses: actions/deploy-pages@v2
+        with:
+          branch: dev  # Ensure deployment is for the 'dev' branch
+          folder: images  # Specify the folder to deploy (can be images or any other folder)
