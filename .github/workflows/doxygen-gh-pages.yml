@@ -26,8 +26,12 @@ jobs:
         doxyfile-path: "./Doxyfile" # default is ./Doxyfile
         # Working directory
         working-directory: "." # default is .
-
-    
+      
+    - name: Upload doxygen files as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: doxygen_files
+        path: html/
   
   deploy-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
@@ -35,6 +39,12 @@ jobs:
     needs: doxy-build
     
     steps:
+      - name: Download doxygen files artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: doxygen_files
+          path: html/
+          
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -43,6 +53,7 @@ jobs:
           # Change the directory if changes in Doxyfile
           publish_dir: ./html
           publish_branch: gh-pages
+          destination_dir: html
 
   deploy-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
@@ -50,6 +61,12 @@ jobs:
     needs: doxy-build
     
     steps:
+      - name: Download doxygen files artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: doxygen_files
+          path: html/
+          
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -58,3 +75,4 @@ jobs:
           # Change the directory if changes in Doxyfile
           publish_dir: ./html
           publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
+          destination_dir: html
