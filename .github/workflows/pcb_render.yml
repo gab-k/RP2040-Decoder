@@ -24,7 +24,6 @@ jobs:
           animation: gif
 
       - name: Upload images as artifact
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
         uses: actions/upload-artifact@v4
         with:
           name: pcb-images
