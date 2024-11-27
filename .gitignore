@@ -3,8 +3,10 @@
 .idea
 
 # Doxygen generated files
-html
-latex
+docs/doxygen/build
+
+# Sphinx generated files
+docs/sphinx/build
 
 # Build folders
 build

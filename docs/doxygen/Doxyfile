@@ -1,0 +1,15 @@
+OUTPUT_DIRECTORY       = ./build
+GENERATE_XML           = YES  # Needed for Breathe
+GENERATE_HTML          = NO   # Optional: if you don’t need standalone Doxygen HTML output
+GENERATE_LATEX         = NO
+INPUT                  = ../../  # Path to your source code
+FILE_PATTERNS          = *.h \
+                         *.c \
+RECURSIVE              = YES  # Include subdirectories
+OPTIMIZE_OUTPUT_FOR_C  = YES  # Optimize output for C 
+EXTRACT_ALL            = NO  # Extract documentation even for undocumented items (optional)
+EXTRACT_PRIVATE        = NO   # Include private members if needed
+EXTRACT_STATIC         = YES
+ENABLE_PREPROCESSING   = YES
+PREDEFINED = extern=//
+EXPAND_AS_DEFINED = extern
