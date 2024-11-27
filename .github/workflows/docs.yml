@@ -8,7 +8,7 @@ on:
 
   
 jobs:
-  doxy-build:
+  build:
     runs-on: ubuntu-latest
     steps:
     - name: Check out the repo
@@ -20,40 +20,21 @@ jobs:
         # Path to Doxyfile
         doxyfile-path: 'docs/doxygen/Doxyfile'
       
-    - name: Upload doxygen files as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: doxygen_files
-        path: build/xml/
-        
-  sphinx-build:
-    runs-on: ubuntu-latest
-    needs: doxy-build
-    steps:
-    - name: Check out the repo
-      uses: actions/checkout@v4
-      
-    - name: Download doxygen files artifact
-      uses: actions/download-artifact@v4
-      with:
-          name: doxygen_files
-          path: build/xml/
-          
     - name: Sphinx build
       uses: ammaraskar/sphinx-action@0.4
       with:
-        docs-folder: "docs/sphinx"
+        docs-folder: "docs/sphinx/source"
      
     - name: Upload sphinx files as artifact
       uses: actions/upload-artifact@v4
       with:
         name: sphinx_files
-        path: build/
+        path: docs/sphinx/build/
   
   deploy-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
     runs-on: ubuntu-latest
-    needs: sphinx-build
+    needs: build
     
     steps:
       - name: Download sphinx files artifact
@@ -73,7 +54,7 @@ jobs:
   deploy-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
     runs-on: ubuntu-latest
-    needs: sphinx-build
+    needs: build
     
     steps:
       - name: Download doxygen files artifact
