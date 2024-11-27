@@ -21,12 +21,8 @@ jobs:
         doxyfile-path: './Doxyfile'
         working-directory: 'docs/doxygen'
     
-    - name: ls
-      run: ls
-    - name: ls
-      run: ls docs/doxygen
-    - name: ls
-      run: ls docs/doxygen/build
+
+
     
     - name: Sphinx build
       uses: ammaraskar/sphinx-action@0.4
@@ -37,7 +33,13 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: sphinx_files
-        path: docs/sphinx/
+        path: docs/sphinx/build
+    - name: ls
+      run: ls
+    - name: ls
+      run: ls docs/sphinx
+    - name: ls
+      run: ls docs/sphinx/build
   
   deploy-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
@@ -70,7 +72,13 @@ jobs:
         with:
           name: sphinx_files
           path: docs/sphinx
-          
+      - name: ls
+        run: ls
+      - name: ls
+        run: ls docs/sphinx
+      - name: ls
+        run: ls docs/sphinx/build
+        
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
