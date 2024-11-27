@@ -23,13 +23,13 @@ jobs:
     - name: Sphinx build
       uses: ammaraskar/sphinx-action@0.4
       with:
-        docs-folder: "docs/sphinx/source"
+        docs-folder: "docs/sphinx/"
      
     - name: Upload sphinx files as artifact
       uses: actions/upload-artifact@v4
       with:
         name: sphinx_files
-        path: docs/sphinx/build/
+        path: docs/sphinx/
   
   deploy-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
