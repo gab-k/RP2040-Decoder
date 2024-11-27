@@ -65,15 +65,10 @@ jobs:
           name: sphinx_files
           path: docs/sphinx
       
-
-      - name: ls
-        run: ls docs/sphinx
-
-        
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/sphinx
           publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
-          destination_dir: docs/sphinx/build
+          destination_dir: sphinx
