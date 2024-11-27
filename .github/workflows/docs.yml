@@ -6,32 +6,48 @@ on:
       - dev   # Trigger on push to 'dev' branch
       - main  # Trigger on push to 'main' branch
 
-
   
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   doxy-build:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - name: Check out the repo
+      uses: actions/checkout@v4
         
-    - name: Doxygen Action
-      uses: mattnotmitt/doxygen-action@v1.1.0
+    - name: Doxygen build
+      uses: mattnotmitt/doxygen-action@v1.9.5
       with:
         # Path to Doxyfile
-        doxyfile-path: "./Doxyfile" # default is ./Doxyfile
-        # Working directory
-        working-directory: "." # default is .
+        doxyfile-path: 'docs/doxygen'
       
     - name: Upload doxygen files as artifact
       uses: actions/upload-artifact@v4
       with:
         name: doxygen_files
-        path: html/
+        path: build/xml/
+        
+  sphinx-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repo
+      uses: actions/checkout@v4
+      
+    - name: Download doxygen files artifact
+      uses: actions/download-artifact@v4
+      with:
+          name: doxygen_files
+          path: build/xml/
+          
+    - name: Sphinx build
+      uses: ammaraskar/sphinx-action@0.4
+      with:
+        docs-folder: "docs/sphinx"
+     
+    - name: Upload sphinx files as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: sphinx_files
+        path: build/
   
   deploy-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
@@ -39,21 +55,19 @@ jobs:
     needs: doxy-build
     
     steps:
-      - name: Download doxygen files artifact
+      - name: Download sphinx files artifact
         uses: actions/download-artifact@v4
         with:
-          name: doxygen_files
-          path: html/
+          name: sphinx_files
+          path: docs/sphinx
           
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Default Doxyfile build documentation to html directory. 
-          # Change the directory if changes in Doxyfile
           publish_dir: ./html
           publish_branch: gh-pages
-          destination_dir: html
+          destination_dir: docs/sphinx/build
 
   deploy-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
@@ -64,15 +78,13 @@ jobs:
       - name: Download doxygen files artifact
         uses: actions/download-artifact@v4
         with:
-          name: doxygen_files
-          path: html/
+          name: sphinx_files
+          path: docs/sphinx
           
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Default Doxyfile build documentation to html directory. 
-          # Change the directory if changes in Doxyfile
           publish_dir: ./html
           publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
-          destination_dir: html
+          destination_dir: docs/sphinx/build
