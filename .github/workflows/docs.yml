@@ -22,7 +22,10 @@ jobs:
     
     - name: ls
       run: ls
-    
+    - name: ls
+      run: ls docs
+    - name: ls
+      run: ls build
     - name: Check if index.xml exists
       run: ls -al docs/doxygen/build/xml
     
