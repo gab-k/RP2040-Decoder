@@ -19,15 +19,14 @@ jobs:
       with:
         # Path to Doxyfile
         doxyfile-path: 'docs/doxygen/Doxyfile'
+        working-directory: 'docs/doxygen'
     
     - name: ls
       run: ls
     - name: ls
-      run: ls docs
+      run: ls docs/doxygen
     - name: ls
-      run: ls build
-    - name: Check if index.xml exists
-      run: ls -al docs/doxygen/build/xml
+      run: ls docs/doxygen/build
     
     - name: Sphinx build
       uses: ammaraskar/sphinx-action@0.4
