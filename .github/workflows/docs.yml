@@ -21,9 +21,6 @@ jobs:
         doxyfile-path: './Doxyfile'
         working-directory: 'docs/doxygen'
     
-
-
-    
     - name: Sphinx build
       uses: ammaraskar/sphinx-action@0.4
       with:
@@ -34,12 +31,7 @@ jobs:
       with:
         name: sphinx_files
         path: docs/sphinx/build
-    - name: ls
-      run: ls
-    - name: ls
-      run: ls docs/sphinx
-    - name: ls
-      run: ls docs/sphinx/build
+
   
   deploy-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
@@ -72,17 +64,16 @@ jobs:
         with:
           name: sphinx_files
           path: docs/sphinx
-      - name: ls
-        run: ls
+      
+
       - name: ls
         run: ls docs/sphinx
-      - name: ls
-        run: ls docs/sphinx/build
+
         
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./html
+          publish_dir: docs/sphinx
           publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
           destination_dir: docs/sphinx/build
