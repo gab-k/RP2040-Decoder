@@ -8,9 +8,59 @@
 
 // XIP_BASE + FLASH_TARGET_OFFSET = "0x101FF000" <- This address need to be smaller than __flash_binary_end stored in RP2040-Decoder.elf.map
 const uint8_t *CV_ARRAY_FLASH = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
-uint64_t input_bit_buffer = 0;
+uint64_t input_bit_buffer = 1;
 uint16_t level_table[32] = {0};
 absolute_time_t falling_edge_time, rising_edge_time;
+
+
+// Function to read the flash size of the chip
+uint32_t get_flash_size() {
+    // Prepare TX and RX buffers
+    uint8_t txbuf[4] = { FLASH_CMD_READ_JEDEC_ID, 0, 0, 0 }; // Send the 0x9F command
+    uint8_t rxbuf[4] = { 0, 0, 0, 0 }; // RX buffer for the response
+
+    // Read the JEDEC ID
+    flash_do_cmd(txbuf, rxbuf, sizeof(txbuf));
+
+    // The third byte of the response (rxbuf[3]) contains the log2 size (e.g., 0x18 for 16 MB)
+    if (rxbuf[3] == 0) {
+        set_error(FLASH_SIZE_READBACK_FAILURE);
+    }
+
+    // Calculate the actual size (2^size_code bytes)
+    uint32_t flash_size = (1u<<rxbuf[3]);
+
+    // Return the flash size in bytes
+    return flash_size;
+}
+
+// This function will be called when it's safe to call flash_range_erase
+// Always erases one sector, see FLASH_SECTOR_SIZE
+static void call_flash_range_erase(void *param) {
+    uint32_t offset = ((uintptr_t*)param)[0];
+    uint32_t byte_count = ((uintptr_t*)param)[1];
+    // Check for offset alignment (Must be aligned to a 4096-byte flash sector) 
+    // Check byte count (Must be a multiple of 4096 bytes (one sector))
+    if ((offset % FLASH_SECTOR_SIZE != 0) || (byte_count % FLASH_SECTOR_SIZE !=0)) {
+        set_error(FLASH_SAFE_EXECUTE_PROGRAM_FAILURE);
+        return;
+    }
+    flash_range_erase(offset, byte_count);
+}
+
+// This function will be called when it's safe to call flash_range_program
+static void call_flash_range_program(void *param) {
+    uint32_t offset = ((uintptr_t*)param)[0];
+    uint32_t byte_count = ((uintptr_t*)param)[1];
+    const uint8_t *data = (const uint8_t *)((uintptr_t*)param)[2];
+    // Check for offset alignment (Must be aligned to a 256-byte flash page)
+    // Check byte count (Must be a multiple of 256 bytes (one page))
+    if ((offset % FLASH_PAGE_SIZE != 0) || (byte_count % FLASH_PAGE_SIZE != 0)) {
+        set_error(FLASH_SAFE_EXECUTE_PROGRAM_FAILURE);
+        return;
+    }
+    flash_range_program(offset, data, byte_count);
+}
 
 
 float two_std_dev(const float arr[], const uint32_t length) {
@@ -44,6 +94,7 @@ float two_std_dev(const float arr[], const uint32_t length) {
 
 
 // Measures constant adc offset and programs the offset into flash
+// TODO: check necessity and correctness of adc offset function
 void adc_offset_adjustment(const uint32_t n) {
     LOG(1, "adc_offset_adjustment");
 
@@ -55,7 +106,7 @@ void adc_offset_adjustment(const uint32_t n) {
     busy_wait_ms(1000);
 
     // Measure n times in "reverse direction" (GPIO 28)
-    adc_select_input(2);
+    adc_select_input(2); //TODO: "2" as input argument?
     adc_run(true);
     for (uint32_t i = 0; i < n; i++) {
         offsets_rev[i] = (float) adc_fifo_get_blocking();
@@ -85,8 +136,18 @@ void adc_offset_adjustment(const uint32_t n) {
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
     CV_ARRAY_TEMP[171] = offset;
-    flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-    flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
+    uintptr_t params_erase[] = {FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE};
+    int ret_val = flash_safe_execute(call_flash_range_erase, params_erase, UINT32_MAX);
+    if (ret_val != PICO_OK){
+        set_error(FLASH_SAFE_EXECUTE_ERASE_FAILURE);
+        return;
+    }
+    uintptr_t params_program[] = {FLASH_TARGET_OFFSET, sizeof(CV_ARRAY_TEMP), (uintptr_t)CV_ARRAY_TEMP};
+    ret_val = flash_safe_execute(call_flash_range_program, params_program, UINT32_MAX);
+    if(ret_val != PICO_OK){
+        set_error(FLASH_SAFE_EXECUTE_PROGRAM_FAILURE);
+        return;
+    }
 }
 
 
@@ -122,8 +183,18 @@ void write_cv_byte(uint16_t cv_address, uint8_t cv_data) {
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
     CV_ARRAY_TEMP[cv_address] = cv_data;
     // First erase necessary amount of  blocks in flash and then rewrite to flash
-    flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-    flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_TEMP, FLASH_PAGE_SIZE * 2);
+    uintptr_t params_erase[] = {FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE};
+    int ret_val = flash_safe_execute(call_flash_range_erase, params_erase, UINT32_MAX);
+    if (ret_val != PICO_OK){
+        set_error(FLASH_SAFE_EXECUTE_ERASE_FAILURE);
+        return;
+    }
+    uintptr_t params_program[] = { FLASH_TARGET_OFFSET, sizeof(CV_ARRAY_TEMP), (uintptr_t)CV_ARRAY_TEMP};
+    ret_val = flash_safe_execute(call_flash_range_program, params_program, UINT32_MAX);
+    if(ret_val != PICO_OK){
+        set_error(FLASH_SAFE_EXECUTE_PROGRAM_FAILURE);
+        return;
+    }
     acknowledge();
 }
 
@@ -153,8 +224,18 @@ void write_cv_handler(const uint16_t cv_index, const uint8_t cv_data) {
             // Reset all CVs to Default (CV_8; Value = 8)
             if (cv_data == 8) {
                 LOG(1, "reset of flash triggered via cv8 => 8\n");
-                flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-                flash_range_program(FLASH_TARGET_OFFSET, CV_ARRAY_DEFAULT, FLASH_PAGE_SIZE * 2);
+                uintptr_t params_erase[] = {FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE};
+                int ret_val = flash_safe_execute(call_flash_range_erase, params_erase, UINT32_MAX);
+                if (ret_val != PICO_OK){
+                    set_error(FLASH_SAFE_EXECUTE_ERASE_FAILURE);
+                    return;
+                }
+                uintptr_t params_program[] = {FLASH_TARGET_OFFSET, sizeof(CV_ARRAY_DEFAULT), (uintptr_t)CV_ARRAY_DEFAULT};
+                ret_val = flash_safe_execute(call_flash_range_program, params_program, UINT32_MAX);
+                if(ret_val != PICO_OK){
+                    set_error(FLASH_SAFE_EXECUTE_PROGRAM_FAILURE);
+                    return;
+                }
             }
             break;
         // CV_17 must have a value between 11000000->(192dec) and 11100111->(231dec) inclusive
@@ -191,18 +272,6 @@ void program_mode(const uint8_t number_of_bytes, const uint8_t *const byte_array
         const uint16_t cv_address_ms_bits = cv_address_ms_bits_mask & byte_array[number_of_bytes - 1];
         const uint16_t cv_address = byte_array[number_of_bytes - 2] + (cv_address_ms_bits << 8);
 
-        // Before accessing flash, timers and interrupts need to be disabled and core1 needs to be shut down.
-        if (pid_control_timer.pool) {
-            alarm_pool_destroy(pid_control_timer.pool);
-        }
-        if (speed_helper_timer.pool) {
-            alarm_pool_destroy(speed_helper_timer.pool);
-        }
-
-        multicore_reset_core1();
-
-        const uint32_t saved_interrupts = save_and_disable_interrupts();
-
         if (instruction_type == 0b000001000) {
             // Verify CV bit instruction
             const uint8_t bit_pos_mask = 0b00000111;
@@ -224,12 +293,6 @@ void program_mode(const uint8_t number_of_bytes, const uint8_t *const byte_array
             const uint8_t cv_data = byte_array[number_of_bytes - 3];
             write_cv_handler(cv_address, cv_data);
         }
-
-        // Restore interrupts
-        restore_interrupts(saved_interrupts);
-        // TODO: verify core1 launch...
-        multicore_launch_core1(core1_entry);
-        // TODO: Check busy wait necessity
         busy_wait_ms(5);
     }
 }
@@ -536,45 +599,19 @@ void init_outputs() {
 
 void cv_setup_check() {
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
-    if (CV_ARRAY_FLASH[64] == 0xFF) {
+    if (true || CV_ARRAY_FLASH[64] == 0xFF) {
         LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)\n");
         const uint8_t arr[4] = {125, 8, 7, 124};
         program_mode(4, arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
     }
 
     // Check for existing ADC offset setup TODO: always measure?
-    if (CV_ARRAY_FLASH[171] == 0xFF) {
+    if (false && CV_ARRAY_FLASH[171] == 0xFF) {
         // Write a value of 7 to read-only CV_7 in order to trigger a ADC offset measurement
         LOG(1, "found cv[171] equals to 0xff, adc offset adjstments (and cr[7] = 7)\n");
         const uint8_t arr[4] = {125, 7, 6, 124};
         program_mode(4, arr); // ADC offset adjustment  (write CV_7 = 7)
     }
-
-    // Check for base PWM configuration - used for feed-forward
-    // Forward Direction
-    /*
-    if (get_16bit_CV(175) == 0) {
-        LOG(1, "found cv[175] equals to 0, forward direction\n");
-        const uint16_t base_pwm_fwd = measure_base_pwm(true, 10);
-        const uint8_t base_pwm_fwd_high_byte = base_pwm_fwd >> 8;
-        const uint8_t base_pwm_fwd_low_byte = base_pwm_fwd & 0x00FF;
-        const uint8_t arr0[4] = {125, base_pwm_fwd_high_byte, 175, 124};
-        program_mode(4, arr0);
-        const uint8_t arr1[4] = {125, base_pwm_fwd_low_byte, 176, 124};
-        program_mode(4, arr1);
-    }
-    // Reverse Direction
-    if (get_16bit_CV(177) == 0) {
-        LOG(1, "found cv[177] equals to 0, reverse direction\n");
-        const uint16_t base_pwm_rev = measure_base_pwm(false, 10);
-        const uint8_t base_pwm_rev_high_byte = base_pwm_rev >> 8;
-        const uint8_t base_pwm_rev_low_byte = base_pwm_rev & 0x00FF;
-        const uint8_t arr0[4] = {125, base_pwm_rev_high_byte, 177, 124};
-        program_mode(4, arr0);
-        const uint8_t arr1[4] = {125, base_pwm_rev_low_byte, 178, 124};
-        program_mode(4, arr1);
-    }
-     */
     LOG(1, "int_lim_max %d\n", CV_ARRAY_FLASH[51]);
     LOG(1, "int_lim_min %d\n", CV_ARRAY_FLASH[52]);
 }
@@ -593,7 +630,7 @@ void init_motor_pwm(const uint8_t gpio) {
     pwm_set_gpio_level(gpio, 0);
     // Enable PWM
     pwm_set_enabled(slice_num, true);
-    LOG(2, "init motor(%d): wrapCounter %d clkdiv %d\n", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
+    LOG(2, "Initialized Motor PWM on pin: %d; wrap_counter %d; clkdiv %d;\n", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
 }
 
 void init_adc() {
@@ -607,24 +644,32 @@ void init_adc() {
 }
 
 int main() {
-    stdio_init_all();
-    LOG(1, "\n\n======\ncore0 init\n");
-    LOG(1, "Init motor PWM\n");
+    if(stdio_init_all() != true){
+        set_error(STDIO_INIT_FAILURE);
+    }
+    multicore_launch_core1(core1_entry);
+    LOG(1, "core0 Initialization...\n");
+    // Wait 1ms to give core1 some time to call flash_safe_execute_core_init()
+    busy_wait_ms(1);
+    // Check for error calling flash_safe_execute_core_init() on core1
+    if(get_error_state() & FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE){
+        panic("Error calling flash_safe_execute_core_init() on core1!");
+    }
+    // Check CV array for factory state of flash or missing ADC offset setup
+    LOG(1, "Check CV array\n");
+    cv_setup_check();
+    LOG(1, "Initializing Motor PWM...\n");
     init_motor_pwm(MOTOR_FWD_PIN);
     init_motor_pwm(MOTOR_REV_PIN);
-    LOG(1, "Init ADC")
+    LOG(1, "Initializing ADC...")
     init_adc();
-    LOG(1, "check cvs\n");
-    cv_setup_check();
-    LOG(1, "init outputs\n");
+    LOG(1, "Initializing Outputs...\n");
     init_outputs();
-    LOG(1, "init gpios\n");
+    LOG(1, "Initializing GPIO...\n");
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     gpio_pull_up(DCC_INPUT_PIN);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
-    LOG(1, "core0 done\n");
-    busy_wait_ms(100);
-    multicore_launch_core1(core1_entry);
+    LOG(1, "core0 Initialized!\n");
     while (true); //sleep_ms(100); //TODO: any potential issues when using sleep?
 }

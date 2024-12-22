@@ -9,6 +9,9 @@
 uint8_t speed_step_target = 0;
 uint8_t speed_step_target_prev = 0;
 
+uint32_t error_state = 0;
+
+
 // Functions in shared.c can be accessed by both cores
 // Measures Back-EMF voltage (proportional to the rotational speed of the motor) on GPIO 28 and GPIO 29 respectively (depending on direction)
 float measure(uint8_t total_iterations,
@@ -67,4 +70,16 @@ uint16_t get_16bit_CV (uint16_t CV_start_index){
 bool get_direction_of_speed_step(uint8_t speed_step){
     // Shift by 7 Bytes to move bit7 into bit0 position and return
     return speed_step >> 7;
+}
+
+void set_error(error_t err){
+    error_state |= err;
+}
+
+void clear_error(error_t err){
+    error_state & (~err);
+}
+
+uint32_t get_error_state(){
+    return error_state;
 }

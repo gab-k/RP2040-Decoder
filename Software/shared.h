@@ -11,10 +11,19 @@
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "pico/printf.h"
+#include "pico/flash.h"
 #include "hardware/pwm.h"
 #include "hardware/adc.h"
 #include "hardware/flash.h"
 #include "hardware/gpio.h"
+
+typedef enum {
+   FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE = (1<<0),
+   FLASH_SAFE_EXECUTE_ERASE_FAILURE = (1<<1),
+   FLASH_SAFE_EXECUTE_PROGRAM_FAILURE = (1<<2),
+   FLASH_SIZE_READBACK_FAILURE = (1<<3),
+   STDIO_INIT_FAILURE = (1<<4),
+} error_t;
 
 
 // here you can enable printf debugging (needs extra soldering and you have to enable uart in the cmake configuration)
@@ -25,7 +34,7 @@
 // - also note that with logging enabled GPIO0/1 are DISABLED from decoder functions because they are used for uart to the
 //   outside world (this is configure automatically for you below!)
 // - IMPORTANT: you have to enable uart in the cmakelists.txt to enable logging!
-#define LOGLEVEL 0
+#define LOGLEVEL 1
 #define LOG(level, ...) { if(level <= LOGLEVEL) {printf(__VA_ARGS__);}}
 
 // Constant Value of 125 x 10^6
@@ -53,8 +62,6 @@
 // GPIO pin mask with allowed outputs (AUX & GPIO (configured as outputs))
 #define GPIO_ALLOWED_OUTPUTS (GPIO_OUTPUT_PIN_MASK) & ~(GPIO_ILLEGAL_MASK)
 
-// Offset from base address used for saving CV_ARRAY_FLASH
-#define FLASH_TARGET_OFFSET (PICO_FLASH_SIZE_BYTES-FLASH_SECTOR_SIZE)
 
 extern repeating_timer_t pid_control_timer;
 extern repeating_timer_t speed_helper_timer;
@@ -104,3 +111,9 @@ uint16_t get_16bit_CV (uint16_t CV_start_index);
  * @return `true` for forward direction, `false` for reverse direction.
  */
 bool get_direction_of_speed_step(uint8_t speed_step);
+
+void set_error(error_t err);
+
+void clear_error(error_t err);
+
+uint32_t get_error_state();

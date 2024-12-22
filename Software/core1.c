@@ -305,7 +305,11 @@ void init_controller(controller_parameter_t *const ctrl_par) {
 }
 
 void core1_entry() {
-    LOG(1, "core1 init...\n");
+    LOG(1, "core1 Initialization...\n");
+    if (flash_safe_execute_core_init() != true){
+        set_error(FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE);
+        return;
+    }
     controller_parameter_t control_parameter;
     controller_parameter_t *ctrl_par = &control_parameter;
     init_controller(ctrl_par);
@@ -321,6 +325,6 @@ void core1_entry() {
                                       speed_helper,
                                       ctrl_par,
                                       &speed_helper_timer);
-    LOG(1, "core1 done\n");
+    LOG(1, "core1 Initialized!\n");
     while (true); //sleep_ms(100); //TODO: any potential issues when using sleep?
 }
