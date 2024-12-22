@@ -74,6 +74,7 @@ bool get_direction_of_speed_step(uint8_t speed_step){
 
 void set_error(error_t err){
     error_state |= err;
+    gpio_put(RP2040_DECODER_DEFAULT_LED_PIN, true);
 }
 
 void clear_error(error_t err){

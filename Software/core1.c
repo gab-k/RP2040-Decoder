@@ -236,6 +236,7 @@ bool controller_general(struct repeating_timer *const t) {
 
 // PID controller and measurement parameter, and speed_table initialization
 void init_controller(controller_parameter_t *const ctrl_par) {
+    LOG(1, "Motor controller initialization...\n")
     // General controller variables
     ctrl_par->mode = STARTUP_MODE;
     ctrl_par->feed_fwd = 0;
@@ -259,8 +260,6 @@ void init_controller(controller_parameter_t *const ctrl_par) {
     const double v_min = (double) CV_ARRAY_FLASH[1];
     const double v_mid = (double) CV_ARRAY_FLASH[5] * 16;
     const double v_max = (double) CV_ARRAY_FLASH[4] * 16;
-
-    LOG(1, "speedtable min(%f) mid(%f) max(%f)\n", v_min, v_mid, v_max);
 
     const double delta_x = 63;
     const double m_1 = (v_mid - v_min) / delta_x;
@@ -301,18 +300,21 @@ void init_controller(controller_parameter_t *const ctrl_par) {
     ctrl_par->measurement_prev = 0.0f;
     ctrl_par->measurement_corrected = 0.0f;
     ctrl_par->setpoint = 0;
-
+    LOG(1, "Motor controller initialization done!\n")
 }
 
 void core1_entry() {
     LOG(1, "core1 Initialization...\n");
+
     if (flash_safe_execute_core_init() != true){
         set_error(FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE);
         return;
     }
+
     controller_parameter_t control_parameter;
     controller_parameter_t *ctrl_par = &control_parameter;
     init_controller(ctrl_par);
+
     alarm_pool_add_repeating_timer_ms(alarm_pool_create(0, 1),
                                       CV_ARRAY_FLASH[48],
                                       controller_general,
@@ -325,6 +327,11 @@ void core1_entry() {
                                       speed_helper,
                                       ctrl_par,
                                       &speed_helper_timer);
-    LOG(1, "core1 Initialized!\n");
-    while (true); //sleep_ms(100); //TODO: any potential issues when using sleep?
+
+    LOG(1, "core1 initialization done!\n");
+
+    // Endless loop
+    while (true) {
+        tight_loop_contents();
+    }
 }

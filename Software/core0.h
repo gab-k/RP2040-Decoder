@@ -8,6 +8,7 @@
 
 #include "shared.h"
 #include "CV.h"
+#include <stdlib.h>
 
 #define SIZE_BYTE_ARRAY 5
 #define MESSAGE_3_BYTES 0b11111111110000000000000000000000000001
@@ -18,6 +19,7 @@
 #define MESSAGE_MASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
 
 #define FLASH_CMD_READ_JEDEC_ID 0x9F
+#define ADC_CALIBRATION_ITERATIONS 8192
 
 /*!
  * \brief Bitmasks used for clearing bits corresponding to function blocks
@@ -46,7 +48,7 @@ const uint32_t clr_bit_arr[6] = {
  * \param length amount of elements in input array
  * \return average value of values deviating less than 2*standard_dev.
  */
-float two_std_dev(const float arr[], uint32_t length);
+uint16_t two_std_dev(const uint16_t arr[], uint32_t length);
 
 /*!
  * \brief Measures ADC offset and saves the offset value to flash memory.
@@ -86,10 +88,15 @@ void verify_cv_byte(uint16_t cv_address, uint8_t cv_data);
 void write_cv_byte(uint16_t cv_address, uint8_t cv_data);
 
 /*!
+ * \brief This function sets all the CV values stored in flash back to their default settings (CV_ARRAY_DEFAULT).
+ */
+void reset_cv_array_to_default();
+
+/*!
  * \brief CV Programming mode function
  * Used on entering programming mode in order to write CV values to persistent flash memory or verify/read bits/bytes from flash. <br>
  * Refers to NMRA Standard 9.2.3 ("Service Mode Programming") or RCN-216<br>
- *
+ * TODO: describe new procedure
  * Procedure:
  *      1. Checks for valid programming command
  *      2. Disables core1 timers

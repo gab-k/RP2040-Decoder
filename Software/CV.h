@@ -2,10 +2,10 @@
 #include "pico/stdlib.h"
 
 #define CV_ARRAY_SIZE 1024
-// All CVs are 8-bit numbers ranging from (0 - 255)dec = (0b00000000 - 0b11111111)bin = (0x00 - 0xFF)hex
-// Note : CV_1 = index 0, CV_2 = index 1, CV_3 = index 2, ...
+// All CVs are 8-bit numbers or bytes ranging from (0 - 255)dec = (0b00000000 - 0b11111111)bin = (0x00 - 0xFF)hex
+// IMPORTANT NOTE : CV_1 @ array_index = 0; CV_2 @ array_index = 1; CV_3 @ array_index = 2; ...; 
+// This effectively means: array_index = cv_index - 1
 
-// Explicitly write CV_ARRAY_DEFAULT into flash memory using __in_flash attribute macro
 uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000011,         //CV_1  -    Basic address       -   CV_1 = 0 and CV_1 > 127 are not valid - Default = 3
    0b00001000,         //CV_2  -    V_min               -   Default = 8

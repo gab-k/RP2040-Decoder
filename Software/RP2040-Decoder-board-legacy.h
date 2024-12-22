@@ -10,6 +10,7 @@
 // -----------------------------------------------------
 
 // Modified version of "boards/pico.h" for using the RP2040-Decoder board
+// NOTE: THIS IS FOR THE "LEGACY" Version without a USB-C Connector
 
 // pico_cmake_set PICO_PLATFORM=rp2040
 
@@ -63,9 +64,8 @@
 #define DCC_INPUT_PIN 21u
 #define MOTOR_FWD_PIN 23u
 #define MOTOR_REV_PIN 22u
-#define FWD_V_EMF_ADC_PIN 29u
-#define REV_V_EMF_ADC_PIN 28u
-
+#define FWD_V_EMF_ADC_PIN 28u
+#define REV_V_EMF_ADC_PIN 29u
 
 #if LOGLEVEL != 0
    // GPIO used directly (GPIO 2-5 incl.) as outputs or to switch auxiliary output transistors (GPIO 24-27 incl.)
@@ -85,6 +85,5 @@
 
 // GPIO pin mask with allowed outputs (AUX & GPIO (configured as outputs))
 #define GPIO_ALLOWED_OUTPUTS (GPIO_OUTPUT_PIN_MASK) & ~(GPIO_ILLEGAL_MASK)
-
 
 #endif

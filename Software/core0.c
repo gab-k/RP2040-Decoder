@@ -63,43 +63,43 @@ static void call_flash_range_program(void *param) {
 }
 
 
-float two_std_dev(const float arr[], const uint32_t length) {
+uint16_t two_std_dev(const uint16_t arr[], const uint32_t length) {
     // Calculate arithmetic average
-    float sum = 0;
+    uint64_t sum = 0;
     for (uint32_t i = 0; i < length; ++i) {
         sum += arr[i];
     }
-    const float x_avg = sum / (float)length;
+    const uint64_t x_avg = sum / length;
 
     // Calculate sample variance and sampled standard deviation
     sum = 0;
     for (uint32_t i = 0; i < length; ++i) {
         sum += (arr[i] - x_avg) * (arr[i] - x_avg);
     }
-    const float variance = sum / (float)(length-1);
-    const float std_dev = sqrtf(variance);
+    const uint16_t variance = sum / (length-1);
+    const uint16_t std_dev = (uint16_t) sqrtf((float) variance);
 
     // Sum every element that is within two times the sampled standard deviation and compute new average
     sum = 0;
     uint32_t counter = 0;
     for (uint32_t i = 0; i < length; ++i) {
-        const float diff = fabsf(arr[i] - x_avg);
-        if ( diff < std_dev * 2.0f ){
+        const uint32_t diff = abs(arr[i] - x_avg);
+        if ( diff <= 2*std_dev ){
             sum += arr[i];
             counter++;
         }
     }
-    return sum / (float) counter;
+    return sum / counter;
 }
 
 
 // Measures constant adc offset and programs the offset into flash
 // TODO: check necessity and correctness of adc offset function
 void adc_offset_adjustment(const uint32_t n) {
-    LOG(1, "adc_offset_adjustment");
+    LOG(1, "ADC offset adjustment...\n");
 
-    float offsets_fwd[n];
-    float offsets_rev[n];
+    uint16_t offsets_fwd[n];
+    uint16_t offsets_rev[n];
     // Set PWM level to 0 just to be sure
     pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
     pwm_set_gpio_level(MOTOR_REV_PIN, 0);
@@ -109,7 +109,7 @@ void adc_offset_adjustment(const uint32_t n) {
     adc_select_input(2); //TODO: "2" as input argument?
     adc_run(true);
     for (uint32_t i = 0; i < n; i++) {
-        offsets_rev[i] = (float) adc_fifo_get_blocking();
+        offsets_rev[i] = adc_fifo_get_blocking();
     }
     adc_run(false);
     adc_fifo_drain();
@@ -119,23 +119,22 @@ void adc_offset_adjustment(const uint32_t n) {
     adc_select_input(3);
     adc_run(true);
     for (uint32_t i = 0; i < n; i++) {
-        offsets_fwd[i] = (float) adc_fifo_get_blocking();
+        offsets_fwd[i] = adc_fifo_get_blocking();
     }
     adc_run(false);
     adc_fifo_drain();
 
     // Find overall average discarding outliers in measurement
-    const float offset_avg_fwd = two_std_dev(offsets_fwd, n);
-    const float offset_avg_rev = two_std_dev(offsets_rev, n);
-    const float overall_avg = (offset_avg_fwd + offset_avg_rev) / 2;
-    const uint8_t offset = (uint8_t) roundf(overall_avg);
+    const uint16_t offset_avg_fwd = two_std_dev(offsets_fwd, n);
+    const uint16_t offset_avg_rev = two_std_dev(offsets_rev, n);
+    const uint16_t overall_avg_offset = (offset_avg_fwd + offset_avg_rev) / 2;
 
-    LOG(1, "new adc offset CV[171] (%f): (uint8_t)%d\n", overall_avg, offset);
+    LOG(1, "New ADC Offset value CV_172 = %u\n", overall_avg_offset);
 
     // Create temporary array -> change CV 172 in temp array -> erase flash -> write temp array to flash
     uint8_t CV_ARRAY_TEMP[CV_ARRAY_SIZE];
     memcpy(CV_ARRAY_TEMP, CV_ARRAY_FLASH, sizeof(CV_ARRAY_TEMP));
-    CV_ARRAY_TEMP[171] = offset;
+    CV_ARRAY_TEMP[171] = overall_avg_offset;
     uintptr_t params_erase[] = {FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE};
     int ret_val = flash_safe_execute(call_flash_range_erase, params_erase, UINT32_MAX);
     if (ret_val != PICO_OK){
@@ -198,6 +197,20 @@ void write_cv_byte(uint16_t cv_address, uint8_t cv_data) {
     acknowledge();
 }
 
+void reset_cv_array_to_default(){
+    uintptr_t params_erase[] = {FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE};
+    int ret_val = flash_safe_execute(call_flash_range_erase, params_erase, UINT32_MAX);
+    if (ret_val != PICO_OK){
+        set_error(FLASH_SAFE_EXECUTE_ERASE_FAILURE);
+        return;
+    }
+    uintptr_t params_program[] = {FLASH_TARGET_OFFSET, sizeof(CV_ARRAY_DEFAULT), (uintptr_t)CV_ARRAY_DEFAULT};
+    ret_val = flash_safe_execute(call_flash_range_program, params_program, UINT32_MAX);
+    if(ret_val != PICO_OK){
+        set_error(FLASH_SAFE_EXECUTE_PROGRAM_FAILURE);
+        return;
+    }
+}
 
 // There are some exceptions to writing CVs - e.g. writing to a read only CV is not valid - this gets handled here
 void write_cv_handler(const uint16_t cv_index, const uint8_t cv_data) {
@@ -213,29 +226,18 @@ void write_cv_handler(const uint16_t cv_index, const uint8_t cv_data) {
             break;
         case 6: //CV_7
             // Read only (CV_7 - Version no.)
-            // ADC offset Adjustment (CV_7; Value = 7);
+            // ADC offset Adjustment is triggered when setting CV_7 = 7
             if (cv_data == 7) {
-                LOG(1, "trigger adc offset adjustment via cv7 => 7\n");
-                adc_offset_adjustment(8192);
+                LOG(1, "Triggered ADC offset adjustment via CV_7 = 7\n");
+                adc_offset_adjustment(ADC_CALIBRATION_ITERATIONS);
             }
             break;
         case 7: //CV_8
             // Read only (CV_8 - Manufacturer ID)
-            // Reset all CVs to Default (CV_8; Value = 8)
+            // Reset all CVs to default (CV_ARRAY_DEFAULT) when setting CV_8 = 8)
             if (cv_data == 8) {
-                LOG(1, "reset of flash triggered via cv8 => 8\n");
-                uintptr_t params_erase[] = {FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE};
-                int ret_val = flash_safe_execute(call_flash_range_erase, params_erase, UINT32_MAX);
-                if (ret_val != PICO_OK){
-                    set_error(FLASH_SAFE_EXECUTE_ERASE_FAILURE);
-                    return;
-                }
-                uintptr_t params_program[] = {FLASH_TARGET_OFFSET, sizeof(CV_ARRAY_DEFAULT), (uintptr_t)CV_ARRAY_DEFAULT};
-                ret_val = flash_safe_execute(call_flash_range_program, params_program, UINT32_MAX);
-                if(ret_val != PICO_OK){
-                    set_error(FLASH_SAFE_EXECUTE_PROGRAM_FAILURE);
-                    return;
-                }
+                LOG(1, "reset of flash triggered via CV_8 = 8\n");
+                reset_cv_array_to_default();
             }
             break;
         // CV_17 must have a value between 11000000->(192dec) and 11100111->(231dec) inclusive
@@ -575,6 +577,7 @@ void track_signal_fall( const unsigned int gpio, const long unsigned int events)
 }
 
 void init_outputs() {
+    LOG(1, "Initializing Outputs...\n");
     gpio_init_mask(GPIO_ALLOWED_OUTPUTS);
     gpio_set_dir_out_masked(GPIO_ALLOWED_OUTPUTS);  // Note: This might also disable UART on GPIO0 & GPIO1
     const uint32_t PWM_enabled_outputs = get_32bit_CV(111) & GPIO_ALLOWED_OUTPUTS;
@@ -592,33 +595,32 @@ void init_outputs() {
             level_table[i] = level;
             pwm_set_clkdiv_int_frac(slice, clock_divider, 0);
             pwm_set_enabled(slice, true);
+            LOG(1, "Set GPIO pin: %u as PWM output; PWM slice: %u; PWM channel: %u; Duty cycle: %f; Clock divider: %u\n", i, slice, channel, (float) level/wrap, clock_divider);
         }
         mask <<= 1;
     }
 }
 
 void cv_setup_check() {
+    LOG(1, "Checking CV array for factory state of flash or missing ADC offset setup...\n");
     // Check for flash factory setting and set CV_FLASH_ARRAY to default values when factory condition ("0xFF") is found.
-    if (true || CV_ARRAY_FLASH[64] == 0xFF) {
-        LOG(1, "found cv[64] equals to 0xff, reseting CVs (and CV[8] = 8)\n");
-        const uint8_t arr[4] = {125, 8, 7, 124};
-        program_mode(4, arr);        //reset to CV_ARRAY_DEFAULT (write CV_8 = 8)
+    if (CV_ARRAY_FLASH[64] == 0xFF) {
+        LOG(1, "Detected flash memory factory condidition (CV_65 == 0xFF), resetting all CVs to default values...\n");
+        reset_cv_array_to_default();
     }
 
-    // Check for existing ADC offset setup TODO: always measure?
-    if (false && CV_ARRAY_FLASH[171] == 0xFF) {
-        // Write a value of 7 to read-only CV_7 in order to trigger a ADC offset measurement
-        LOG(1, "found cv[171] equals to 0xff, adc offset adjstments (and cr[7] = 7)\n");
-        const uint8_t arr[4] = {125, 7, 6, 124};
-        program_mode(4, arr); // ADC offset adjustment  (write CV_7 = 7)
+    // Check for existing ADC offset setup
+    if (CV_ARRAY_FLASH[171] == 0xFF) {
+        LOG(1, "Detected ADC offset factory condidition (CV_172 == 0xFF), running offset adjustment measurement function...\n");
+        adc_offset_adjustment(ADC_CALIBRATION_ITERATIONS);
     }
-    LOG(1, "int_lim_max %d\n", CV_ARRAY_FLASH[51]);
-    LOG(1, "int_lim_min %d\n", CV_ARRAY_FLASH[52]);
+    LOG(1, "CV check done!\n");
 }
 
 
 // Motor PWM initialization
 void init_motor_pwm(const uint8_t gpio) {
+    LOG(2, "Initializing Motor PWM on GPIO pin: %u...\n", gpio);
     // Set GPIO pin to PWM functionality
     gpio_set_function(gpio, GPIO_FUNC_PWM);
     // Set wrap counter value saved in CV
@@ -630,10 +632,11 @@ void init_motor_pwm(const uint8_t gpio) {
     pwm_set_gpio_level(gpio, 0);
     // Enable PWM
     pwm_set_enabled(slice_num, true);
-    LOG(2, "Initialized Motor PWM on pin: %d; wrap_counter %d; clkdiv %d;\n", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
+    LOG(2, "Initialized motor PWM on pin: %u; wrap_counter %u; clkdiv %d;\n", gpio, wrap_counter, CV_ARRAY_FLASH[173]);
 }
 
 void init_adc() {
+    LOG(1, "Initializing ADC...\n")
     // Initialize ADC
     adc_init();
     // Set ADC GPIO pins to ADC functionality
@@ -641,35 +644,84 @@ void init_adc() {
     adc_gpio_init(REV_V_EMF_ADC_PIN);
     // Configure ADC FIFO
     adc_fifo_setup(true, false, 0, false, false);
+    LOG(1, "ADC initialization done!\n")
 }
 
-int main() {
-    if(stdio_init_all() != true){
-        set_error(STDIO_INIT_FAILURE);
-    }
-    multicore_launch_core1(core1_entry);
-    LOG(1, "core0 Initialization...\n");
-    // Wait 1ms to give core1 some time to call flash_safe_execute_core_init()
-    busy_wait_ms(1);
-    // Check for error calling flash_safe_execute_core_init() on core1
-    if(get_error_state() & FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE){
-        panic("Error calling flash_safe_execute_core_init() on core1!");
-    }
-    // Check CV array for factory state of flash or missing ADC offset setup
-    LOG(1, "Check CV array\n");
-    cv_setup_check();
-    LOG(1, "Initializing Motor PWM...\n");
-    init_motor_pwm(MOTOR_FWD_PIN);
-    init_motor_pwm(MOTOR_REV_PIN);
-    LOG(1, "Initializing ADC...")
-    init_adc();
-    LOG(1, "Initializing Outputs...\n");
-    init_outputs();
-    LOG(1, "Initializing GPIO...\n");
+void init_digital_inputs() {
+    LOG(1, "Initializing digital inputs and track signal irq...\n");
     gpio_init(DCC_INPUT_PIN);
     gpio_set_dir(DCC_INPUT_PIN, GPIO_IN);
     gpio_pull_up(DCC_INPUT_PIN);
     gpio_set_irq_enabled_with_callback(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE, true, &track_signal_rise);
-    LOG(1, "core0 Initialized!\n");
-    while (true); //sleep_ms(100); //TODO: any potential issues when using sleep?
+    LOG(1, "Digital inputs and track signal irq initialization done!\n");
+}
+
+void wait_for_input() {
+    while (true) {
+        // Send a message to the user asking them to acknowledge it by sending a reply
+        LOG(1, "Send any character to continue.\n");
+        // Wait for a character (with a 1-second timeout)
+        int received_char = getchar_timeout_us(1000000); // 1 second timeout
+        if (received_char != PICO_ERROR_TIMEOUT) {
+            // If a character is received, exit the function
+            LOG(1, "Character '%c' received. Continuing...\n", (char)received_char);
+            return;
+        }
+        // If no character is received, retry...
+    }
+}
+
+
+int main() {
+    // Initialize LED GPIO pin
+    gpio_init(RP2040_DECODER_DEFAULT_LED_PIN);
+    gpio_set_dir(RP2040_DECODER_DEFAULT_LED_PIN, GPIO_OUT);
+
+    // Initialize stdio
+    if(stdio_init_all() != true){
+        set_error(STDIO_INIT_FAILURE);
+    }
+
+    // Wait for user input before continuing, this is only enabled when LOG_WAIT is set to 1 and logging is enabled (LOGLEVEL > 0)
+    // Also disabled when no STDIO is configured as the user would not be able to send anything
+    # if (LOGLEVEL > 0 && LOG_WAIT == 1) && (STDIO_UART_ENABLED || STDIO_USB_ENABLED)
+    wait_for_input();
+    printf("%u", STDIO_UART_ENABLED);
+    #endif
+
+    LOG(1, "core0 Initialization...\n");
+
+    // Launch core1
+    multicore_launch_core1(core1_entry);
+
+    // Wait 10ms to give core1 some time to call flash_safe_execute_core_init()
+    busy_wait_ms(10);
+
+    // Check for error calling flash_safe_execute_core_init() on core1
+    if(get_error_state() & FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE){
+        panic("Error calling flash_safe_execute_core_init() on core1!");
+    }
+
+    // Initialize Motor PWM pins
+    init_motor_pwm(MOTOR_FWD_PIN);
+    init_motor_pwm(MOTOR_REV_PIN);
+
+    // Initialize outputs
+    init_outputs();
+
+    // Initialize ADC
+    init_adc();
+
+    // Check CV array for factory state of flash or missing ADC offset setup
+    cv_setup_check();
+
+    // Initialize digital inputs and track signal irq
+    init_digital_inputs();
+    
+    LOG(1, "core0 initialization done!\n");
+    
+    // Endless loop
+    while (true) {
+        tight_loop_contents();
+    }
 }
