@@ -8,7 +8,6 @@
 
 #include "shared.h"
 #include "CV.h"
-#include <stdlib.h>
 
 #define SIZE_BYTE_ARRAY 5
 #define MESSAGE_3_BYTES 0b11111111110000000000000000000000000001
@@ -20,6 +19,7 @@
 
 #define FLASH_CMD_READ_JEDEC_ID 0x9F
 #define ADC_CALIBRATION_ITERATIONS 8192
+#define WATCHDOG_TIMER_IN_MS 2000
 
 /*!
  * \brief Bitmasks used for clearing bits corresponding to function blocks
@@ -96,18 +96,12 @@ void reset_cv_array_to_default();
  * \brief CV Programming mode function
  * Used on entering programming mode in order to write CV values to persistent flash memory or verify/read bits/bytes from flash. <br>
  * Refers to NMRA Standard 9.2.3 ("Service Mode Programming") or RCN-216<br>
- * TODO: describe new procedure
  * Procedure:
  *      1. Checks for valid programming command
- *      2. Disables core1 timers
- *      3. Resets core1
- *      4. Saves interrupts
- *      5. Evaluates the type of programming instruction Write byte / Verify byte / Verify bit and runs corresponding function
- *      6. Restores interrupts
- *      7. Launch core1
+ *      2. Evaluates the type of programming instruction Write byte / Verify byte / Verify bit and runs corresponding function
  *
- * \param number_of_bytes Number of bytes in byte_array[]
- * \param byte_array Pointer to byte_array[]
+ * \param number_of_bytes Number of bytes in the array.
+ * \param byte_array Pointer to the byte array.
  */
 void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]);
 
@@ -121,22 +115,93 @@ void program_mode(uint8_t number_of_bytes, const uint8_t byte_array[]);
  */
 void set_outputs(uint32_t functions_to_set_bitmask);
 
+/**
+ * @brief Update functions F0 - F31 when function command is received or in case of direction change.
+ *
+ * @param new_function_bitmask New function bitmask.
+ * @param clr_bit_ind Clear bit index.
+ * @param direction_change Direction change flag.
+ */
 void update_active_functions(uint32_t new_function_bitmask, uint8_t clr_bit_ind, bool direction_change);
 
+/**
+ * @brief Detect errors in the byte array using exor of all bytes.
+ * 
+ * Exor of all bytes is expected to be "0b00000000".
+ *
+ * @param number_of_bytes Number of bytes in the array.
+ * @param byte_array Pointer to the byte array.
+ * @return true if no error is detected, false otherwise.
+ */
 bool error_detection(int8_t number_of_bytes, const uint8_t *byte_array);
 
+/**
+ * @brief Check if the address is a long address.
+ *
+ * @param number_of_bytes Number of bytes in the array.
+ * @param byte_array Pointer to the byte array.
+ * @return true if it is a long address, false otherwise.
+ */
 bool is_long_address(uint8_t number_of_bytes, const uint8_t byte_array[]);
 
+/**
+ * @brief Evaluate the address of the message.
+ *
+ * @param number_of_bytes Number of bytes in the array.
+ * @param byte_array Pointer to the byte array.
+ * @return true if the address is correct, false otherwise.
+ */
 bool address_evaluation(uint8_t number_of_bytes, const uint8_t byte_array[]);
 
+/**
+ * @brief Evaluate the instruction of the message.
+ *
+ * @param number_of_bytes Number of bytes in the array.
+ * @param byte_array Pointer to the byte array.
+ */
 void instruction_evaluation(uint8_t number_of_bytes, const uint8_t byte_array[]);
 
+/**
+ * @brief Check for reset message - When reset message is found, stop the motor and disable all functions.
+ *
+ * @return Number of bytes if valid reset message bit-pattern is found. Otherwise -1 is returned.
+ */
 bool reset_message_check(uint8_t number_of_bytes, const uint8_t *const byte_array);
 
+/**
+ * @brief Verify DCC message
+ *
+ * Procedure:
+ * 1. Check for valid preamble using bitmasks
+ * 2. Return number of bytes if valid bit-pattern is found. Otherwise -1 is returned.
+ *
+ * \return Number of bytes if valid bit-pattern is found. Otherwise return -1.
+ */
 int8_t verify_dcc_message();
 
+/**
+ * @brief Convert sequence of bits to byte array
+ *
+ * For each byte in the byte array, shift the input bit buffer by 9 bits and save the result in the byte array.
+ * Bytes are ordered as follows:
+ * Start of transmission -> byte_n(address byte) -> ... -> byte_0(error detection byte) -> end of transmission
+ * 
+ * \param number_of_bytes Number of bytes in the array.
+ * \param byte_array Pointer to the byte array.
+ */
 void bits_to_byte_array(int8_t number_of_bytes, uint8_t byte_array[]);
 
+/**
+ * @brief Main message evaluation function
+ *
+ * Procedure:
+ * 1. Check if input buffer contains a valid DCC message
+ * 2. Split data into array of bytes
+ * 3. Check for errors
+ * 4. Check for matching address
+ * 5. Check for reset message and set flag when reset message is received
+ *
+ */
 void evaluate_message();
 
 /*!
@@ -184,7 +249,7 @@ void init_outputs();
 void cv_setup_check();
 
 /*!
- * \brief Function initializes motor PWM for pin specified
+ * \brief Function initializes motor PWM for pin specified in CMakeLists.txt
  * \param gpio GPIO pin
  */
 void init_motor_pwm(uint8_t gpio);
@@ -192,6 +257,6 @@ void init_motor_pwm(uint8_t gpio);
 /*!
  * \brief Initializes ADC
  *
- * Function initializes ADC, corresponding GPIO pins and ADC FIFO
+ * Function initializes ADC, corresponding GPIO pins specified in CMakeLists.txt, also configures ADC FIFO.
  */
 void init_adc();

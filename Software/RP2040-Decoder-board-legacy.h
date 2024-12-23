@@ -36,10 +36,6 @@
 #define PICO_DEFAULT_UART_RX_PIN 1
 #endif
 
-// --- LED ---
-#ifndef RP2040_DECODER_DEFAULT_LED_PIN
-#define RP2040_DECODER_DEFAULT_LED_PIN 12
-#endif
 
 // --- FLASH ---
 

@@ -82,13 +82,83 @@ typedef struct controller_parameter_t{
 
 } controller_parameter_t;
 
-
-
+/**
+ * @brief Get the speed step table index based on the speed step value.
+ *
+ * @param speed_step The speed step value.
+ * @return The index in the speed step table.
+ */
 uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step);
+
+/**
+ * @brief Repeating timer callback function called every x milliseconds to implement a time delay in acceleration or deceleration.
+ * 
+ * x is CV_175
+ *
+ * @param t Pointer to the repeating timer structure.
+ * @return true to schedule the repeating timer again.
+ */
 bool speed_helper(struct repeating_timer *t);
+
+/**
+ * @brief Function to adjust the PWM level/duty cycle.
+ *
+ * @param level The new PWM level.
+ */
 void adjust_pwm_level(uint16_t level);
+
+/**
+ * @brief Function to calculate and return the proportional gain based on the speed step.
+ *
+ * This is done in order to make kp dependent on the speed step (gain scheduling).
+ * 
+ * @param ctrl_par Pointer to the controller parameter structure.
+ * @return The proportional gain.
+ */
 float get_kp(const controller_parameter_t *ctrl_par);
+
+/**
+ * @brief Calculate and return the initial PWM level.
+ * 
+ * Calculation is done by taking the last 16 initial levels (when available) and calculating the average.
+ * The average is the multiplied by a factor of 2/3.
+ *
+ * @param ctrl_par Pointer to the controller parameter structure.
+ * @return The initial PWM level.
+ */
 uint16_t get_initial_level(controller_parameter_t * ctrl_par);
+
+/**
+ * @brief Controller function for startup mode.
+ * 
+ * This is called inside the controller_general function when the controller mode is set to STARTUP_MODE.
+ *
+ * @param ctrl_par Pointer to the controller parameter structure.
+ */
 void controller_startup_mode(controller_parameter_t * ctrl_par);
+
+/**
+ * @brief Controller function for PID mode.
+ * 
+ * This is called inside the controller_general function when the controller mode is set to PID_MODE.
+ *
+ * @param ctrl_par Pointer to the controller parameter structure.
+ */
+void controller_pid_mode(controller_parameter_t *const ctrl_par);
+
+/**
+ * @brief General controller function called every x milliseconds.
+ *
+ * @param t Pointer to the repeating timer structure.
+ * @return true to schedule the repeating timer again.
+ */
 bool controller_general(struct repeating_timer * t);
+
+/**
+ * @brief Initialize the all controller variables, measurement parameters, and speed table.
+ * 
+ * ctrl_par contains all controller variables and is passed to the other controller functions.
+ *
+ * @param ctrl_par Pointer to the controller parameter structure.
+ */
 void init_controller(controller_parameter_t * ctrl_par);

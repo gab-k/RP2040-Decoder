@@ -94,16 +94,15 @@ endif()
 # Add the standard library to the build
 target_link_libraries(  RP2040-Decoder
                         pico_stdlib
+                        pico_multicore
+                        pico_flash
                         hardware_pwm
                         hardware_adc
                         hardware_flash
-                        pico_multicore
-                        pico_flash)
+                        hardware_watchdog  )
 
 # Add the standard include files to the build
-target_include_directories(RP2040-Decoder PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}
-)
+target_include_directories(RP2040-Decoder PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 # create map/bin/hex file etc.
 pico_add_extra_outputs(RP2040-Decoder)

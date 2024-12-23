@@ -16,6 +16,8 @@
 #include "hardware/adc.h"
 #include "hardware/flash.h"
 #include "hardware/gpio.h"
+#include "hardware/watchdog.h"
+
 
 typedef enum {
    FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE = (1<<0),
@@ -23,12 +25,13 @@ typedef enum {
    FLASH_SAFE_EXECUTE_PROGRAM_FAILURE = (1<<2),
    FLASH_SIZE_READBACK_FAILURE = (1<<3),
    STDIO_INIT_FAILURE = (1<<4),
+   REBOOT_BY_WATCHDOG = (1<<5),
 } error_t;
 
 
 #define LOG(level, ...) { \
     if (level <= LOGLEVEL) { \
-        printf("[Core %u] ", get_core_num()); \
+        printf("[core%u] ", get_core_num()); \
         printf(__VA_ARGS__); \
     } \
 }

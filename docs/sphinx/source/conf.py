@@ -14,7 +14,7 @@ release = '0.3, 1.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['myst_parser', 'breathe',]
+extensions = ['myst_parser', 'breathe', "sphinx_rtd_dark_mode"]
 
 templates_path = ['_templates']
 exclude_patterns = []

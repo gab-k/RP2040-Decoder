@@ -62,6 +62,12 @@ static void call_flash_range_program(void *param) {
     flash_range_program(offset, data, byte_count);
 }
 
+unsigned int abs_val(int x) {
+    // Vorzeichenbit extrahieren (falls das höchstwertige Bit 1 ist, ist die Zahl negativ)
+    int mask = x >> (sizeof(x) * 8 - 1); // Rechtsverschiebung des Vorzeichens
+    printf("%d\n", mask);
+    return (x + mask) ^ mask;
+}
 
 uint16_t two_std_dev(const uint16_t arr[], const uint32_t length) {
     // Calculate arithmetic average
@@ -83,7 +89,7 @@ uint16_t two_std_dev(const uint16_t arr[], const uint32_t length) {
     sum = 0;
     uint32_t counter = 0;
     for (uint32_t i = 0; i < length; ++i) {
-        const uint32_t diff = abs(arr[i] - x_avg);
+        const uint32_t diff = abs_val(arr[i] - x_avg);
         if ( diff <= 2*std_dev ){
             sum += arr[i];
             counter++;
@@ -363,7 +369,7 @@ void update_active_functions(uint32_t new_function_bitmask, const uint8_t clr_bi
 }
 
 
-// Bitwise XOR for all Bytes -> when result is: "0000 0000" error check is passed.
+// Bitwise XOR for all Bytes -> when result is: "0b00000000" error check is passed.
 bool error_detection(const int8_t number_of_bytes, const uint8_t *const byte_array) {
     uint8_t xor_byte = 0;
     for (int i = 0; i < number_of_bytes; i++) {
@@ -524,7 +530,7 @@ void evaluate_message() {
     const int8_t number_of_bytes = verify_dcc_message();
     // number_of_bytes contains the amount of bytes when the message is valid, otherwise -1
     if (number_of_bytes != -1) {
-        // Split data into 8Bit array
+        // Split data into array of bytes
         uint8_t byte_array[SIZE_BYTE_ARRAY] = {0};
         bits_to_byte_array(number_of_bytes, byte_array);
         // Check for errors
@@ -658,11 +664,12 @@ void init_digital_inputs() {
 
 void wait_for_input() {
     while (true) {
+        watchdog_update();
         // Send a message to the user asking them to acknowledge it by sending a reply
         LOG(1, "Send any character to continue.\n");
-        // Wait for a character (with a 1-second timeout)
-        int received_char = getchar_timeout_us(1000000); // 1 second timeout
-        if (received_char != PICO_ERROR_TIMEOUT) {
+        // Wait for a character
+        int received_char = getchar_timeout_us((WATCHDOG_TIMER_IN_MS/2)*1000);
+        if ((received_char != PICO_ERROR_TIMEOUT) && (received_char > 0)) {
             // If a character is received, exit the function
             LOG(1, "Character '%c' received. Continuing...\n", (char)received_char);
             return;
@@ -681,12 +688,13 @@ int main() {
     if(stdio_init_all() != true){
         set_error(STDIO_INIT_FAILURE);
     }
+    stdio_flush();
 
     // Wait for user input before continuing, this is only enabled when LOG_WAIT is set to 1 and logging is enabled (LOGLEVEL > 0)
     // Also disabled when no STDIO is configured as the user would not be able to send anything
     # if (LOGLEVEL > 0 && LOG_WAIT == 1) && (STDIO_UART_ENABLED || STDIO_USB_ENABLED)
-    wait_for_input();
-    printf("%u", STDIO_UART_ENABLED);
+        wait_for_input();
+        printf("%u", STDIO_UART_ENABLED);
     #endif
 
     LOG(1, "core0 Initialization...\n");
@@ -696,6 +704,15 @@ int main() {
 
     // Wait 10ms to give core1 some time to call flash_safe_execute_core_init()
     busy_wait_ms(10);
+
+    // Check for reboot by watchdog and set error when true
+    if (watchdog_caused_reboot()) {
+        set_error(REBOOT_BY_WATCHDOG);
+    }
+
+    // Enable the watchdog, requiring the watchdog to be updated every 2000ms or the chip will reboot
+    // second arg is pause on debug which means the watchdog will pause when stepping through code
+    watchdog_enable(WATCHDOG_TIMER_IN_MS, 1);
 
     // Check for error calling flash_safe_execute_core_init() on core1
     if(get_error_state() & FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE){
@@ -722,6 +739,7 @@ int main() {
     
     // Endless loop
     while (true) {
-        tight_loop_contents();
+        sleep_ms(400);
+        watchdog_update();
     }
 }

@@ -37,6 +37,11 @@ crop_areas = {
         "p1": (620, 395),
         "p2": (810, 555),
         "name": "Aux_Outputs"
+    },
+    "Microcontroller": {
+        "p1": (40, 20),
+        "p2": (600, 420),
+        "name": "Microcontroller"
     }
 }
 
