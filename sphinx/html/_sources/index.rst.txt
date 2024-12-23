@@ -11,7 +11,8 @@ RP2040-Decoder Documentation
    :caption: Contents:
 
    other/getting_started
-   hardware/hw
-   software/sw
-   other/CV_list
+   hardware/index
+   software/index
+   other/index
    other/troubleshooting
+   other/debugging

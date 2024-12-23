@@ -9,6 +9,8 @@
   <title>Configuration Variables (CV) &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -16,11 +18,13 @@
       <script src="../_static/documentation_options.js?v=6bd3bce2"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
-    <link rel="prev" title="Header files" href="../software/header_files.html" /> 
+    <link rel="prev" title="Other" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,50 +49,54 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../hardware/hw.html">Hardware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../software/sw.html">Software</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration Variables (CV)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#note">Note</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#speed-step-configuration">Speed step configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cv-list">CV List</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#cv-1-basic-address">CV_1 - Basic address</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-2-v-min">CV_2 - V_min</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-3-acceleration-rate">CV_3 - Acceleration rate</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-4-deceleration-rate">CV_4 - Deceleration rate</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-5-v-max">CV_5 - V_max</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-6-v-mid">CV_6 - V_mid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-7-version-no-read-only">CV_7 - Version No. (Read-Only)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-8-manufacturer-read-only">CV_8 - Manufacturer (Read-Only)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-9-motor-pwm-frequency">CV_9 - Motor PWM Frequency</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-11-packet-timeout">CV_11 - Packet timeout</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-12-permitted-operating-modes">CV_12 - Permitted operating modes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-17-cv-18-14-bit-extended-long-address">CV_17 &amp; CV_18 - 14-Bit extended/long address</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-29-decoder-configuration">CV_29 - Decoder Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-31-cv-32-extended-cv-pointer-read-only">CV_31 &amp; CV_32 - Extended CV pointer (Read-Only)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-47-feed-forward-gain-k-ff">CV_47 - Feed-forward gain k_ff</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-48-filter-time-constant-tau-in-ms">CV_48 - Filter time constant (tau) in ms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-49-pid-control-sampling-time-t-in-ms">CV_49 - PID Control sampling time t in ms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-50-pid-control-i-factor">CV_50 - PID Control I Factor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-51-pid-control-d-factor">CV_51 - PID Control D Factor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-52-cv-53-pid-integral-limits">CV_52 &amp; CV_53 - PID Integral Limits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-54-cv-55-gain-scheduling-config-k-p-x0">CV_54 &amp; CV_55 - Gain scheduling config k_p &#64; x0</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-56-cv-57-gain-scheduling-config-k-p-x1">CV_56 &amp; CV_57 - Gain scheduling config k_p &#64; x1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-58-cv-59-gain-scheduling-config-k-p-x2">CV_58 &amp; CV_59 - Gain scheduling config k_p &#64; x2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-60-gain-scheduling-config-x1-shift-percentage">CV_60 - Gain scheduling config x1 shift percentage</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-61-measurement-iterations">CV_61 - Measurement Iterations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-62-measurement-delay">CV_62 - Measurement Delay</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-63-cv-64-measurement-array-cutoffs">CV_63 &amp; CV_64 - Measurement array cutoffs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-65-new-flash-variable">CV_65 - New flash variable</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-112-cv-113-cv-114-cv-115-gpio-pwm-configuration">CV_112, CV_113, CV_114, CV_115 - GPIO PWM Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-116-to-cv-171-pwm-slice-configuration">CV_116 to CV_171 - PWM Slice configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-172-adc-offset">CV_172 - ADC Offset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-173-adc-offset-measurement-cycles">CV_173 - ADC offset measurement cycles</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-174-additional-motor-pwm-clock-divider">CV_174 - Additional motor-PWM clock divider.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-175-speed-helper-timer-delay">CV_175 - speed_helper timer delay</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-176-cv-177-cv-178-cv-179-base-pwm-level-used-in-feed-forward-control">CV_176, CV_177, CV_178, CV_179 - Base PWM Level used in feed-forward control</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cv-257-to-cv-512-function-mapping-cvs">CV_257 to CV_512 - Function Mapping CVs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software/index.html">Software</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Other</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Configuration Variables (CV)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#note">Note</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#speed-step-configuration">Speed step configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cv-list">CV List</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cv-1-basic-address">CV_1 - Basic address</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-2-v-min">CV_2 - V_min</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-3-acceleration-rate">CV_3 - Acceleration rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-4-deceleration-rate">CV_4 - Deceleration rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-5-v-max">CV_5 - V_max</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-6-v-mid">CV_6 - V_mid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-7-version-no-read-only">CV_7 - Version No. (Read-Only)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-8-manufacturer-read-only">CV_8 - Manufacturer (Read-Only)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-9-motor-pwm-frequency">CV_9 - Motor PWM Frequency</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-11-packet-timeout">CV_11 - Packet timeout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-12-permitted-operating-modes">CV_12 - Permitted operating modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-17-cv-18-14-bit-extended-long-address">CV_17 &amp; CV_18 - 14-Bit extended/long address</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-29-decoder-configuration">CV_29 - Decoder Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-31-cv-32-extended-cv-pointer-read-only">CV_31 &amp; CV_32 - Extended CV pointer (Read-Only)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-47-feed-forward-gain-k-ff">CV_47 - Feed-forward gain k_ff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-48-filter-time-constant-tau-in-ms">CV_48 - Filter time constant (tau) in ms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-49-pid-control-sampling-time-t-in-ms">CV_49 - PID Control sampling time t in ms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-50-pid-control-i-factor">CV_50 - PID Control I Factor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-51-pid-control-d-factor">CV_51 - PID Control D Factor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-52-cv-53-pid-integral-limits">CV_52 &amp; CV_53 - PID Integral Limits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-54-cv-55-gain-scheduling-config-k-p-x0">CV_54 &amp; CV_55 - Gain scheduling config k_p &#64; x0</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-56-cv-57-gain-scheduling-config-k-p-x1">CV_56 &amp; CV_57 - Gain scheduling config k_p &#64; x1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-58-cv-59-gain-scheduling-config-k-p-x2">CV_58 &amp; CV_59 - Gain scheduling config k_p &#64; x2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-60-gain-scheduling-config-x1-shift-percentage">CV_60 - Gain scheduling config x1 shift percentage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-61-measurement-iterations">CV_61 - Measurement Iterations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-62-measurement-delay">CV_62 - Measurement Delay</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-63-cv-64-measurement-array-cutoffs">CV_63 &amp; CV_64 - Measurement array cutoffs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-65-new-flash-variable">CV_65 - New flash variable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-112-cv-113-cv-114-cv-115-gpio-pwm-configuration">CV_112, CV_113, CV_114, CV_115 - GPIO PWM Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-116-to-cv-171-pwm-slice-configuration">CV_116 to CV_171 - PWM Slice configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-172-adc-offset">CV_172 - ADC Offset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-173-adc-offset-measurement-cycles">CV_173 - ADC offset measurement cycles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-174-additional-motor-pwm-clock-divider">CV_174 - Additional motor-PWM clock divider.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-175-speed-helper-timer-delay">CV_175 - speed_helper timer delay</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-176-cv-177-cv-178-cv-179-base-pwm-level-used-in-feed-forward-control">CV_176, CV_177, CV_178, CV_179 - Base PWM Level used in feed-forward control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-257-to-cv-512-function-mapping-cvs">CV_257 to CV_512 - Function Mapping CVs</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
@@ -108,6 +116,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Other</a></li>
       <li class="breadcrumb-item active">Configuration Variables (CV)</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/other/CV_list.md.txt" rel="nofollow"> View page source</a>
@@ -313,7 +322,7 @@ k_ff = CV_47/10000</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../software/header_files.html" class="btn btn-neutral float-left" title="Header files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Other" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="troubleshooting.html" class="btn btn-neutral float-right" title="Troubleshooting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

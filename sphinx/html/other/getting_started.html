@@ -9,6 +9,8 @@
   <title>Getting started &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -16,10 +18,12 @@
       <script src="../_static/documentation_options.js?v=6bd3bce2"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Hardware" href="../hardware/hw.html" />
+    <link rel="next" title="Hardware" href="../hardware/index.html" />
     <link rel="prev" title="RP2040-Decoder Documentation" href="../index.html" /> 
 </head>
 
@@ -47,18 +51,19 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#where-to-get-the-board">1. Where to get the board?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#production-files">2. Production files?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#building-and-flashing">3. Building and flashing</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#other-os">Other OS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-software">3. Building the software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flashing-the-software">4. Flashing the software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flashing-the-software-via-uf2-file">4.1. Flashing the software via .uf2 file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flashing-the-software-via-swd">4.2. Flashing the software via SWD</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#wiring-and-initial-startup">4. Wiring and initial startup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#if-it-s-not-working-as-expected">5. If it’s not working as expected</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wiring">5. Wiring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resolving-issues">6. Resolving issues</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../hardware/hw.html">Hardware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../software/sw.html">Software</a></li>
-<li class="toctree-l1"><a class="reference internal" href="CV_list.html">Configuration Variables (CV)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software/index.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Other</a></li>
 <li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 
@@ -78,7 +83,7 @@
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Getting started</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/other/getting_started.md.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/other/getting_started.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -88,92 +93,62 @@
              
   <section id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
-<p>In order to make use of this project, you will need the following:</p>
-<ul class="simple">
-<li><p>The RP2040-Decoder board itself</p></li>
-<li><p>Raspberry Pi Pico or another multi-drop SWD debug interfaces might work as well</p></li>
-<li><p>Micro-USB cable</p></li>
-</ul>
 <section id="where-to-get-the-board">
 <h2>1. Where to get the board?<a class="headerlink" href="#where-to-get-the-board" title="Link to this heading"></a></h2>
-<p>You can of course choose any preferred PCB manufacturer, the PCB is designed to be compliant with JLCPCB.com 2 layer board capabilities (hole diameter/clearence/etc.). Regarding assembly, you can of course assemble the board yourself but I would not recommend it (especially the RP2040 QFN Package is not easy to solder). Alternatively you can order the board fully or partly assembled. All parts are normally available at LCSC.com who supply parts to JLCPCB.com.</p>
+<p>You can choose any PCB manufacturer you like.The PCB is designed to fit with JLCPCB.com’s capabilities and constraints.You can assemble the board yourself, but it’s best not to do so if you’re not familiar with soldering small components. Alternatively, you can order the board fully or partly assembled.Soldering the back of the PCB by hand is not too difficult. All parts are normally available at LCSC.com, who supply parts to JLCPCB.com.</p>
 </section>
 <section id="production-files">
 <h2>2. Production files?<a class="headerlink" href="#production-files" title="Link to this heading"></a></h2>
-<p>In order to generate export the production files (Gerber/BOM/Pick and Place) you need <a class="reference external" href="https://www.kicad.org/download/">KiCad</a> 6 which is open source.
-<a class="reference external" href="https://jlcpcb.com/help/article/362-how-to-generate-gerber-and-drill-files-in-kicad-7">How to do this?</a></p>
+<p>In order to export the production files (Gerber/BOM/Pick and Place), you need <a class="reference external" href="https://www.kicad.org/download/">KiCad</a> which is open source.
+In case you are ordering from JLCPCB it is recommended to use the <a class="reference external" href="https://github.com/bennymeg/Fabrication-Toolkit">Fabrication-Toolkit KiCad plugin by bennymeg</a></p>
 </section>
-<section id="building-and-flashing">
-<h2>3. Building and flashing<a class="headerlink" href="#building-and-flashing" title="Link to this heading"></a></h2>
-<p>To build the software and run it on the Controller we need to interface the RP2040 using Serial Wire Debug. This can be done using a Raspberry Pi Pico board.</p>
-<section id="windows">
-<h3>Windows<a class="headerlink" href="#windows" title="Link to this heading"></a></h3>
-<ol class="arabic simple">
-<li><p>Connect Raspberry Pi Pico via USB while holding the reset button. Your Pi Pico should now be visible in Windows explorer as a mass storage device.</p></li>
-<li><p>Download the latest prebuilt “picoprobe.uf2” release binary from <a class="reference external" href="https://github.com/raspberrypi/picoprobe/releases">here</a> or download it from the <a class="reference external" href="https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#debugging-using-another-raspberry-pi-pico">Raspberry Pi Website</a>.</p></li>
-<li><p>Copy “picoprobe.uf2” to your Pi Pico. The Pi Pico onboard LED should now light up.</p></li>
-<li><p>Connect GND to GND, GPIO2 to SWCLK, GPIO3 to SWDIO, VBUS to +V, as shown in the picture below .
-<img src="https://github.com/gab-k/RP2040-Decoder/blob/main/docs/svg/Debug_Connections.svg" width="700"/></p></li>
-<li><p>Download and install <a class="reference external" href="https://github.com/raspberrypi/pico-setup-windows">Pico setup for Windows</a></p></li>
-<li><p>Download and install <a class="reference external" href="https://www.msys2.org/">MSYS2</a></p></li>
-<li><p>Open a MSYS2 MINGW64 shell window</p></li>
-<li><p>Update all pacman packages</p></li>
-</ol>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pacman<span class="w"> </span>-Syu
-</pre></div>
-</div>
-<ol class="arabic simple" start="9">
-<li><p>Install mingw-w64-x86_64-toolchain (choose to install all)</p></li>
-</ol>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pacman<span class="w"> </span>-S<span class="w"> </span>mingw-w64-x86_64-toolchain
-</pre></div>
-</div>
-<ol class="arabic simple" start="10">
-<li><p>Add “C:\msys64\mingw64\bin” to your users PATH environment variable. If you have choosen to not use the default directory for MSYS2 add the one you have choosen. <a class="reference external" href="https://www.computerhope.com/issues/ch000549.htm">How to do this?</a></p></li>
-<li><p>Open the Pico - Developer Powershell</p></li>
-<li><p>Navigate to a folder you like and clone the project repository</p></li>
-</ol>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/gab-k/RP2040-Decoder
-</pre></div>
-</div>
-<ol class="arabic simple" start="13">
-<li><p>Enter cloned repository, create and enter build directory</p></li>
-</ol>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>RP2040-Decoder
-mkdir<span class="w"> </span>build
-<span class="nb">cd</span><span class="w"> </span>build
-</pre></div>
-</div>
-<ol class="arabic simple" start="14">
-<li><p>Run CMake and the mingw32-make to build</p></li>
-</ol>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-G<span class="w"> </span><span class="s2">&quot;MinGW Makefiles&quot;</span><span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Debug<span class="w"> </span>..
-mingw32
-</pre></div>
-</div>
-<ol class="arabic simple" start="15">
-<li><p>Flash the decoders software using openocd</p></li>
-</ol>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>openocd<span class="w"> </span>-f<span class="w"> </span>interface/cmsis-dap.cfg<span class="w"> </span>-f<span class="w"> </span>target/rp2040.cfg<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;adapter speed 5000&quot;</span><span class="w"> </span>-c<span class="s2">&quot;program rp2040-decoder.elf verify reset exit&quot;</span>
-</pre></div>
-</div>
+<section id="building-the-software">
+<span id="id1"></span><h2>3. Building the software<a class="headerlink" href="#building-the-software" title="Link to this heading"></a></h2>
+<p>If you got a RP2040-Decoder with USB the easiest way to get the RP2040-Decoder up and running is to just use the precompiled .uf2 file and ignore the rest of this section.</p>
+<p>However sometimes you might want to build by yourself, be it for debugging or to make your own modifications to the source code.
+The easiest way to do this is to just use <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a> and the Raspberry Pi Pico extension.
+The <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#vscode-extension">official documentation</a> of the Pi Pico does a great job of explaining this in detail.</p>
 </section>
-<section id="other-os">
-<h3>Other OS<a class="headerlink" href="#other-os" title="Link to this heading"></a></h3>
-<p>The first four steps are identical to the steps described above for windows users. Regarding building and flashing, please refer to <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf">Getting started - Pico</a>. Chapter 3 &amp; 5 and Appendix A are the most relevant but you might also refer to chapter 9.1 if you are using macOS.</p>
+<section id="flashing-the-software">
+<h2>4. Flashing the software<a class="headerlink" href="#flashing-the-software" title="Link to this heading"></a></h2>
+<p>For RP2040-Decoders with USB there is two ways of flashing the software:</p>
+<ol class="arabic">
+<li><p>Flasing via USB using the .uf2 file by copying it with your preferred file explorer.</p></li>
+<li><p>Using Serial Wire Debug (SWD)</p>
+<p>2.1. Using another RP2040/RP2350-based board with <a class="reference external" href="https://github.com/raspberrypi/debugprobe">debugprobe software</a> on it. (Could be the RP2040-Decoder itself)</p>
+<p>2.2. Using any other supported SWD debug interface</p>
+</li>
+</ol>
+<p>For RP2040-Decoders without USB the only way of flashing the software is via SWD</p>
+<section id="flashing-the-software-via-uf2-file">
+<h3>4.1. Flashing the software via .uf2 file<a class="headerlink" href="#flashing-the-software-via-uf2-file" title="Link to this heading"></a></h3>
+<p>When first plugged in the RP2040 boots into Mass Storage Device mode. To flash the software, you need to drag the ‘.uf2’ file onto the disk using any file explorer.
+This will write the file to the Flash and restart the RP2040.
+In case you want to repeat the flasing process, temporarily connect the solder bridge called JP1 on the back side of the board and power cycle the device.
+This procedure is also described in the <a class="reference external" href="https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf#_programming_the_flash">Raspberry Pi Pico Datasheet Chapter 4.1</a></p>
+</section>
+<section id="flashing-the-software-via-swd">
+<h3>4.2. Flashing the software via SWD<a class="headerlink" href="#flashing-the-software-via-swd" title="Link to this heading"></a></h3>
+<p>Flashing via SWD is a little more complicated but also comes with great advantages in terms of debugging.
+The book on <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf">Getting started with Raspberry Pi Pico-series</a> does a great job of explaining how debugging works.
+As already suggested in <a class="reference internal" href="#building-the-software"><span class="std std-ref">3.</span></a> it is recommended to use the <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#vscode-extension">Visual Studio Code Extension</a>.
+Most relevant in the book are <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#_debug">Chapter 4.3. Debug</a> and <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#debugprobe_section">Appendix A: Debugprobe</a></p>
 </section>
 </section>
-<section id="wiring-and-initial-startup">
-<h2>4. Wiring and initial startup<a class="headerlink" href="#wiring-and-initial-startup" title="Link to this heading"></a></h2>
-<img src="https://github.com/gab-k/RP2040-Decoder/blob/main/docs/svg/Wiring_diagram.svg" width="700"/>
-<p>The illustration above shows an example wiring configuration, you can connect up to 4 outputs(up to 400mA) and 6 GPIOs for lighter loads or custom applications. A Free-wheeling diode should be used when switching inductive loads!</p>
-<p>Another important note is that when the decoder is put into operation for the first time, it automatically performs a motor calibration, which is required for feedforward control. The calibration takes about one to two minutes.</p>
+<section id="wiring">
+<h2>5. Wiring<a class="headerlink" href="#wiring" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line">Please refer to the hardware section for your board:</div>
+<div class="line"><a class="reference internal" href="../hardware/rev_1_0/hw_description.html#wiring-rev-1-0"><span class="std std-ref">Wiring Rev 1.0</span></a></div>
+<div class="line"><a class="reference internal" href="../hardware/rev_0_3/hw_description.html#wiring-rev-0-3"><span class="std std-ref">Wiring Rev 0.3</span></a></div>
+</div>
 </section>
-<section id="if-it-s-not-working-as-expected">
-<h2>5. If it’s not working as expected<a class="headerlink" href="#if-it-s-not-working-as-expected" title="Link to this heading"></a></h2>
+<section id="resolving-issues">
+<h2>6. Resolving issues<a class="headerlink" href="#resolving-issues" title="Link to this heading"></a></h2>
+<p>If the decoder is not working as expected:</p>
 <ol class="arabic simple">
 <li><p>Follow the <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/wiki/Troubleshooting">Troubleshooting instructions</a></p></li>
-<li><p>If you still have trouble create a new <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/discussions">discussion</a> or <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/issues">issue</a> and describe your question/issue.</p></li>
+<li><p>If you still have trouble, create a new <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/discussions">discussion</a> or <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/issues">issue</a> and describe your question/issue.</p></li>
 </ol>
 </section>
 </section>
@@ -183,7 +158,7 @@ mingw32
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="RP2040-Decoder Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../hardware/hw.html" class="btn btn-neutral float-right" title="Hardware" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../hardware/index.html" class="btn btn-neutral float-right" title="Hardware" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
