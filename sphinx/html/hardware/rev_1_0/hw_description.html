@@ -101,7 +101,7 @@
              
   <section id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h1>
-<figure class="align-default" id="id1">
+<figure class="align-center" id="id1">
 <img alt="Block Diagram" src="../../_images/Block_Diagram_Hardware1.svg" />
 <figcaption>
 <p><span class="caption-text">Harware block diagram</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
@@ -208,7 +208,7 @@
 </section>
 <section id="input-stage">
 <h1>Input Stage<a class="headerlink" href="#input-stage" title="Link to this heading"></a></h1>
-<figure class="align-default" id="id3">
+<figure class="align-center" id="id3">
 <img alt="Input Stage" src="../../_images/Input_Stage1.svg" />
 <figcaption>
 <p><span class="caption-text">Input stage</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
@@ -217,8 +217,8 @@
 <p>D2 Rectifies the DCC square-wave into VDC, the amplitude is not critical as long as it’s within the 25V limit. The rectified voltage VDC is then provided to the 3.3V voltage regulator and to the motor driver. The shottky diode D1 and the bridge rectifier D2 ensure a logical “or” linkage of the VBUS supply voltages and the DCC input voltage</p>
 <p>The MOSFET on the right effectively translates the rather high DCC voltage to a suitable level for the microcontroller to process. When Q1 is turned off GPIO21 is pulled high by the RP2040 internal pull-up resistor, as soon as Q1 gets turned on (V<sub>GS</sub>&gt; V<sub>GS,th</sub>), GPIO21 gets pulled to GND potential. R1 and R2 ensure that V<sub>GS</sub>doesn’t exceed ±12V.
 Motor Driver
-====================</p>
-<figure class="align-default" id="id4">
+==============================</p>
+<figure class="align-center" id="id4">
 <img alt="Motor Driver" src="../../_images/Motor_Driver1.svg" />
 <figcaption>
 <p><span class="caption-text">Motor driver</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
@@ -228,7 +228,7 @@ Motor Driver
 </section>
 <section id="auxiliary-outputs">
 <h1>Auxiliary Outputs<a class="headerlink" href="#auxiliary-outputs" title="Link to this heading"></a></h1>
-<figure class="align-default" id="id5">
+<figure class="align-center" id="id5">
 <img alt="Auxiliary Outputs" src="../../_images/Aux_Outputs1.svg" />
 <figcaption>
 <p><span class="caption-text">Auxiliary Outputs</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
@@ -242,7 +242,7 @@ Motor Driver
 </section>
 <section id="microcontroller">
 <h1>Microcontroller<a class="headerlink" href="#microcontroller" title="Link to this heading"></a></h1>
-<figure class="align-default" id="id6">
+<figure class="align-center" id="id6">
 <img alt="Microcontroller" src="../../_images/Microcontroller1.svg" />
 <figcaption>
 <p><span class="caption-text">Microcontroller, flash memory, crystal oscillator, USB connector, …</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
@@ -252,7 +252,7 @@ Motor Driver
 </section>
 <section id="complete-schematic">
 <h1>Complete Schematic<a class="headerlink" href="#complete-schematic" title="Link to this heading"></a></h1>
-<figure class="align-default" id="id7">
+<figure class="align-center" id="id7">
 <img alt="Complete Schematic" src="../../_images/RP2040-Decoder1.svg" />
 <figcaption>
 <p><span class="caption-text">Complete Schematic</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
@@ -383,7 +383,7 @@ Motor Driver
 </section>
 <section id="wiring-the-decoder">
 <span id="wiring-rev-1-0"></span><h1>Wiring the Decoder<a class="headerlink" href="#wiring-the-decoder" title="Link to this heading"></a></h1>
-<figure class="align-default" id="id9">
+<figure class="align-center" id="id9">
 <a class="reference internal image-reference" href="../../svg/hw/rev_1_0/Wiring_diagram.svg"><img alt="Wiring Diagram" src="../../svg/hw/rev_1_0/Wiring_diagram.svg" style="width: 700px;" />
 </a>
 <figcaption>

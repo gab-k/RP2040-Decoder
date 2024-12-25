@@ -1,8 +1,9 @@
 Overview
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_0_3/Block_Diagram_Hardware.svg
    :alt: Block Diagram
+   :align: center
 
    Harware block diagram
 
@@ -22,7 +23,7 @@ The above block diagram gives a general overview regarding the operation of comp
    - Crystal oscillator
 
 Electrical Characteristics
-====================
+==============================
 .. table:: Electrical Characteristics & Absolute Maximum Ratings
    :widths: auto
 
@@ -46,10 +47,11 @@ Electrical Characteristics
 (2): According to: `T2N7002BK Datasheet <https://toshiba.semicon-storage.com/info/T2N7002BK_datasheet_en_20191025.pdf?did=30376&prodName=T2N7002BK>`_
 
 Input Stage
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_0_3/Input_Stage.svg
    :alt: Input Stage
+   :align: center
 
    Input stage
 
@@ -58,20 +60,22 @@ D1 Rectifies the DCC square-wave into +V, the amplitude is not critical as long 
 The MOSFET on the right effectively translates the rather high DCC voltage to a suitable level for the microcontroller to process. When Q1 is turned off GPIO21 is pulled high by the RP2040 internal pull-up resistor, as soon as Q1 gets turned on (V\ :sub:`GS`\ > V\ :sub:`GS,th`\), GPIO21 gets pulled to GND potential. R1 and R2 ensure that V\ :sub:`GS`\ doesn't exceed ±20V.
 
 Motor Driver
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_0_3/Motor_Driver.svg
    :alt: Motor Driver
+   :align: center
 
    Motor driver
 
 The Motor Driver is a special H-Bridge IC that is made for DC motors. To control the motor, it is necessary to measure the back-EMF voltage, which is directly related to the motor's speed. This is done by the ADC, which measures at Points ADC_EMF_A and ADC_EMF_B. The two resistors work together as a voltage divider.
 
 Auxiliary Outputs
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_0_3/Aux_Outputs.svg
    :alt: Auxiliary Outputs
+   :align: center
 
    Auxiliary Outputs
 
@@ -79,31 +83,33 @@ Switching of loads can be done using four N-Channel MOSFETs (Q2 to Q5). The amou
 
 
 GPIO
-====================
+==============================
 
 To switch lighter loads, six GPIO soldering pads are connected to GPIO0 to GPIO5 pins. Although not yet set up in the software, they could be used as inputs as well (e.g. reed switch). GPIO0 and GPIO1 can also be used to facilitate stdio logging via UART, which can easily be set up in CMakeLists.txt.
 
 
 Microcontroller
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_0_3/Microcontroller.svg
    :alt: Microcontroller
+   :align: center
 
    Microcontroller, flash memory, crystal oscillator, ...
 
 The Microcontroller needs a crystal oscillator for its clock. External flash memory holds the configuration variables and the program itself. R3 & C14 are used to filter ADC_AVDD (ADC Reference Voltage).
 
 Complete Schematic
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_0_3/RP2040-Decoder.svg
    :alt: Complete Schematic
+   :align: center
    
    Complete Schematic
 
 BOM & Alternative Parts
-====================
+==============================
 .. table:: BOM
    :widths: auto
 
@@ -142,14 +148,16 @@ Alternative for HT7533S:
 
 
 .. _wiring_rev_0_3:
+
 Wiring the Decoder
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_0_3/Wiring_diagram.svg
-    :width: 700
-    :alt: Wiring Diagram
+   :align: center
+   :width: 700
+   :alt: Wiring Diagram
 
-    Wiring Diagram
+   Wiring Diagram
 
 The illustration above provides an example of a wiring configuration.
 It supports the connection of up to 4 transistor-switched outputs and 6 GPIOs for lighter loads or custom applications.

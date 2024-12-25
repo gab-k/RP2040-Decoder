@@ -1,7 +1,8 @@
 Overview
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_1_0/Block_Diagram_Hardware.svg
+   :align: center
    :alt: Block Diagram
 
    Harware block diagram
@@ -23,7 +24,7 @@ The above block diagram gives a general overview regarding the operation of comp
    - USB Connector
 
 Electrical Characteristics
-====================
+==============================
 .. table:: Electrical Characteristics & Absolute Maximum Ratings
    :widths: auto
 
@@ -49,9 +50,10 @@ Electrical Characteristics
 (3): T\ :sub:`Case`\ = 25°C, keep power dissipation, thermal resistance the corresponding temperature rise ΔT and switching losses in PWM mode in mind!
 
 Input Stage
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_1_0/Input_Stage.svg
+   :align: center
    :alt: Input Stage
 
    Input stage
@@ -60,9 +62,10 @@ D2 Rectifies the DCC square-wave into VDC, the amplitude is not critical as long
 
 The MOSFET on the right effectively translates the rather high DCC voltage to a suitable level for the microcontroller to process. When Q1 is turned off GPIO21 is pulled high by the RP2040 internal pull-up resistor, as soon as Q1 gets turned on (V\ :sub:`GS`\ > V\ :sub:`GS,th`\), GPIO21 gets pulled to GND potential. R1 and R2 ensure that V\ :sub:`GS`\ doesn't exceed ±12V.
 Motor Driver
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_1_0/Motor_Driver.svg
+   :align: center
    :alt: Motor Driver
 
    Motor driver
@@ -70,9 +73,10 @@ Motor Driver
 The Motor Driver is a special H-Bridge IC that is made for DC motors. To control the motor, it is necessary to measure the back-EMF voltage, which is directly related to the motor's speed. This is done by the ADC, which measures at Points ADC_EMF_A and ADC_EMF_B. The two resistors work together as a voltage divider.
 
 Auxiliary Outputs
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_1_0/Aux_Outputs.svg
+   :align: center
    :alt: Auxiliary Outputs
 
    Auxiliary Outputs
@@ -80,14 +84,15 @@ Auxiliary Outputs
 Switching of loads can be done using four N-Channel MOSFETs (Q2 to Q5). The amount of current is somewhat dependend on either static R\ :sub:`DS(on)`\  losses and/or switching losses using PWM. They are switching on the low-side, which means the load effectively gets connected to GND potential as the transistor starts to conduct. GPIO24 - GPIO27 are used.
 
 GPIO
-====================
+==============================
 
 To switch lighter loads, six GPIO soldering pads are connected to GPIO0 to GPIO5 pins. Although not yet set up in the software, they could be used as inputs as well (e.g. reed switch). GPIO0 and GPIO1 can also be used to facilitate stdio logging via UART, which can easily be set up in CMakeLists.txt.
 
 Microcontroller
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_1_0/Microcontroller.svg
+   :align: center
    :alt: Microcontroller
 
    Microcontroller, flash memory, crystal oscillator, USB connector, ...
@@ -95,15 +100,16 @@ Microcontroller
 The Microcontroller needs a crystal oscillator for its clock. External flash memory holds the configuration variables and the program itself. The USB connector can be used to flash the software onto the decoder and also for logging via stdio (can be enabled via CMakeLists.txt). D3 is used as a status LED. R11 & C13 are used to filter ADC_AVDD (ADC Reference Voltage).
 
 Complete Schematic
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_1_0/RP2040-Decoder.svg
+   :align: center
    :alt: Complete Schematic
 
    Complete Schematic
 
 BOM & Alternative Parts
-====================
+==============================
 .. table:: BOM
    :widths: auto
 
@@ -142,12 +148,14 @@ Alternative for HT7533S:
 
 
 .. _wiring_rev_1_0:
+
 Wiring the Decoder
-====================
+==============================
 
 .. figure:: ../../../../svg/hw/rev_1_0/Wiring_diagram.svg
     :width: 700
     :alt: Wiring Diagram
+    :align: center
 
     Wiring Diagram
 

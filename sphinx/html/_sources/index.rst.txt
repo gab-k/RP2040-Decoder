@@ -15,4 +15,3 @@ RP2040-Decoder Documentation
    software/index
    other/index
    other/troubleshooting
-   other/debugging
