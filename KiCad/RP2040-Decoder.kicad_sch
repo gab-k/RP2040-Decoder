@@ -4017,7 +4017,7 @@
 					)
 				)
 			)
-			(property "Footprint" "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm"
+			(property "Footprint" "RP2040-Decoder_Additional_Footprints:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm_ThermalVias"
 				(at 0 -21.59 0)
 				(effects
 					(font
@@ -4026,7 +4026,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://datasheet.lcsc.com/lcsc/2101211904_Bardeen-Micro--BDR6133_C2687793.pdf"
+			(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2409291808_Bardeen-Micro--BDR6133_C2687793.pdf"
 				(at 6.35 -24.13 0)
 				(effects
 					(font
@@ -4035,7 +4035,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "H-Bridge driver, 1A, Low Voltage, PWM input, WSON-8"
+			(property "Description" "H-Bridge driver, 2.8A, 2V to 24V, PWM input, ESOP8"
 				(at 0 0 0)
 				(effects
 					(font
@@ -4044,7 +4044,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "half bridge driver"
+			(property "ki_keywords" "1CH DC Motor H-bridge driver "
 				(at 0 0 0)
 				(effects
 					(font
@@ -4053,7 +4053,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "WSON*1EP*2x2mm*P0.5mm*"
+			(property "ki_fp_filters" "SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm"
 				(at 0 0 0)
 				(effects
 					(font
@@ -9938,7 +9938,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_SO:SOIC-8_5.23x5.23mm_P1.27mm"
+		(property "Footprint" "RP2040-Decoder_Additional_Footprints:SOIC-8_5.23x5.23mm_P1.27mm"
 			(at 64.77 142.24 0)
 			(effects
 				(font
@@ -18194,7 +18194,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm_ThermalVias"
+		(property "Footprint" "RP2040-Decoder_Additional_Footprints:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm_ThermalVias"
 			(at 247.65 144.78 0)
 			(effects
 				(font
@@ -18203,7 +18203,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/2101211904_Bardeen-Micro--BDR6133_C2687793.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2409291808_Bardeen-Micro--BDR6133_C2687793.pdf"
 			(at 254 147.32 0)
 			(effects
 				(font
@@ -18212,7 +18212,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "H-Bridge driver, 2.8A, 2V to 24V, PWM input, ESOP8"
 			(at 247.65 123.19 0)
 			(effects
 				(font

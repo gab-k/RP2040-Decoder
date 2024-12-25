@@ -40,9 +40,11 @@
 // --- FLASH ---
 
 // Flash size is 8 MiB for W25Q64JVSSIQ if you decide to use another capacity flash IC change the size to the corresponding value
+// 8MiB = (8 * 1024 * 1024) bytes = 8388608 bytes
 #ifndef PICO_FLASH_SIZE_BYTES
-#define PICO_FLASH_SIZE_BYTES (8 * 1024 * 1024)
+#define PICO_FLASH_SIZE_BYTES 8388608
 #endif
+
 // Offset from base address used for saving CV_ARRAY_FLASH - in this case one sector size from the end of flash
 #define FLASH_TARGET_OFFSET (PICO_FLASH_SIZE_BYTES-FLASH_SECTOR_SIZE)
 

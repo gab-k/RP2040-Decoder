@@ -9,6 +9,43 @@
 struct repeating_timer pid_control_timer, speed_helper_timer;
 
 
+// Measures Back-EMF voltage (proportional to the rotational speed of the motor) on GPIO 28 and GPIO 29 respectively (depending on direction)
+float measure(uint8_t total_iterations,
+              uint8_t measurement_delay_us,
+              uint8_t l_side_arr_cutoff,
+              uint8_t r_side_arr_cutoff,
+              bool direction){ //TODO: Change to direction_t
+    uint32_t sum = 0;
+    uint16_t adc_val[total_iterations];
+    int32_t j = 0;
+    uint16_t key;
+    pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
+    pwm_set_gpio_level(MOTOR_REV_PIN, 0);
+    adc_select_input((!direction)+2); // TODO: fix with #define macros!
+    busy_wait_us(measurement_delay_us);
+    adc_run(true);
+    for (int32_t i = 0; i < total_iterations; ++i) {
+        //Take adc value out of fifo when available, then do one step of insertion sort.
+        adc_val[i] = adc_fifo_get_blocking();
+        key = adc_val[i];
+        j = i - 1;
+        while (j >= 0 && adc_val[j] > key) {
+            adc_val[j + 1] = adc_val[j];
+            j--;
+        }
+        adc_val[j + 1] = key;
+    }
+    adc_run(false);
+    //discard x entries beginning from the lowest entry of the array (counting up); x = msr.l_side_arr_cutoff
+    //discard y entries beginning from the highest index of the array (counting down); y = msr.r_side_arr_cutoff
+    for (int32_t i = l_side_arr_cutoff; i < total_iterations - r_side_arr_cutoff ; ++i) {
+        sum += adc_val[i];
+    }
+    float res = (float)sum / (float)( total_iterations - (l_side_arr_cutoff + r_side_arr_cutoff) );
+    // return true to keep the repeating timer active
+    return res;
+}
+
 // Get speed_step_table_index depending on speed_step
 uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step) {
     // Clear direction information in bit7
@@ -79,12 +116,13 @@ bool speed_helper(struct repeating_timer *const t) {
 
 // Helper function to adjust pwm level/duty cycle.
 void adjust_pwm_level(const uint16_t level) {
-    if (get_direction_of_speed_step(speed_step_target)) {
+    direction_t dir =  get_direction_of_speed_step(speed_step_target);
+    if (dir == DIRECTION_FORWARD) {
         // Forward
         pwm_set_gpio_level(MOTOR_REV_PIN, 0);
         pwm_set_gpio_level(MOTOR_FWD_PIN, level);
     }
-    else {
+    else if (dir == DIRECTION_REVERSE){
         // Reverse
         pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
         pwm_set_gpio_level(MOTOR_REV_PIN, level);
@@ -186,7 +224,7 @@ void controller_pid_mode(controller_parameter_t *const ctrl_par) {
 }
 
 // General controller function gets called every x milliseconds where x is CV_49 i.e. sampling time (pid->t)
-// TODO: fixed point arithmetic to improve performance...
+// TODO: Consider fixed point arithmetic to improve performance...
 bool controller_general(struct repeating_timer *const t) {
     // Cast (void *) to (controller_parameter_t *)
     controller_parameter_t *const ctrl_par = (controller_parameter_t *) (t->user_data);

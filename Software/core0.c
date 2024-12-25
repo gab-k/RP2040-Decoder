@@ -316,8 +316,8 @@ void set_outputs(const uint32_t functions_to_set_bitmask) {
     uint32_t temp_mask = 1;
     for (uint8_t i = 0; i < 32; i++) {
         if (temp_mask & functions_to_set_bitmask) {
-            const bool direction = get_direction_of_speed_step(speed_step_target);
-            outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * direction);
+            const direction_t dir  = get_direction_of_speed_step(speed_step_target);
+            outputs_to_set |= get_32bit_CV(i * 8 + 260 - 4 * dir);
         }
         temp_mask <<= 1;
     }
@@ -444,7 +444,7 @@ void instruction_evaluation(const uint8_t number_of_bytes, const uint8_t *const 
         speed_step_target = byte_array[command_byte_start_index - 1];
         // Check for direction change
         const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
-                                 get_direction_of_speed_step(speed_step_target_prev);
+                                       get_direction_of_speed_step(speed_step_target_prev);
         // In case of a direction change, functions need to be updated because functions depend on direction
         if (direction_changed) {
             update_active_functions(0, 0, true);
@@ -488,12 +488,13 @@ void instruction_evaluation(const uint8_t number_of_bytes, const uint8_t *const 
 // Check for reset message - When reset message is found, stop the motor and disable all functions.
 bool reset_message_check(const uint8_t number_of_bytes, const uint8_t *const byte_array) {
     if (byte_array[number_of_bytes - 1] == 0b00000000 && byte_array[number_of_bytes - 2] == 0b00000000) {
-        const bool direction = get_direction_of_speed_step(speed_step_target);
+        const direction_t dir = get_direction_of_speed_step(speed_step_target);
         // Set previous speed step target to current speed step target
         speed_step_target_prev = speed_step_target;
+        // TODO: Improve comment below 
         // Set speed step target to emergency stop speed step ( 1 for Reverse direction / 129 for forward direction)
         // for details see get_direction_of_speed_step() doxygen comment in "shared.h"
-        speed_step_target = 1 + 128*direction;
+        speed_step_target = 1 + 128*dir;
         update_active_functions(0,0,0);  // Disables all functions
         return true;
     }

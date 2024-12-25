@@ -82,6 +82,27 @@ typedef struct controller_parameter_t{
 
 } controller_parameter_t;
 
+
+/**
+ * @brief Measures Back-EMF voltage (proportional to the rotational speed of the motor) on GPIO 28 and GPIO 29 respectively (depending on direction).
+ *
+ * This function performs multiple ADC measurements, sorts the results using insertion sort, and calculates the average of the middle values,
+ * discarding a specified number of the lowest and highest values.
+ *
+ * @param total_iterations The total number of ADC measurements to perform.
+ * @param measurement_delay_us The delay in microseconds between the switch-off of the motor PWM and the measurement.
+ * @param l_side_arr_cutoff The number of lowest ADC values to discard.
+ * @param r_side_arr_cutoff The number of highest ADC values to discard.
+ * @param direction The direction of the motor. //TODO: Introduce Motor direction typedef
+ * @return The average of the middle ADC values after discarding the specified number of lowest and highest values.
+ */
+float measure(uint8_t total_iterations,
+              uint8_t measurement_delay_us,
+              uint8_t l_side_arr_cutoff,
+              uint8_t r_side_arr_cutoff,
+              bool direction);
+
+
 /**
  * @brief Get the speed step table index based on the speed step value.
  *

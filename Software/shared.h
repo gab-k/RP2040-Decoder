@@ -28,6 +28,11 @@ typedef enum {
    REBOOT_BY_WATCHDOG = (1<<5),
 } error_t;
 
+typedef enum {
+   DIRECTION_FORWARD = 1,
+   DIRECTION_REVERSE = 0,
+} direction_t;
+
 
 #define LOG(level, ...) { \
     if (level <= LOGLEVEL) { \
@@ -49,11 +54,6 @@ extern uint8_t speed_step_target_prev;
 
 void core1_entry();
 void write_cv_handler(uint16_t cv_index, uint8_t cv_data);
-float measure(uint8_t total_iterations,
-              uint8_t measurement_delay_us,
-              uint8_t l_side_arr_cutoff,
-              uint8_t r_side_arr_cutoff,
-              bool direction);
 uint32_t get_32bit_CV (uint16_t CV_start_index);
 uint16_t get_16bit_CV (uint16_t CV_start_index);
 /*!
@@ -85,9 +85,9 @@ uint16_t get_16bit_CV (uint16_t CV_start_index);
  * | 255 | 1111 1111 | Forward   | Speed step 126       |
  *
  * @param speed_step The speed step byte.
- * @return `true` for forward direction, `false` for reverse direction.
+ * @return `DIRECTION_FORWARD` for forward direction, `DIRECTION_REVERSE` for reverse direction.
  */
-bool get_direction_of_speed_step(uint8_t speed_step);
+direction_t get_direction_of_speed_step(uint8_t speed_step);
 
 void set_error(error_t err);
 
