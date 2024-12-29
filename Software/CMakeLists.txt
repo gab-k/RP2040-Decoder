@@ -23,8 +23,12 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
+
 set(PICO_BOARD_HEADER_DIRS ${CMAKE_SOURCE_DIR}) 
-set(PICO_BOARD RP2040-Decoder-board CACHE STRING "Board type")
+# Board type selection:
+#
+# Please select RP2040-Decoder-board.h for Rev >= 1.0 or RP2040-Decoder-board-legacy.h for Rev < 1.0
+set(PICO_BOARD RP2040-Decoder-board.h CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -34,8 +38,9 @@ project(RP2040-Decoder C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-add_compile_options(#-Wall
-                    -O0
+add_compile_options(-Wall
+                    -Ofast
+                    -g3
                     -Wno-format          # int != int32 _t as far as the compiler is concerned because gcc has int32_t as long int
                     -Wno-unused-function # we have some for the docs that aren't called
                     -Wno-maybe-uninitialized)
@@ -66,15 +71,15 @@ pico_set_program_version(RP2040-Decoder "1.0")
 # - Be cautious: Logging can alter timing behavior. For example, the PID controller is time critical,
 #   limit the frequency of log outputs—such as logging only every 100th iteration.
 # - Note that with UART logging enabled, PICO_DEFAULT_UART_TX_PIN and PICO_DEFAULT_UART_RX_PIN are disabled for decoder functions.
-#   These pins are used for UART communication. Disablign is done automatically in RP2040-Decoder-board.h or RP2040-Decoder-board-legacy.h respectively.
+#   These pins are used for UART communication. Disabling is done automatically in RP2040-Decoder-board.h or RP2040-Decoder-board-legacy.h respectively.
 set(LOGLEVEL 1)
 # Additionally, the LOG_WAIT parameter can be configured to make the controller wait for user input via stdio before continuing.
 # This is useful for ensuring that all stdio logging outputs are captured.
 # If disabled, there may not be enough time to connect the serial terminal before most of the logging has already been completed.
-set(LOG_WAIT 1)
+set(LOG_WAIT 0)
 # Modify the below lines to enable/disable output over UART and/or USB
 set(STDIO_USB_ENABLED 1)
-set(STDIO_UART_ENABLED 1)
+set(STDIO_UART_ENABLED 0)
 # Leave those two unmodified
 pico_enable_stdio_uart(RP2040-Decoder ${STDIO_UART_ENABLED})
 pico_enable_stdio_usb(RP2040-Decoder ${STDIO_USB_ENABLED})
@@ -102,7 +107,8 @@ target_link_libraries(  RP2040-Decoder
                         hardware_pwm
                         hardware_adc
                         hardware_flash
-                        hardware_watchdog  )
+                        hardware_watchdog
+                        hardware_exception  )
 
 # Add the standard include files to the build
 target_include_directories(RP2040-Decoder PRIVATE ${CMAKE_CURRENT_LIST_DIR})

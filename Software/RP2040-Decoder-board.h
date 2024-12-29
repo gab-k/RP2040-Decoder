@@ -51,8 +51,10 @@
 // Offset from base address used for saving CV_ARRAY_FLASH - in this case one sector size from the end of flash
 #define FLASH_TARGET_OFFSET (PICO_FLASH_SIZE_BYTES-FLASH_SECTOR_SIZE)
 
+// For some reason the clock divider of 4 is necessary, otherwise the controller occasionally hard faults
+// Another workaround could be to run code from RAM but this seems to work fine
 #ifndef PICO_FLASH_SPI_CLKDIV
-#define PICO_FLASH_SPI_CLKDIV 2
+#define PICO_FLASH_SPI_CLKDIV 4
 #endif
 
 
@@ -67,6 +69,8 @@
 #define MOTOR_REV_PIN 22u
 #define FWD_V_EMF_ADC_PIN 29u
 #define REV_V_EMF_ADC_PIN 28u
+#define FWD_V_EMF_ADC_CHANNEL (FWD_V_EMF_ADC_PIN-26u)
+#define REV_V_EMF_ADC_CHANNEL (REV_V_EMF_ADC_PIN-26u)
 
 
 #if LOGLEVEL != 0

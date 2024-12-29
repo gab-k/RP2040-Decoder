@@ -7,6 +7,7 @@
 #include "core1.h"
 
 struct repeating_timer pid_control_timer, speed_helper_timer;
+bool controller_flag, speed_helper_flag = false;
 
 
 // Measures Back-EMF voltage (proportional to the rotational speed of the motor) on GPIO 28 and GPIO 29 respectively (depending on direction)
@@ -14,14 +15,20 @@ float measure(uint8_t total_iterations,
               uint8_t measurement_delay_us,
               uint8_t l_side_arr_cutoff,
               uint8_t r_side_arr_cutoff,
-              bool direction){ //TODO: Change to direction_t
+              direction_t direction){
     uint32_t sum = 0;
     uint16_t adc_val[total_iterations];
     int32_t j = 0;
     uint16_t key;
     pwm_set_gpio_level(MOTOR_FWD_PIN, 0);
     pwm_set_gpio_level(MOTOR_REV_PIN, 0);
-    adc_select_input((!direction)+2); // TODO: fix with #define macros!
+    if (direction == DIRECTION_FORWARD) {
+        adc_select_input(FWD_V_EMF_ADC_CHANNEL);
+    } else if(direction == DIRECTION_REVERSE) {
+        adc_select_input(REV_V_EMF_ADC_CHANNEL);
+    } else{
+        set_error(INVALID_DIRECTION);
+    }
     busy_wait_us(measurement_delay_us);
     adc_run(true);
     for (int32_t i = 0; i < total_iterations; ++i) {
@@ -36,6 +43,7 @@ float measure(uint8_t total_iterations,
         adc_val[j + 1] = key;
     }
     adc_run(false);
+    //adc_fifo_drain();
     //discard x entries beginning from the lowest entry of the array (counting up); x = msr.l_side_arr_cutoff
     //discard y entries beginning from the highest index of the array (counting down); y = msr.r_side_arr_cutoff
     for (int32_t i = l_side_arr_cutoff; i < total_iterations - r_side_arr_cutoff ; ++i) {
@@ -61,10 +69,9 @@ uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step) {
 
 // This function gets called every x milliseconds where x is CV_175.
 // The purpose of this function is to implement a time delay in acceleration or deceleration
-bool speed_helper(struct repeating_timer *const t) {
+void speed_helper(controller_parameter_t * ctrl_par) {
     // ctrl_par->setpoint only gets adjusted when the speed_helper_counter is equal to the accel_rate/decel_rate
     // -> Time for 1 Speed Step := (speed_helper timer delay)*(accel_rate) or CV_175*CV_3 or CV_175*CV_4
-    controller_parameter_t *const ctrl_par = (controller_parameter_t *) (t->user_data);
     const uint8_t accel_rate = CV_ARRAY_FLASH[2];
     const uint8_t decel_rate = CV_ARRAY_FLASH[3];
     static uint8_t speed_helper_counter;
@@ -109,9 +116,6 @@ bool speed_helper(struct repeating_timer *const t) {
         // Target reached -> Reset Counter
         speed_helper_counter = 0;
     }
-
-    // return true to schedule the repeating timer again
-    return true;
 }
 
 // Helper function to adjust pwm level/duty cycle.
@@ -209,14 +213,15 @@ void controller_pid_mode(controller_parameter_t *const ctrl_par) {
     if (LOGLEVEL >= 1) {
         static int counter = 0;
         counter++;
-        if (counter > 100) {
+        if (counter > 200) {
             LOG(1, "ctrl_par error(%f) output(%f)\n", ctrl_par->pid.e, output_f);
             counter = 0;
         }
     }
 
     // Set PWM Level and discard results in adc fifo
-    adjust_pwm_level((uint16_t) roundf(output_f));
+    //adjust_pwm_level((uint16_t) roundf(output_f));
+    adjust_pwm_level((uint16_t) output_f);
     // Save previous error, integrator, differentiator values
     ctrl_par->pid.e_prev = ctrl_par->pid.e;
     ctrl_par->pid.i_prev = i;
@@ -225,10 +230,7 @@ void controller_pid_mode(controller_parameter_t *const ctrl_par) {
 
 // General controller function gets called every x milliseconds where x is CV_49 i.e. sampling time (pid->t)
 // TODO: Consider fixed point arithmetic to improve performance...
-bool controller_general(struct repeating_timer *const t) {
-    // Cast (void *) to (controller_parameter_t *)
-    controller_parameter_t *const ctrl_par = (controller_parameter_t *) (t->user_data);
-
+void controller_general(controller_parameter_t * ctrl_par) {
     // Change in direction -> reset previous derivative, error and integral parts and pwm_base_done
     const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
                                    get_direction_of_speed_step(speed_step_target_prev);
@@ -240,8 +242,7 @@ bool controller_general(struct repeating_timer *const t) {
         ctrl_par->mode = STARTUP_MODE;
         ctrl_par->startup.level = 0;
         adjust_pwm_level(0);
-        // return true exits and schedule the repeating timer again
-        return true;
+        return;
     }
 
     // Measure BEMF voltage and compute error
@@ -266,9 +267,6 @@ bool controller_general(struct repeating_timer *const t) {
 
     // Save measurement value
     ctrl_par->measurement_prev = ctrl_par->measurement;
-
-    // return true to schedule the repeating timer again
-    return true;
 }
 
 
@@ -341,6 +339,17 @@ void init_controller(controller_parameter_t *const ctrl_par) {
     LOG(1, "Motor controller initialization done!\n")
 }
 
+bool controller_timer_callback(__unused struct repeating_timer *t) {
+    controller_flag = true;
+    return true;
+}
+
+bool speed_helper_timer_callback(__unused struct repeating_timer *t) {
+    speed_helper_flag = true;
+    return true;
+}
+
+
 void core1_entry() {
     LOG(1, "core1 Initialization...\n");
 
@@ -349,10 +358,13 @@ void core1_entry() {
         return;
     }
 
+
     controller_parameter_t control_parameter;
     controller_parameter_t *ctrl_par = &control_parameter;
     init_controller(ctrl_par);
 
+    
+/*
     alarm_pool_add_repeating_timer_ms(alarm_pool_create(0, 1),
                                       CV_ARRAY_FLASH[48],
                                       controller_general,
@@ -366,10 +378,28 @@ void core1_entry() {
                                       ctrl_par,
                                       &speed_helper_timer);
 
+*/
+
+
+    struct repeating_timer timer_controller, timer_speed_helper;
+    add_repeating_timer_ms(-CV_ARRAY_FLASH[48], controller_timer_callback, NULL, &timer_controller);
+    add_repeating_timer_ms(-CV_ARRAY_FLASH[174], speed_helper_timer_callback, NULL, &timer_speed_helper);
+
     LOG(1, "core1 initialization done!\n");
 
     // Endless loop
     while (true) {
-        tight_loop_contents();
+        if (controller_flag) {
+            controller_general(ctrl_par);
+            controller_flag = false;
+        }
+        else if (speed_helper_flag) {
+            speed_helper(ctrl_par);
+            speed_helper_flag = false;
+        }
+        else {
+            watchdog_update();
+        }
+        
     }
 }

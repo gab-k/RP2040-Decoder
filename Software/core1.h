@@ -93,14 +93,14 @@ typedef struct controller_parameter_t{
  * @param measurement_delay_us The delay in microseconds between the switch-off of the motor PWM and the measurement.
  * @param l_side_arr_cutoff The number of lowest ADC values to discard.
  * @param r_side_arr_cutoff The number of highest ADC values to discard.
- * @param direction The direction of the motor. //TODO: Introduce Motor direction typedef
+ * @param direction The direction of the motor.
  * @return The average of the middle ADC values after discarding the specified number of lowest and highest values.
  */
 float measure(uint8_t total_iterations,
               uint8_t measurement_delay_us,
               uint8_t l_side_arr_cutoff,
               uint8_t r_side_arr_cutoff,
-              bool direction);
+              direction_t direction);
 
 
 /**
@@ -116,10 +116,9 @@ uint8_t get_speed_step_table_index_of_speed_step(uint8_t speed_step);
  * 
  * x is CV_175
  *
- * @param t Pointer to the repeating timer structure.
- * @return true to schedule the repeating timer again.
+ * @param ctrl_par Pointer to the controller parameter structure.
  */
-bool speed_helper(struct repeating_timer *t);
+void speed_helper(controller_parameter_t * ctrl_par);
 
 /**
  * @brief Function to adjust the PWM level/duty cycle.
@@ -170,10 +169,9 @@ void controller_pid_mode(controller_parameter_t *const ctrl_par);
 /**
  * @brief General controller function called every x milliseconds.
  *
- * @param t Pointer to the repeating timer structure.
- * @return true to schedule the repeating timer again.
+ * @param ctrl_par Pointer to the controller parameter structure.
  */
-bool controller_general(struct repeating_timer * t);
+void controller_general(controller_parameter_t * ctrl_par);
 
 /**
  * @brief Initialize the all controller variables, measurement parameters, and speed table.

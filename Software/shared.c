@@ -6,9 +6,10 @@
 
 #include "shared.h"
 
+// TODO: Implement enum typedef for speed steps, also getter and setter functions checking validity of speed step values.
 uint8_t speed_step_target = 0;
 uint8_t speed_step_target_prev = 0;
-uint32_t error_state = 0;
+static error_t error_state = 0;
 
 // Functions in shared.c are accessed by both cores
 
@@ -36,13 +37,27 @@ direction_t get_direction_of_speed_step(uint8_t speed_step){
 
 void set_error(error_t err){
     error_state |= err;
-    gpio_put(RP2040_DECODER_DEFAULT_LED_PIN, true);
+    #ifdef RP2040_DECODER_DEFAULT_LED_PIN
+        gpio_put(RP2040_DECODER_DEFAULT_LED_PIN, true);
+    #endif
 }
 
 void clear_error(error_t err){
-    error_state & (~err);
+    error_state &= (~err);
+    if (error_state == 0){
+        #ifdef RP2040_DECODER_DEFAULT_LED_PIN
+            gpio_put(RP2040_DECODER_DEFAULT_LED_PIN, false);
+        #endif
+    }
 }
 
-uint32_t get_error_state(){
+void clear_all_errors(){
+    error_state = 0;
+    #ifdef RP2040_DECODER_DEFAULT_LED_PIN
+        gpio_put(RP2040_DECODER_DEFAULT_LED_PIN, false);
+    #endif
+}
+
+error_t get_error_state(){
     return error_state;
 }
