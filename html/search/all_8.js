@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['rp2040_20decoder_0',['RP2040-Decoder',['../md_README.html',1,'']]]
+  ['pid_5fparams_0',['pid_params',['../structpid__params.html',1,'']]],
+  ['program_5fmode_1',['program_mode',['../core0_8h.html#a5036684f11eb837835390659f9e0c4a9',1,'core0.h']]]
 ];
