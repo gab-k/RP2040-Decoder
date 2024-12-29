@@ -3,6 +3,10 @@ RP2040-Decoder
 
 This Project is a DIY DCC Decoder for model railroad locomotives which aims to be cost effective.
 
+IMPORTANT NOTE 
+---------------
+If you are planning to order a few boards, have a look at the dev branch, there is a new revision (1.0) in the works which has not yet been fully tested. The new revision has a number of improvements and is much easier to use. So if you are planning to order boards you might want to be patient or alternatively, if you are adventurous, just order the revision in the dev branch. In addition, the software and documentation in the dev branch brings a number of improvements, so it may also be of interest to owners of the 0.3 revision.
+
 Features
 --------
 
