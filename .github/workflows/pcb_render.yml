@@ -19,7 +19,7 @@ jobs:
       - name: Render PCB image
         uses: linalinn/kicad-render@main
         with:
-          pcb_file: KiCad/RP2040-Decoder.kicad_pcb
+          pcb_file: KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
           output_path: ${{ github.workspace }}/images
           animation: gif
 
