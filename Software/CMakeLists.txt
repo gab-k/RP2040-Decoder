@@ -23,12 +23,11 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
-
 set(PICO_BOARD_HEADER_DIRS ${CMAKE_SOURCE_DIR}) 
 # Board type selection:
 #
-# Please select RP2040-Decoder-board.h for Rev >= 1.0 or RP2040-Decoder-board-legacy.h for Rev < 1.0
-set(PICO_BOARD RP2040-Decoder-board.h CACHE STRING "Board type")
+# Please select RP2040-Decoder-board-Rev-1_0 for Rev >= 1.0 or RP2040-Decoder-board-Rev-0_3 for Rev <= 0.3
+set(PICO_BOARD RP2040-Decoder-board-Rev-1_0)
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -38,12 +37,13 @@ project(RP2040-Decoder C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+# Manual compiler options, these generally override configuration set by CMAKE_BUILD_TYPE
 add_compile_options(-Wall
-                    -Ofast
-                    -g3
-                    -Wno-format          # int != int32 _t as far as the compiler is concerned because gcc has int32_t as long int
-                    -Wno-unused-function # we have some for the docs that aren't called
-                    -Wno-maybe-uninitialized)
+                    # -O0                   # Overrides optimization flags specified by CMAKE_BUILD_TYPE
+                    # -g3                   # Overrides debug flags specified by CMAKE_BUILD_TYPE
+                    -Wno-format             # unsigned int = uint32_t using gcc so don't warn about format
+                    -Wno-unused-function    # Some defined functions used for debugging are never called or not used when logging is disabled
+                    )
 
 # Add executable
 add_executable( RP2040-Decoder 
@@ -55,8 +55,14 @@ add_executable( RP2040-Decoder
                 shared.h )
 
 pico_set_program_name(RP2040-Decoder "RP2040-Decoder")
-pico_set_program_version(RP2040-Decoder "1.0")
 
+# Build type
+message("CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+message("PICO_DEOPTIMIZED_DEBUG: ${PICO_DEOPTIMIZED_DEBUG}")
+if(NOT CMAKE_BUILD_TYPE)
+    message(WARNING "CMAKE_BUILD_TYPE is not set. Defaulting to 'Release'")
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+endif()
 
 # Logging configuration:
 # 
@@ -119,61 +125,16 @@ pico_add_extra_outputs(RP2040-Decoder)
 # Program size check
 #
 # Check for program size exceeding limits as CVs are stored at the end of flash, the program could theoretically overwrite this.
-# In practice the program size is usually only about 100KiB.
+# In practice the program size is usually does not exceed about 100KiB, the actual size is printed by CMake from arm-none-eabi-size.
 # Extract the directory of the C compiler and construct the path to the 'arm-none-eabi-size' tool
 get_filename_component(C_COMPILER_DIR ${CMAKE_C_COMPILER} DIRECTORY)
 set(SIZE_TOOL ${C_COMPILER_DIR}/arm-none-eabi-size)
-
-# Add custom command to check the flash size after build
+set(BOARD_HEADER "${CMAKE_SOURCE_DIR}/${PICO_BOARD}.h")
+set(ELF_FILE "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.elf")
 add_custom_command(TARGET RP2040-Decoder POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E echo "Checking flash size for $<TARGET_FILE:RP2040-Decoder>"
-    COMMAND ${SIZE_TOOL} $<TARGET_FILE:RP2040-Decoder> > size_output.txt
+    COMMAND ${CMAKE_COMMAND} 
+    -D BOARD_HEADER=${BOARD_HEADER} 
+    -D SIZE_TOOL=${SIZE_TOOL} 
+    -D ELF_FILE=${ELF_FILE}
+    -P ${CMAKE_SOURCE_DIR}/post_build.cmake
 )
-
-# Read the size output file
-file(READ "${CMAKE_BINARY_DIR}/size_output.txt" SIZE_OUTPUT)
-
-# Print the content of SIZE_OUTPUT
-message(STATUS "arm-none-eabi-size output:\n${SIZE_OUTPUT}")
-
-# Use regex to match all numbers
-string(REGEX MATCHALL "[0-9]+" MATCHED_VALUES "${SIZE_OUTPUT}")
-
-# Get third element from list of matches, this corresponds with dec table value in "size_output.txt"
-list(GET MATCHED_VALUES 3 PROGRAM_SIZE_DEC)
-
-# Check for success of program size extraction from "size_output.txt"
-if(PROGRAM_SIZE_DEC)
-    message(STATUS "PROGRAM_SIZE_DEC: ${PROGRAM_SIZE_DEC} bytes")
-else()
-    message(FATAL_ERROR "Could not extract program size from size_output.txt")
-endif()
-
-
-# Path to the header file that defines PICO_FLASH_SIZE_BYTES 
-set(FLASH_CONFIG_HEADER ${CMAKE_SOURCE_DIR}/${PICO_BOARD}.h)
-# Read the contents of the header file into a variable
-file(READ ${FLASH_CONFIG_HEADER} HEADER_CONTENT)
-
-# Extract the value of PICO_FLASH_SIZE_BYTES using a regular expression
-string(REGEX MATCHALL "#define PICO_FLASH_SIZE_BYTES [0-9]+" MACRO_MATCH "${HEADER_CONTENT}")
-string(REGEX MATCHALL "[0-9]+" PICO_FLASH_SIZE_BYTES "${MACRO_MATCH}")
-
-
-# Check for success of PICO_FLASH_SIZE_BYTES extraction from board header file
-if(PICO_FLASH_SIZE_BYTES)
-    message(STATUS "PICO_FLASH_SIZE_BYTES: ${PICO_FLASH_SIZE_BYTES} bytes")
-else()
-    message(FATAL_ERROR "Failed to find PICO_FLASH_SIZE_BYTES in the header file.")
-endif()
-
-# Sector size is always 4096 bytes
-set(FLASH_SECTOR_SIZE 4096)
-message(STATUS "FLASH_SECTOR_SIZE: ${FLASH_SECTOR_SIZE} bytes")
-# Subtract flash sector size from flash size
-math(EXPR FLASH_TARGET_OFFSET "${PICO_FLASH_SIZE_BYTES} - ${FLASH_SECTOR_SIZE}")
-message(STATUS "FLASH_TARGET_OFFSET: ${FLASH_TARGET_OFFSET} bytes")
-
-if(PROGRAM_SIZE_DEC GREATER FLASH_TARGET_OFFSET)
-    message(FATAL_ERROR "Program size exceeds allowed flash size. Flash sector containing the CVs would be overwritten! Please reduce the size of the program.")
-endif()
