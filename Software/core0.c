@@ -149,7 +149,7 @@ static uint16_t two_std_dev(const uint16_t arr[], const uint32_t length) {
 
 static void adc_offset_adjustment(uint32_t const n) {
     // Measures constant adc offset and programs the offset into flash
-    LOG(1, "ADC offset adjustment...\n");
+    LOG(1, "ADC offset adjustment with %u iterations...\n", n);
     
     uint16_t offsets_fwd[n];
     uint16_t offsets_rev[n];
@@ -537,7 +537,8 @@ static bool reset_message_check(size_t const number_of_bytes, const uint8_t *con
         speed_step_target_prev = speed_step_target;
         // Set speed step target to emergency stop speed step ( 1 for Reverse direction / 129 for forward direction)
         // for details see get_direction_of_speed_step() comment in "shared.h"
-        speed_step_target = 1 + 128*dir;
+        if(dir == DIRECTION_FORWARD) speed_step_target = SPEED_STEP_FORWARD_EMERGENCY_STOP;
+        else if(dir == DIRECTION_REVERSE) speed_step_target = SPEED_STEP_REVERSE_EMERGENCY_STOP;
         update_active_functions(0,0,0);  // Disables all functions
         return true;
     }
@@ -665,11 +666,12 @@ static void cv_setup_check() {
     }
 
     // Check for existing ADC offset setup
-    if (CV_ARRAY_FLASH[171] == 0xFF) {
+    if (true || CV_ARRAY_FLASH[171] == 0xFF) {
         LOG(1, "Detected ADC offset factory condidition (CV_172 == %u), running offset adjustment measurement function...\n", CV_ARRAY_FLASH[171]);
         adc_offset_adjustment(ADC_CALIBRATION_ITERATIONS);
     }
-    LOG(1, "CV check done!\n");
+    LOG(1, "CV check done! Setting wait_for_cv_setup_check flag to false!\n");
+    cv_setup_check_done = true;
 }
 
 static void init_motor_pwm(uint8_t const gpio) {
@@ -753,10 +755,6 @@ int main() {
 
     LOG(1, "core0 Initialization...\n");
     
-    // Enable the watchdog, requiring the watchdog to be updated every WATCHDOG_TIMER_IN_MS milliseconds or the chip will reboot
-    // second arg is pause on debug which means the watchdog will pause when stepping through code
-    watchdog_enable(WATCHDOG_TIMER_IN_MS, 1);
-
     // Check for reboot by watchdog and set error when true
     if (watchdog_caused_reboot()) {
         LOG(1, "Reboot by watchdog detected!\n");
@@ -780,7 +778,13 @@ int main() {
 
     // Launch core1
     multicore_launch_core1(core1_entry);
-    // Wait 100ms to give core1 some time to call flash_safe_execute_core_init()
+
+    // Wait for core1 to call flash_safe_execute_core_init() and set the flash_safe_execute_core_init_done flag
+    LOG(1, "Waiting for flash_safe_execute_core_init_done flag...\n");
+    while (!flash_safe_execute_core_init_done) {
+        watchdog_update();
+    }
+
     busy_wait_ms(100);
     
 
@@ -797,6 +801,11 @@ int main() {
     // Enable IRQ
     gpio_set_irq_enabled(DCC_INPUT_PIN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
     irq_set_enabled(IO_IRQ_BANK0, true);
+    
+    // Enable the watchdog, requiring the watchdog to be updated every WATCHDOG_TIMER_IN_MS milliseconds or the chip will reboot
+    // second arg is pause on debug which means the watchdog will pause when stepping through code
+    // Watchdog is updated by core0 and core1 whenever there is time and hopefully soon enough to prevent a reboot.
+    watchdog_enable(WATCHDOG_TIMER_IN_MS, 1);
     
     // Endless loop
     while (true) {

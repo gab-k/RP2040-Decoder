@@ -82,7 +82,7 @@ void speed_helper(controller_parameter_t * ctrl_par) {
     const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
                                    get_direction_of_speed_step(speed_step_target_prev);
 
-    if (speed_step_target == 129 || speed_step_target == 1) {
+    if (speed_step_target == SPEED_STEP_FORWARD_EMERGENCY_STOP || speed_step_target == SPEED_STEP_REVERSE_EMERGENCY_STOP) {
         // Emergency Stop
         speed_table_index = 0;
         speed_helper_counter = 0;
@@ -353,34 +353,22 @@ bool speed_helper_timer_callback(__unused struct repeating_timer *t) {
 void core1_entry() {
     LOG(1, "core1 Initialization...\n");
 
-    if (flash_safe_execute_core_init() != true){
+    flash_safe_execute_core_init_done = flash_safe_execute_core_init();
+    if (flash_safe_execute_core_init_done != true){
         set_error(FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE);
         return;
     }
 
+    // Wait for core0 to finish CV check (see cv_setup_check)
+    LOG(1, "Waiting for CV check flag...\n");
+    while(!cv_setup_check_done){
+        watchdog_update(); // Update watchdog while waiting on core0
+    }
 
     controller_parameter_t control_parameter;
     controller_parameter_t *ctrl_par = &control_parameter;
     init_controller(ctrl_par);
-
     
-/*
-    alarm_pool_add_repeating_timer_ms(alarm_pool_create(0, 1),
-                                      CV_ARRAY_FLASH[48],
-                                      controller_general,
-                                      ctrl_par,
-                                      &pid_control_timer);
-    // Set TIMER_IRQ_0 to highest priority of 0x00
-    irq_set_priority(TIMER_IRQ_0, 0x00);
-    alarm_pool_add_repeating_timer_ms(alarm_pool_create(1, 1),
-                                      CV_ARRAY_FLASH[174],
-                                      speed_helper,
-                                      ctrl_par,
-                                      &speed_helper_timer);
-
-*/
-
-
     struct repeating_timer timer_controller, timer_speed_helper;
     add_repeating_timer_ms(-CV_ARRAY_FLASH[48], controller_timer_callback, NULL, &timer_controller);
     add_repeating_timer_ms(-CV_ARRAY_FLASH[174], speed_helper_timer_callback, NULL, &timer_speed_helper);

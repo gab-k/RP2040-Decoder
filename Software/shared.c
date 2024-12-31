@@ -7,8 +7,10 @@
 #include "shared.h"
 
 // TODO: Implement enum typedef for speed steps, also getter and setter functions checking validity of speed step values.
-uint8_t speed_step_target = 0;
-uint8_t speed_step_target_prev = 0;
+speed_step_t speed_step_target = SPEED_STEP_REVERSE_STOP;
+speed_step_t speed_step_target_prev = SPEED_STEP_REVERSE_STOP;
+bool cv_setup_check_done = false;
+bool flash_safe_execute_core_init_done = false;
 static error_t error_state = 0;
 
 // Functions in shared.c are accessed by both cores
@@ -30,8 +32,9 @@ uint16_t get_16bit_CV (uint16_t CV_start_index){
     return (byte_0) + (byte_1<<8);
 }
 
-direction_t get_direction_of_speed_step(uint8_t speed_step){
-    // Shift by 7 Bytes to move bit7 into bit0 position and return
+direction_t get_direction_of_speed_step(speed_step_t speed_step){
+    // Bit 7 is the direction bit.
+    // Shift by 7 bits to move bit7 into bit0 position and return direction.
     return speed_step >> 7;
 }
 

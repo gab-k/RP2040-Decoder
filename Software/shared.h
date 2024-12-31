@@ -309,8 +309,10 @@ typedef enum {
 extern repeating_timer_t pid_control_timer;
 extern repeating_timer_t speed_helper_timer;
 extern const uint8_t *CV_ARRAY_FLASH;
-extern uint8_t speed_step_target;
-extern uint8_t speed_step_target_prev;
+extern speed_step_t speed_step_target;
+extern speed_step_t speed_step_target_prev;
+extern bool cv_setup_check_done;
+extern bool flash_safe_execute_core_init_done;
 
 
 void core1_entry();
@@ -347,7 +349,7 @@ uint16_t get_16bit_CV (uint16_t CV_start_index);
  * @param speed_step The speed step byte.
  * @return `DIRECTION_FORWARD` for forward direction, `DIRECTION_REVERSE` for reverse direction.
  */
-direction_t get_direction_of_speed_step(uint8_t speed_step);
+direction_t get_direction_of_speed_step(speed_step_t speed_step);
 
 void set_error(error_t err);
 
