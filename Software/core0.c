@@ -666,7 +666,7 @@ static void cv_setup_check() {
     }
 
     // Check for existing ADC offset setup
-    if (true || CV_ARRAY_FLASH[171] == 0xFF) {
+    if (CV_ARRAY_FLASH[171] == 0xFF) {
         LOG(1, "Detected ADC offset factory condidition (CV_172 == %u), running offset adjustment measurement function...\n", CV_ARRAY_FLASH[171]);
         adc_offset_adjustment(ADC_CALIBRATION_ITERATIONS);
     }
