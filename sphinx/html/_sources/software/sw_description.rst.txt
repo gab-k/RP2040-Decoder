@@ -38,29 +38,55 @@ Software files high level overview:
 - **RP2040-Decoder-board.h or RP2040-Decoder-board-legacy.h**
    
    - Flash Size
-   - Pin specification
+   - Pin definitions
 
       - LED pin when available
-      - UART_TX/UART_RX when used
+      - UART_TX/UART_RX pins when used for logging
       - DCC input pin
       - Motor Control PWM pins
       - ADC pins
 
+- **post_build.cmake**
    
+   - Post build script for checking whether the size of the binary is within the limits of the flash size minus one sector (used for storing CVs).
 
+- **pico_sdk_import.cmake**
+   
+   - Helps to locate and import the Pico SDK
 
-Conveniently, The Raspberry Pi Foundation provides a well-documented `SDK <https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf>`_ for the RP2040. The SDK provides abstraction to a higher level, and therefore there is no need to access any registers directly. Everything is written using the SDK, so hopefully, the code is easier to understand.
+The `Raspberry Pi Pico SDK <https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf>`_ is a dependency of the decoder software. The SDK provides abstraction to a higher level, so hopefully, in combination with the comments included in header and source files, the code is easy enough to understand.
 
-Motor control
-------------------------------
+Control Loop & Digital Controller
+------------------------------------
 
-.. figure:: ../../../svg/sw/Block_Diagram_Control.svg
-   :alt: Block Diagram
+.. figure:: ../../../svg/sw/Block_Diagram_Control_Loop.svg
+   :alt: Block Diagram - Control Loop
    :align: center
 
-   Motor control - Block diagram
+   Control Loop - Block diagram
 
-The above block diagram in essence describes the functionality of the control loop. While the central component is the PID controller, there is an additional block called `Feed-forward <https://en.wikipedia.org/wiki/Feed_forward_(control)>`_ that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the ``speed_helper()`` function, which delays changing the setpoint according to the configured deceleration/acceleration rates.
+The block diagram above shows the complete control loop. The actual digital controller block is explained below.
+
+The Speed Helper block effectively sets the setpoint of the controller according to the CV configured acceleration and deceleration rates and actual target speedstep.
+
+For feedback the back EMF voltage V_EMF is measured via voltage divider and ADC. V_EMF is proportional to the motor speed in RPM.
+
+
+TODO: rewrite this: While the central component is the PID controller, there is an additional block called `Feed-forward <https://en.wikipedia.org/wiki/Feed_forward_(control)>`_ that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the ``speed_helper()`` function, which delays changing the setpoint according to the configured deceleration/acceleration rates.
+
+.. figure:: ../../../svg/sw/Block_Diagram_Digital_Controller.svg
+   :alt: Block Diagram - Digital Controller
+   :align: center
+
+   Digital Controller - Block diagram
+
+The controller is divided into two parts, depending on whether the motor is stationary or in motion. The startup controller handles overcoming friction of the motor, and finding base PWM level for overcoming friction. The base PWM level is saved and added to the output of the PID controller which handles motor control when the motor is in motion.
+
+
+Startup Controller
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Used on startup, meaning when the motor is not moving. The startup controller sets a PWM duty cycle level of :math:`\frac{2}{3} \cdot \text{base_pwm}` and then ramps up the duty cycle/PWM level until the motor starts moving. This is done in order to overcome the friction of the drive train and motor. :math:`\text{base_pwm}` is the average value of the 16 previous startup PWM levels. When no previous startup PWM levels are saved the startup controller begins ramping up from 0. The actual value at which the motor started moving is used as a reference for the :ref:`feed forward <feed_forward>` block. 
+
 
 PID Controller
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,7 +125,9 @@ This results in the following difference equations which are then implemented in
    \end{align}
 
 
-Also note that instead of using the derivative of error, the derivative on measurement is used. This is done to prevent a high derivative part in the event of a large change in setpoint.
+.. note::
+   - Instead of using the derivative of error, the derivative on measurement is used. This is done to prevent a high derivative part in the event of a large change in setpoint.
+   - The previously explained base PWM is added to the actual output as well, meaning the formula above only shows the actual PID control part without feed forward. 
 
 
 Gain Scheduling
@@ -112,6 +140,9 @@ Gain Scheduling
    Gain Scheduling
 
 Another aspect to consider is the implementation of `gain scheduling <https://en.wikipedia.org/wiki/Gain_scheduling>`_. K\ :sub:`P` is a function of the current setpoint. Often it is favorable to have a higher proportional gain K\ :sub:`P` for slow speeds, achieving better control results. The illustration above shows the default setting for K\ :sub:`P`. CV_54 & CV_55 are used to set K\ :sub:`P` @ x\ :sub:`0`, CV_56 & CV_57 for K\ :sub:`P` @ x\ :sub:`1`, and CV_58 & CV_59 for K\ :sub:`P` @ x\ :sub:`2`. Additionally, CV_60 is used to shift x\ :sub:`1` from the leftmost point (0% = 0/255) to the rightmost point (100% = 255/255).
+
+
+.. _feed_forward:
 
 Feed-forward
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

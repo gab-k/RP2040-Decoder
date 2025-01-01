@@ -9,8 +9,6 @@
   <title>RP2040-Decoder Documentation &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
-      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -19,8 +17,6 @@
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-      <script src="_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
-      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -52,7 +48,6 @@
 <li class="toctree-l1"><a class="reference internal" href="hardware/index.html">Hardware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software/index.html">Software</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other/index.html">Other</a></li>
-<li class="toctree-l1"><a class="reference internal" href="other/troubleshooting.html">Troubleshooting</a></li>
 </ul>
 
         </div>
@@ -88,27 +83,156 @@
 <li class="toctree-l2"><a class="reference internal" href="other/getting_started.html#where-to-get-the-board">1. Where to get the board?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="other/getting_started.html#production-files">2. Production files?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="other/getting_started.html#building-the-software">3. Building the software</a></li>
-<li class="toctree-l2"><a class="reference internal" href="other/getting_started.html#flashing-the-software">4. Flashing the software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="other/getting_started.html#flashing-the-software">4. Flashing the software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="other/getting_started.html#flashing-the-software-via-uf2-file">4.1. Flashing the software via .uf2 file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="other/getting_started.html#flashing-the-software-via-swd">4.2. Flashing the software via SWD</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="other/getting_started.html#wiring">5. Wiring</a></li>
 <li class="toctree-l2"><a class="reference internal" href="other/getting_started.html#resolving-issues">6. Resolving issues</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="hardware/index.html">Hardware</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="hardware/index.html#revision-1-0">Revision 1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="hardware/index.html#revision-0-3">Revision 0.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware/index.html#revision-1-0">Revision 1.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#electrical-characteristics">Electrical Characteristics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#input-stage">Input Stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#motor-driver">Motor Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#auxiliary-outputs">Auxiliary Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#gpio">GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#microcontroller">Microcontroller</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#complete-schematic">Complete Schematic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#bom-alternative-parts">BOM &amp; Alternative Parts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_1_0/hw_description.html#wiring-the-decoder">Wiring the Decoder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware/index.html#revision-0-3">Revision 0.3</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#electrical-characteristics">Electrical Characteristics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#input-stage">Input Stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#motor-driver">Motor Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#auxiliary-outputs">Auxiliary Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#gpio">GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#microcontroller">Microcontroller</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#complete-schematic">Complete Schematic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#bom-alternative-parts">BOM &amp; Alternative Parts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware/rev_0_3/hw_description.html#wiring-the-decoder">Wiring the Decoder</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="software/index.html">Software</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="software/sw_description.html">Software Description</a></li>
-<li class="toctree-l2"><a class="reference internal" href="software/header_files.html">Header files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="software/sw_description.html">Software Description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="software/sw_description.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/sw_description.html#control-loop-digital-controller">Control Loop &amp; Digital Controller</a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/sw_description.html#dcc-signal-decoding">DCC signal decoding</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="other/index.html">Other</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="other/CV_list.html">Configuration Variables (CV)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="other/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="software/header_files.html">core0.h</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv412dcc_packet_t"><code class="docutils literal notranslate"><span class="pre">dcc_packet_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417dcc_ring_buffer_t"><code class="docutils literal notranslate"><span class="pre">dcc_ring_buffer_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv425increment_ring_buffer_idxP6size_t7uint8_t"><code class="docutils literal notranslate"><span class="pre">increment_ring_buffer_idx()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv422call_flash_range_erasePv"><code class="docutils literal notranslate"><span class="pre">call_flash_range_erase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv424call_flash_range_programPv"><code class="docutils literal notranslate"><span class="pre">call_flash_range_program()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417call_flash_do_cmdPv"><code class="docutils literal notranslate"><span class="pre">call_flash_do_cmd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv412absolute_vali"><code class="docutils literal notranslate"><span class="pre">absolute_val()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv411two_std_devA_K8uint16_t8uint32_t"><code class="docutils literal notranslate"><span class="pre">two_std_dev()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv421adc_offset_adjustment8uint32_t"><code class="docutils literal notranslate"><span class="pre">adc_offset_adjustment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv411acknowledgev"><code class="docutils literal notranslate"><span class="pre">acknowledge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv413verify_cv_bit8uint16_tb7uint8_t"><code class="docutils literal notranslate"><span class="pre">verify_cv_bit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv414verify_cv_byte8uint16_t7uint8_t"><code class="docutils literal notranslate"><span class="pre">verify_cv_byte()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv413write_cv_byte8uint16_t7uint8_t"><code class="docutils literal notranslate"><span class="pre">write_cv_byte()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv425reset_cv_array_to_defaultv"><code class="docutils literal notranslate"><span class="pre">reset_cv_array_to_default()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv412program_mode6size_tPCK7uint8_t"><code class="docutils literal notranslate"><span class="pre">program_mode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv411set_outputs8uint32_t"><code class="docutils literal notranslate"><span class="pre">set_outputs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv423update_active_functions8uint32_t7uint8_tb"><code class="docutils literal notranslate"><span class="pre">update_active_functions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv415error_detection6size_tPK7uint8_t"><code class="docutils literal notranslate"><span class="pre">error_detection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv415is_long_address6size_tA_K7uint8_t"><code class="docutils literal notranslate"><span class="pre">is_long_address()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv418address_evaluation6size_tA_K7uint8_t"><code class="docutils literal notranslate"><span class="pre">address_evaluation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv422instruction_evaluation6size_tA_K7uint8_t"><code class="docutils literal notranslate"><span class="pre">instruction_evaluation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv419reset_message_check6size_tPCK7uint8_t"><code class="docutils literal notranslate"><span class="pre">reset_message_check()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417detect_dcc_packetv"><code class="docutils literal notranslate"><span class="pre">detect_dcc_packet()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv423bits_to_dcc_packet_dataP12dcc_packet_t"><code class="docutils literal notranslate"><span class="pre">bits_to_dcc_packet_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv415evaluate_packetv"><code class="docutils literal notranslate"><span class="pre">evaluate_packet()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417track_signal_risev"><code class="docutils literal notranslate"><span class="pre">track_signal_rise()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417track_signal_fallv"><code class="docutils literal notranslate"><span class="pre">track_signal_fall()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv412init_outputsv"><code class="docutils literal notranslate"><span class="pre">init_outputs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv414cv_setup_checkv"><code class="docutils literal notranslate"><span class="pre">cv_setup_check()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv414init_motor_pwm7uint8_t"><code class="docutils literal notranslate"><span class="pre">init_motor_pwm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv48init_adcv"><code class="docutils literal notranslate"><span class="pre">init_adc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv411clr_bit_arr"><code class="docutils literal notranslate"><span class="pre">clr_bit_arr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N12dcc_packet_t4dataE"><code class="docutils literal notranslate"><span class="pre">dcc_packet_t::data</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N12dcc_packet_t6lengthE"><code class="docutils literal notranslate"><span class="pre">dcc_packet_t::length</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N17dcc_ring_buffer_t7packetsE"><code class="docutils literal notranslate"><span class="pre">dcc_ring_buffer_t::packets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N17dcc_ring_buffer_t6wr_idxE"><code class="docutils literal notranslate"><span class="pre">dcc_ring_buffer_t::wr_idx</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N17dcc_ring_buffer_t6rd_idxE"><code class="docutils literal notranslate"><span class="pre">dcc_ring_buffer_t::rd_idx</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="other/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="software/header_files.html#core1-h">core1.h</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv420startup_parameters_t"><code class="docutils literal notranslate"><span class="pre">startup_parameters_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv415pid_parameter_t"><code class="docutils literal notranslate"><span class="pre">pid_parameter_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv422controller_parameter_t"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417controller_mode_t"><code class="docutils literal notranslate"><span class="pre">controller_mode_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv47measure7uint8_t7uint8_t7uint8_t7uint8_t11direction_t"><code class="docutils literal notranslate"><span class="pre">measure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv440get_speed_step_table_index_of_speed_step7uint8_t"><code class="docutils literal notranslate"><span class="pre">get_speed_step_table_index_of_speed_step()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv412speed_helperP22controller_parameter_t"><code class="docutils literal notranslate"><span class="pre">speed_helper()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv416adjust_pwm_level8uint16_t"><code class="docutils literal notranslate"><span class="pre">adjust_pwm_level()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv46get_kpPK22controller_parameter_t"><code class="docutils literal notranslate"><span class="pre">get_kp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417get_initial_levelP22controller_parameter_t"><code class="docutils literal notranslate"><span class="pre">get_initial_level()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv423controller_startup_modeP22controller_parameter_t"><code class="docutils literal notranslate"><span class="pre">controller_startup_mode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv419controller_pid_modePC22controller_parameter_t"><code class="docutils literal notranslate"><span class="pre">controller_pid_mode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv418controller_generalP22controller_parameter_t"><code class="docutils literal notranslate"><span class="pre">controller_general()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv415init_controllerP22controller_parameter_t"><code class="docutils literal notranslate"><span class="pre">init_controller()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N20startup_parameters_t5levelE"><code class="docutils literal notranslate"><span class="pre">startup_parameters_t::level</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N20startup_parameters_t12base_pwm_arrE"><code class="docutils literal notranslate"><span class="pre">startup_parameters_t::base_pwm_arr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N20startup_parameters_t14base_pwm_arr_iE"><code class="docutils literal notranslate"><span class="pre">startup_parameters_t::base_pwm_arr_i</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv416pid_parameters_t"><code class="docutils literal notranslate"><span class="pre">pid_parameters_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t4modeE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::mode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t8feed_fwdE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::feed_fwd</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t8setpointE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::setpoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t11speed_tableE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::speed_table</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t7startupE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::startup</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t3pidE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::pid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t11measurementE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::measurement</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t16measurement_prevE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::measurement_prev</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t21measurement_correctedE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::measurement_corrected</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t10adc_offsetE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::adc_offset</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t15msr_delay_in_usE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::msr_delay_in_us</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t20msr_total_iterationsE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::msr_total_iterations</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t17l_side_arr_cutoffE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::l_side_arr_cutoff</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv4N22controller_parameter_t17r_side_arr_cutoffE"><code class="docutils literal notranslate"><span class="pre">controller_parameter_t::r_side_arr_cutoff</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="software/header_files.html#shared-h">shared.h</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv47error_t"><code class="docutils literal notranslate"><span class="pre">error_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv411direction_t"><code class="docutils literal notranslate"><span class="pre">direction_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv412speed_step_t"><code class="docutils literal notranslate"><span class="pre">speed_step_t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv411core1_entryv"><code class="docutils literal notranslate"><span class="pre">core1_entry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv412get_32bit_CV8uint16_t"><code class="docutils literal notranslate"><span class="pre">get_32bit_CV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv412get_16bit_CV8uint16_t"><code class="docutils literal notranslate"><span class="pre">get_16bit_CV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv427get_direction_of_speed_step12speed_step_t"><code class="docutils literal notranslate"><span class="pre">get_direction_of_speed_step()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv49set_error7error_t"><code class="docutils literal notranslate"><span class="pre">set_error()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv411clear_error7error_t"><code class="docutils literal notranslate"><span class="pre">clear_error()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv416clear_all_errorsv"><code class="docutils literal notranslate"><span class="pre">clear_all_errors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv415get_error_statev"><code class="docutils literal notranslate"><span class="pre">get_error_state()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417pid_control_timer"><code class="docutils literal notranslate"><span class="pre">pid_control_timer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv418speed_helper_timer"><code class="docutils literal notranslate"><span class="pre">speed_helper_timer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv414CV_ARRAY_FLASH"><code class="docutils literal notranslate"><span class="pre">CV_ARRAY_FLASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv417speed_step_target"><code class="docutils literal notranslate"><span class="pre">speed_step_target</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv422speed_step_target_prev"><code class="docutils literal notranslate"><span class="pre">speed_step_target_prev</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv419cv_setup_check_done"><code class="docutils literal notranslate"><span class="pre">cv_setup_check_done</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv433flash_safe_execute_core_init_done"><code class="docutils literal notranslate"><span class="pre">flash_safe_execute_core_init_done</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="software/header_files.html#cv-h">CV.h</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="software/header_files.html#_CPPv416CV_ARRAY_DEFAULT"><code class="docutils literal notranslate"><span class="pre">CV_ARRAY_DEFAULT</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="other/index.html">Other</a><ul class="simple">
+</ul>
+</li>
 </ul>
 </div>
 </section>

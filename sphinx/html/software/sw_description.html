@@ -9,8 +9,6 @@
   <title>Software Description &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -19,12 +17,10 @@
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
-      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Header files" href="header_files.html" />
+    <link rel="next" title="core0.h" href="header_files.html" />
     <link rel="prev" title="Software" href="index.html" /> 
 </head>
 
@@ -54,7 +50,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Software</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Software Description</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#motor-control">Motor control</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#control-loop-digital-controller">Control Loop &amp; Digital Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#startup-controller">Startup Controller</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pid-controller">PID Controller</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#gain-scheduling">Gain Scheduling</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id2">Feed-forward</a></li>
@@ -64,11 +61,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#dcc-signal-decoding">DCC signal decoding</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="header_files.html">Header files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_files.html">core0.h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_files.html#core1-h">core1.h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_files.html#shared-h">shared.h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_files.html#cv-h">CV.h</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../other/troubleshooting.html">Troubleshooting</a></li>
 </ul>
 
         </div>
@@ -140,11 +139,11 @@
 <blockquote>
 <div><ul>
 <li><p>Flash Size</p></li>
-<li><p>Pin specification</p>
+<li><p>Pin definitions</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>LED pin when available</p></li>
-<li><p>UART_TX/UART_RX when used</p></li>
+<li><p>UART_TX/UART_RX pins when used for logging</p></li>
 <li><p>DCC input pin</p></li>
 <li><p>Motor Control PWM pins</p></li>
 <li><p>ADC pins</p></li>
@@ -154,24 +153,52 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p><strong>post_build.cmake</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Post build script for checking whether the size of the binary is within the limits of the flash size minus one sector (used for storing CVs).</p></li>
 </ul>
-<p>Conveniently, The Raspberry Pi Foundation provides a well-documented <a class="reference external" href="https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf">SDK</a> for the RP2040. The SDK provides abstraction to a higher level, and therefore there is no need to access any registers directly. Everything is written using the SDK, so hopefully, the code is easier to understand.</p>
+</div></blockquote>
+</li>
+<li><p><strong>pico_sdk_import.cmake</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Helps to locate and import the Pico SDK</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>The <a class="reference external" href="https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf">Raspberry Pi Pico SDK</a> is a dependency of the decoder software. The SDK provides abstraction to a higher level, so hopefully, in combination with the comments included in header and source files, the code is easy enough to understand.</p>
 </section>
-<section id="motor-control">
-<h2>Motor control<a class="headerlink" href="#motor-control" title="Link to this heading"></a></h2>
-<figure class="align-center" id="id4">
-<img alt="Block Diagram" src="../_images/Block_Diagram_Control.svg" />
+<section id="control-loop-digital-controller">
+<h2>Control Loop &amp; Digital Controller<a class="headerlink" href="#control-loop-digital-controller" title="Link to this heading"></a></h2>
+<figure class="align-center" id="id5">
+<img alt="Block Diagram - Control Loop" src="../_images/Block_Diagram_Control_Loop.svg" />
 <figcaption>
-<p><span class="caption-text">Motor control - Block diagram</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+<p><span class="caption-text">Control Loop - Block diagram</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<p>The above block diagram in essence describes the functionality of the control loop. While the central component is the PID controller, there is an additional block called <a class="reference external" href="https://en.wikipedia.org/wiki/Feed_forward_(control)">Feed-forward</a> that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the <code class="docutils literal notranslate"><span class="pre">speed_helper()</span></code> function, which delays changing the setpoint according to the configured deceleration/acceleration rates.</p>
+<p>The block diagram above shows the complete control loop. The actual digital controller block is explained below.</p>
+<p>The Speed Helper block effectively sets the setpoint of the controller according to the CV configured acceleration and deceleration rates and actual target speedstep.</p>
+<p>For feedback the back EMF voltage V_EMF is measured via voltage divider and ADC. V_EMF is proportional to the motor speed in RPM.</p>
+<p>TODO: rewrite this: While the central component is the PID controller, there is an additional block called <a class="reference external" href="https://en.wikipedia.org/wiki/Feed_forward_(control)">Feed-forward</a> that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the <code class="docutils literal notranslate"><span class="pre">speed_helper()</span></code> function, which delays changing the setpoint according to the configured deceleration/acceleration rates.</p>
+<figure class="align-center" id="id6">
+<img alt="Block Diagram - Digital Controller" src="../../svg/sw/Block_Diagram_Digital_Controller.svg" />
+<figcaption>
+<p><span class="caption-text">Digital Controller - Block diagram</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The controller is divided into two parts, depending on whether the motor is stationary or in motion. The startup controller handles overcoming friction of the motor, and finding base PWM level for overcoming friction. The base PWM level is saved and added to the output of the PID controller which handles motor control when the motor is in motion.</p>
+<section id="startup-controller">
+<h3>Startup Controller<a class="headerlink" href="#startup-controller" title="Link to this heading"></a></h3>
+<p>Used on startup, meaning when the motor is not moving. The startup controller sets a PWM duty cycle level of <span class="math notranslate nohighlight">\(\frac{2}{3} \cdot \text{base_pwm}\)</span> and then ramps up the duty cycle/PWM level until the motor starts moving. This is done in order to overcome the friction of the drive train and motor. <span class="math notranslate nohighlight">\(\text{base_pwm}\)</span> is the average value of the 16 previous startup PWM levels. When no previous startup PWM levels are saved the startup controller begins ramping up from 0. The actual value at which the motor started moving is used as a reference for the <a class="reference internal" href="#id2"><span class="std std-ref">feed forward</span></a> block.</p>
+</section>
 <section id="pid-controller">
 <h3>PID Controller<a class="headerlink" href="#pid-controller" title="Link to this heading"></a></h3>
-<figure class="align-center" id="id5">
+<figure class="align-center" id="id7">
 <img alt="PID Controller figure" src="../_images/Block_Diagram_PID.svg" />
 <figcaption>
-<p><span class="caption-text">PID Controller</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+<p><span class="caption-text">PID Controller</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>The block diagram above shows the PID controller in the s-domain. The derivative part contains an additional digital low-pass filter used to filter out high-frequency noise.</p>
@@ -193,24 +220,30 @@ i_n &amp;= 0.5 \cdot K_I \cdot \left(e_n + e_{n-1}\right) + i_{n-1} \\
 d_n &amp;= \frac{2 K_D \cdot \left(e_n - e_{n-1}\right) + \left(2 \tau - T_s\right) \cdot d_{n-1}}{2 \tau + T_s} \\
 \text{output}_n &amp;= p_n + i_n + d_n
 \end{align}\end{split}\]</div>
-<p>Also note that instead of using the derivative of error, the derivative on measurement is used. This is done to prevent a high derivative part in the event of a large change in setpoint.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Instead of using the derivative of error, the derivative on measurement is used. This is done to prevent a high derivative part in the event of a large change in setpoint.</p></li>
+<li><p>The previously explained base PWM is added to the actual output as well, meaning the formula above only shows the actual PID control part without feed forward.</p></li>
+</ul>
+</div>
 </section>
 <section id="gain-scheduling">
 <h3>Gain Scheduling<a class="headerlink" href="#gain-scheduling" title="Link to this heading"></a></h3>
-<figure class="align-center" id="id6">
+<figure class="align-center" id="id8">
 <img alt="Gain Scheduling figure" src="../_images/adaptive_kp.svg" />
 <figcaption>
-<p><span class="caption-text">Gain Scheduling</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+<p><span class="caption-text">Gain Scheduling</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>Another aspect to consider is the implementation of <a class="reference external" href="https://en.wikipedia.org/wiki/Gain_scheduling">gain scheduling</a>. K<sub>P</sub> is a function of the current setpoint. Often it is favorable to have a higher proportional gain K<sub>P</sub> for slow speeds, achieving better control results. The illustration above shows the default setting for K<sub>P</sub>. CV_54 &amp; CV_55 are used to set K<sub>P</sub> &#64; x<sub>0</sub>, CV_56 &amp; CV_57 for K<sub>P</sub> &#64; x<sub>1</sub>, and CV_58 &amp; CV_59 for K<sub>P</sub> &#64; x<sub>2</sub>. Additionally, CV_60 is used to shift x<sub>1</sub> from the leftmost point (0% = 0/255) to the rightmost point (100% = 255/255).</p>
 </section>
 <section id="id2">
-<h3>Feed-forward<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
-<figure class="align-center" id="id7">
+<span id="id3"></span><h3>Feed-forward<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id9">
 <img alt="Feed forward figure" src="../_images/feed_forward.svg" />
 <figcaption>
-<p><span class="caption-text">Feed-forward</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+<p><span class="caption-text">Feed-forward</span><a class="headerlink" href="#id9" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>TODO: Update this part:</p>
@@ -241,7 +274,7 @@ d_n &amp;= \frac{2 K_D \cdot \left(e_n - e_{n-1}\right) + \left(2 \tau - T_s\rig
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Software" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="header_files.html" class="btn btn-neutral float-right" title="Header files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="header_files.html" class="btn btn-neutral float-right" title="core0.h" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

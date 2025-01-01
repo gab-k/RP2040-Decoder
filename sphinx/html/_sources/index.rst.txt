@@ -7,7 +7,7 @@ RP2040-Decoder Documentation
 ============================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    other/getting_started

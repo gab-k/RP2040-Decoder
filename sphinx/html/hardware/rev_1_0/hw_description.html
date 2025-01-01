@@ -9,8 +9,6 @@
   <title>Overview &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
-      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
@@ -18,8 +16,6 @@
       <script src="../../_static/documentation_options.js?v=6bd3bce2"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
-      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -54,15 +50,12 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Overview</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#electrical-characteristics">Electrical Characteristics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#input-stage">Input Stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#motor-driver">Motor Driver</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#auxiliary-outputs">Auxiliary Outputs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#gpio">GPIO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#microcontroller">Microcontroller</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#complete-schematic">Complete Schematic</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#bom-alternative-parts">BOM &amp; Alternative Parts</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#alternatives-for-bdr6133">Alternatives for BDR6133:</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#alternative-for-ht7533s">Alternative for HT7533S:</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#bom-alternative-parts">BOM &amp; Alternative Parts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#wiring-the-decoder">Wiring the Decoder</a></li>
 </ul>
 </li>
@@ -71,7 +64,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../software/index.html">Software</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../other/index.html">Other</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../other/troubleshooting.html">Troubleshooting</a></li>
 </ul>
 
         </div>
@@ -205,6 +197,10 @@
 <p>(1): According to: <a class="reference external" href="https://www.lcsc.com/datasheet/lcsc_datasheet_2409291808_Bardeen-Micro--BDR6133_C2687793.pdf">BDR6133 Datasheet</a></p>
 <p>(2): According to: <a class="reference external" href="https://www.vishay.com/docs/63399/si1308edl.pdf">Si1308EDL Datasheet</a></p>
 <p>(3): T<sub>Case</sub>= 25°C, keep power dissipation, thermal resistance the corresponding temperature rise ΔT and switching losses in PWM mode in mind!</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Keep in mind that realistically these maximum ratings can’t be reached in practice due to thermal limitations. For example the motor current can probably not exceed 1.5A for continuous operation.</p>
+</div>
 </section>
 <section id="input-stage">
 <h1>Input Stage<a class="headerlink" href="#input-stage" title="Link to this heading"></a></h1>
@@ -214,10 +210,11 @@
 <p><span class="caption-text">Input stage</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<p>D2 Rectifies the DCC square-wave into VDC, the amplitude is not critical as long as it’s within the 25V limit. The rectified voltage VDC is then provided to the 3.3V voltage regulator and to the motor driver. The shottky diode D1 and the bridge rectifier D2 ensure a logical “or” linkage of the VBUS supply voltages and the DCC input voltage</p>
-<p>The MOSFET on the right effectively translates the rather high DCC voltage to a suitable level for the microcontroller to process. When Q1 is turned off GPIO21 is pulled high by the RP2040 internal pull-up resistor, as soon as Q1 gets turned on (V<sub>GS</sub>&gt; V<sub>GS,th</sub>), GPIO21 gets pulled to GND potential. R1 and R2 ensure that V<sub>GS</sub>doesn’t exceed ±12V.
-Motor Driver
-==============================</p>
+<p>D2 Rectifies the DCC square-wave into VDC, the amplitude is not critical as long as it’s within the 25V limit. The rectified voltage VDC is then provided to the 3.3V voltage regulator and to the motor driver. The shottky diode D1 and the bridge rectifier D2 ensure a logical “or” linkage of the VBUS supply voltages and the DCC input voltage, meaning that the decoder can be powered either by the DCC track signal or by the VBUS supply voltage which is supplied via USB connector.</p>
+<p>The MOSFET on the right effectively translates the rather high DCC voltage to a suitable level for the microcontroller to process. When Q1 is turned off GPIO21 is pulled high by the RP2040 internal pull-up resistor, as soon as Q1 gets turned on (V<sub>GS</sub>&gt; V<sub>GS,th</sub>), GPIO21 gets pulled to GND potential. R1 and R2 ensure that V<sub>GS</sub>doesn’t exceed ±12V.</p>
+</section>
+<section id="motor-driver">
+<h1>Motor Driver<a class="headerlink" href="#motor-driver" title="Link to this heading"></a></h1>
 <figure class="align-center" id="id4">
 <img alt="Motor Driver" src="../../_images/Motor_Driver1.svg" />
 <figcaption>
@@ -261,133 +258,15 @@ Motor Driver
 </section>
 <section id="bom-alternative-parts">
 <h1>BOM &amp; Alternative Parts<a class="headerlink" href="#bom-alternative-parts" title="Link to this heading"></a></h1>
-<table class="docutils align-default" id="id8">
-<caption><span class="caption-text">BOM</span><a class="headerlink" href="#id8" title="Link to this table"></a></caption>
-<thead>
-<tr class="row-odd"><th class="head"><p>Ref</p></th>
-<th class="head"><p>Quantity</p></th>
-<th class="head"><p>Value               Component Type</p></th>
-<th class="head"><p>Component Name</p></th>
-<th class="head"><p>Footprint</p></th>
-<th class="head"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>C1, C2, C5, C6, C14</p></td>
-<td><p>5</p></td>
-<td><p>10u</p></td>
-<td><p>Ceramic Capacitor</p></td>
-<td><p>/</p></td>
-<td><p>0603_1608Metric</p></td>
-</tr>
-<tr class="row-odd"><td><p>C3, C4, C7, C8, C9, C10, C11, C12, C13, C15</p></td>
-<td><p>10</p></td>
-<td><p>100n</p></td>
-<td><p>Ceramic Capacitor</p></td>
-<td><p>/</p></td>
-<td><p>0603_1608Metric</p></td>
-</tr>
-<tr class="row-even"><td><p>C16, C17</p></td>
-<td><p>2</p></td>
-<td><p>33p</p></td>
-<td><p>Ceramic Capacitor</p></td>
-<td><p>/</p></td>
-<td><p>0603_1608Metric</p></td>
-</tr>
-<tr class="row-odd"><td><p>D1</p></td>
-<td><p>1</p></td>
-<td><p>V<sub>RMS</sub>=40V, I<sub>F</sub>=2A</p></td>
-<td><p>Bridge Rectifier</p></td>
-<td><p>KMB24F</p></td>
-<td><p>MBS (TO-269AA)</p></td>
-</tr>
-<tr class="row-even"><td><p>Q1, Q2, Q3, Q4, Q5</p></td>
-<td><p>5</p></td>
-<td><p>V<sub>DS</sub>=60V, I<sub>D</sub>=0.4A</p></td>
-<td><p>N-Channel MOSFET</p></td>
-<td><p>T2N7002BK</p></td>
-<td><p>SOT-23</p></td>
-</tr>
-<tr class="row-odd"><td><p>R1, R2, R5, R6</p></td>
-<td><p>4</p></td>
-<td><p>6k8</p></td>
-<td><p>Resistor</p></td>
-<td><p>/</p></td>
-<td><p>0603_1608Metric</p></td>
-</tr>
-<tr class="row-even"><td><p>R3</p></td>
-<td><p>1</p></td>
-<td><p>200</p></td>
-<td><p>Resistor</p></td>
-<td><p>/</p></td>
-<td><p>0603_1608Metric</p></td>
-</tr>
-<tr class="row-odd"><td><p>R7, R8, R9</p></td>
-<td><p>3</p></td>
-<td><p>1k</p></td>
-<td><p>Resistor</p></td>
-<td><p>/</p></td>
-<td><p>0603_1608Metric</p></td>
-</tr>
-<tr class="row-even"><td><p>U1</p></td>
-<td><p>1</p></td>
-<td><p>V<sub>OUT</sub>=3.3V</p></td>
-<td><p>Low Dropout Voltage Regulator</p></td>
-<td><p>HT7533S</p></td>
-<td><p>SOT-23</p></td>
-</tr>
-<tr class="row-odd"><td><p>U2</p></td>
-<td><p>1</p></td>
-<td><p>I=2.8A</p></td>
-<td><p>H-Bridge Driver</p></td>
-<td><p>BDR6133</p></td>
-<td><p>SOIC-8</p></td>
-</tr>
-<tr class="row-even"><td><p>U3</p></td>
-<td><p>1</p></td>
-<td><p>64Mb</p></td>
-<td><p>Flash Memory</p></td>
-<td><p>W25Q64JVSSIQ</p></td>
-<td><p>SOIC-8</p></td>
-</tr>
-<tr class="row-odd"><td><p>U4</p></td>
-<td><p>1</p></td>
-<td><p>/</p></td>
-<td><p>Microcontroller</p></td>
-<td><p>RP2040</p></td>
-<td><p>QFN-56-1EP_7x7mm_P0.4mm</p></td>
-</tr>
-<tr class="row-even"><td><p>Y1</p></td>
-<td><p>1</p></td>
-<td><p>f=12MHz</p></td>
-<td><p>Crystal Oscillator</p></td>
-<td><p>X322512MSB4SI</p></td>
-<td><p>Crystal_SMD_3225-4Pin_3.2x2.5mm</p></td>
-</tr>
-</tbody>
-</table>
-<p>NOTE: Keep capacitor V<sub>max</sub> in mind!</p>
-<section id="alternatives-for-bdr6133">
-<h2>Alternatives for BDR6133:<a class="headerlink" href="#alternatives-for-bdr6133" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://lcsc.com/product-detail/Motor-Driver-ICs_PTC-Princeton-Tech-PT5126A-S-TP_C162093.html">PT5126A-S-TP</a></p></li>
-<li><p><a class="reference external" href="https://lcsc.com/product-detail/Motor-Driver-ICs_PTC-Princeton-Tech-PT2476_C481903.html">PT2476</a></p></li>
-</ul>
-</section>
-<section id="alternative-for-ht7533s">
-<h2>Alternative for HT7533S:<a class="headerlink" href="#alternative-for-ht7533s" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://www.lcsc.com/product-detail/Linear-Voltage-Regulators-LDO_Gainsil-GS7533-33TR3_C7427372.html">GS7533-33TR3</a></p></li>
-</ul>
-</section>
+<p>please see <strong>PLACEHOLDER-AUTOGENERATED-BOM</strong> for the complete BOM.</p>
 </section>
 <section id="wiring-the-decoder">
 <span id="wiring-rev-1-0"></span><h1>Wiring the Decoder<a class="headerlink" href="#wiring-the-decoder" title="Link to this heading"></a></h1>
-<figure class="align-center" id="id9">
+<figure class="align-center" id="id8">
 <a class="reference internal image-reference" href="../../svg/hw/rev_1_0/Wiring_diagram.svg"><img alt="Wiring Diagram" src="../../svg/hw/rev_1_0/Wiring_diagram.svg" style="width: 700px;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Wiring Diagram</span><a class="headerlink" href="#id9" title="Link to this image"></a></p>
+<p><span class="caption-text">Wiring Diagram</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>The illustration above provides an example of a wiring configuration.
