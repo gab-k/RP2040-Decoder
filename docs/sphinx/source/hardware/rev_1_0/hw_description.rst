@@ -49,6 +49,9 @@ Electrical Characteristics
 
 (3): T\ :sub:`Case`\ = 25°C, keep power dissipation, thermal resistance the corresponding temperature rise ΔT and switching losses in PWM mode in mind!
 
+.. note:: Keep in mind that realistically these maximum ratings can't be reached in practice due to thermal limitations. For example the motor current can probably not exceed 1.5A for continuous operation.
+
+
 Input Stage
 ==============================
 
@@ -58,9 +61,10 @@ Input Stage
 
    Input stage
 
-D2 Rectifies the DCC square-wave into VDC, the amplitude is not critical as long as it's within the 25V limit. The rectified voltage VDC is then provided to the 3.3V voltage regulator and to the motor driver. The shottky diode D1 and the bridge rectifier D2 ensure a logical "or" linkage of the VBUS supply voltages and the DCC input voltage
+D2 Rectifies the DCC square-wave into VDC, the amplitude is not critical as long as it's within the 25V limit. The rectified voltage VDC is then provided to the 3.3V voltage regulator and to the motor driver. The shottky diode D1 and the bridge rectifier D2 ensure a logical "or" linkage of the VBUS supply voltages and the DCC input voltage, meaning that the decoder can be powered either by the DCC track signal or by the VBUS supply voltage which is supplied via USB connector. 
 
 The MOSFET on the right effectively translates the rather high DCC voltage to a suitable level for the microcontroller to process. When Q1 is turned off GPIO21 is pulled high by the RP2040 internal pull-up resistor, as soon as Q1 gets turned on (V\ :sub:`GS`\ > V\ :sub:`GS,th`\), GPIO21 gets pulled to GND potential. R1 and R2 ensure that V\ :sub:`GS`\ doesn't exceed ±12V.
+
 Motor Driver
 ==============================
 
@@ -110,41 +114,7 @@ Complete Schematic
 
 BOM & Alternative Parts
 ==============================
-.. table:: BOM
-   :widths: auto
-
-   =====================================================  =============================  ====================================  =============================  =====================  =========================
-   Ref                                                    Quantity                       Value               Component Type                 Component Name         Footprint
-   =====================================================  =============================  ====================================  =============================  =====================  =========================
-   C1, C2, C5, C6, C14                                    5                              10u                                   Ceramic Capacitor              /                      0603_1608Metric
-   C3, C4, C7, C8, C9, C10, C11, C12, C13, C15            10                             100n                                  Ceramic Capacitor              /                      0603_1608Metric
-   C16, C17                                               2                              33p                                   Ceramic Capacitor              /                      0603_1608Metric
-   D1                                                     1                              V\ :sub:`RMS`\=40V, I\ :sub:`F`\=2A   Bridge Rectifier               KMB24F                 MBS (TO-269AA)
-   Q1, Q2, Q3, Q4, Q5                                     5                              V\ :sub:`DS`\=60V, I\ :sub:`D`\=0.4A  N-Channel MOSFET               T2N7002BK              SOT-23
-   R1, R2, R5, R6                                         4                              6k8                                   Resistor                       /                      0603_1608Metric
-   R3                                                     1                              200                                   Resistor                       /                      0603_1608Metric
-   R7, R8, R9                                             3                              1k                                    Resistor                       /                      0603_1608Metric
-   U1                                                     1                              V\ :sub:`OUT`\=3.3V                   Low Dropout Voltage Regulator  HT7533S                SOT-23
-   U2                                                     1                              I=2.8A                                H-Bridge Driver                BDR6133                SOIC-8
-   U3                                                     1                              64Mb                                  Flash Memory                   W25Q64JVSSIQ           SOIC-8
-   U4                                                     1                              /                                     Microcontroller                RP2040                 QFN-56-1EP_7x7mm_P0.4mm
-   Y1                                                     1                              f=12MHz                               Crystal Oscillator             X322512MSB4SI          Crystal_SMD_3225-4Pin_3.2x2.5mm
-   =====================================================  =============================  ====================================  =============================  =====================  =========================
-
-
-
-NOTE: Keep capacitor V\ :sub:`max`\  in mind!
-
-Alternatives for BDR6133:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-* `PT5126A-S-TP <https://lcsc.com/product-detail/Motor-Driver-ICs_PTC-Princeton-Tech-PT5126A-S-TP_C162093.html>`_
-* `PT2476 <https://lcsc.com/product-detail/Motor-Driver-ICs_PTC-Princeton-Tech-PT2476_C481903.html>`_
-
-Alternative for HT7533S:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-* `GS7533-33TR3 <https://www.lcsc.com/product-detail/Linear-Voltage-Regulators-LDO_Gainsil-GS7533-33TR3_C7427372.html>`_
+please see **PLACEHOLDER-AUTOGENERATED-BOM** for the complete BOM.
 
 
 .. _wiring_rev_1_0:

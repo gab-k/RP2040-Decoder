@@ -53,13 +53,15 @@ const uint32_t clr_bit_arr[6] = {
  * 
  * This structure is used to store the data and length of a DCC packet.
  * 
- * @typedef dcc_packet_t
+ * @struct dcc_packet_t
  * 
- * @field data An array of bytes representing the DCC packet data.
- * @field length The length of the DCC packet data.
+ * @param data An array of bytes representing the DCC packet data.
+ * @param length The length of the DCC packet data.
  */
 typedef struct dcc_packet_t {
+        /*! An array of bytes representing the DCC packet data. */
         uint8_t data[RING_BUFFER_BYTES];
+        /*! The length of the DCC packet data. */
         size_t length;
 }dcc_packet_t;
 
@@ -69,16 +71,15 @@ typedef struct dcc_packet_t {
  * This structure is used to manage a ring buffer that stores DCC packets.
  * It contains an array of packets and indices for writing and reading.
  * 
- * @typedef dcc_ring_buffer_t
- * 
- * @field packets Array of DCC packets stored in the ring buffer.
- * @field wr_idx Index for the next write operation in the ring buffer.
- * @field rd_idx Index for the next read operation in the ring buffer.
+ * @struct dcc_ring_buffer_t
  */
 typedef struct dcc_ring_buffer_t {
-    dcc_packet_t packets[RING_BUFFER_PACKETS];
-    size_t wr_idx;
-    size_t rd_idx;
+        /*! Array of DCC packets stored in the ring buffer. */
+        dcc_packet_t packets[RING_BUFFER_PACKETS];
+        /*! Index for the next write operation in the ring buffer. */
+        size_t wr_idx;
+        /*! Index for the next read operation in the ring buffer. */
+        size_t rd_idx;
 } dcc_ring_buffer_t;
 
 
@@ -208,7 +209,7 @@ static void reset_cv_array_to_default();
  * 
  * Procedure:
  * 1. Checks for a valid programming command.
- * 2. Evaluates the type of programming instruction (Write byte / Verify byte / Verify bit) and runs the corresponding function.
+ * 2. Evaluates the type of programming instruction (Write byte / Verify byte / Verify bit) and runs the corresponding function. See verify_cv_byte(), verify_cv_bit() and write_cv_byte().
  *
  * @param number_of_bytes The number of bytes in the array.
  * @param byte_array A pointer to the byte array.

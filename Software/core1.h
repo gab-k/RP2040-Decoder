@@ -151,7 +151,7 @@ uint16_t get_initial_level(controller_parameter_t * ctrl_par);
 /**
  * @brief Controller function for startup mode.
  * 
- * This is called inside the controller_general function when the controller mode is set to STARTUP_MODE.
+ * This is called inside the controller_general() function when the controller mode is set to STARTUP_MODE.
  *
  * @param ctrl_par Pointer to the controller parameter structure.
  */
@@ -160,7 +160,7 @@ void controller_startup_mode(controller_parameter_t * ctrl_par);
 /**
  * @brief Controller function for PID mode.
  * 
- * This is called inside the controller_general function when the controller mode is set to PID_MODE.
+ * This is called inside the controller_general() function when the controller mode is set to PID_MODE.
  *
  * @param ctrl_par Pointer to the controller parameter structure.
  */
@@ -174,9 +174,7 @@ void controller_pid_mode(controller_parameter_t *const ctrl_par);
 void controller_general(controller_parameter_t * ctrl_par);
 
 /**
- * @brief Initialize the all controller variables, measurement parameters, and speed table.
- * 
- * ctrl_par contains all controller variables and is passed to the other controller functions.
+ * @brief Initialize controller variables, measurement parameters, and speed table.
  *
  * @param ctrl_par Pointer to the controller parameter structure.
  */
