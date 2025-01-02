@@ -29,7 +29,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi g++ libstdc++-arm-none-eabi-newlib build-essential
     
     - name: Get SDK and add PICO_SDK_PATH
-      run: git clone https://github.com/raspberrypi/pico-sdk.git && echo "PICO_SDK_PATH=/pico-sdk" >> $GITHUB_ENV
+      run: git clone https://github.com/raspberrypi/pico-sdk.git && echo "PICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk" >> $GITHUB_ENV
      
     - name: Init submodules to get tinyUSB stack
       run: ls && cd pico-sdk && git submodule update --init && cd ..
