@@ -32,7 +32,7 @@ jobs:
       run: cd /tmp && git clone https://github.com/raspberrypi/pico-sdk.git && echo "PICO_SDK_PATH=/tmp/pico-sdk" >> $GITHUB_ENV
      
     - name: Init submodules to get tinyUSB stack
-      run: git submodule update --init
+      run: ls && git submodules init && git submodules update
       
     - name: Configure and run CMake Rev0.3
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
