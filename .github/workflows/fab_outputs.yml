@@ -13,25 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          pip3 install wheel
-          sudo apt install libwxgtk3.0-gtk3-dev
-          curl -O https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-22.04/wxPython-4.2.2-cp313-cp313-linux_x86_64.whl
-          pip3 install wxPython-4.2.2-cp313-cp313-linux_x86_64.whl
-          
       - name: Install KiCad
         run: |
           sudo add-apt-repository --yes ppa:kicad/kicad-8.0-releases
           sudo apt update
           sudo apt install --install-recommends kicad
-
+        
+      - name: locate
+        run: |
+          whereis kicad
+      
       - name: Clone Fabrication Toolkit
         run: |
           git clone https://github.com/bennymeg/Fabrication-Toolkit.git
