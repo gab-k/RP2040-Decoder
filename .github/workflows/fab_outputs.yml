@@ -21,6 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
+          pip install wheel
           pip install wxpython
           
       - name: Install KiCad
