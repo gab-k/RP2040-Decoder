@@ -4,7 +4,7 @@ Getting started
 1. Where to get the board?
 ----------------------------------
 
-You can choose any PCB manufacturer you like.The PCB is designed to fit with JLCPCB.com's capabilities and constraints.You can assemble the board yourself, but it's best not to do so if you're not familiar with soldering small components. Alternatively, you can order the board fully or partly assembled.Soldering the back of the PCB by hand is not too difficult. All parts are normally available at LCSC.com, who supply parts to JLCPCB.com.
+You can choose any PCB manufacturer you like. The PCB is designed to fit with JLCPCB.com's capabilities and constraints. You can assemble the board yourself, but it's best not to do so if you're not familiar with soldering small components. Alternatively, you can order the board fully or partly assembled. Soldering the back of the PCB by hand is not too difficult. All parts are normally available at LCSC.com, who supply parts to JLCPCB.com.
 
 2. Production files?
 ----------------------------------
@@ -30,7 +30,7 @@ Note: If you are building for Hardware Rev 0.3 or below change the board definti
 
 For RP2040-Decoders with USB there is two ways of flashing the software:
 
-1. Flasing via USB using the .uf2 file by copying it with your preferred file explorer. 
+1. Flashing via USB using the .uf2 file by copying it with your preferred file explorer. 
 2. Using Serial Wire Debug (SWD)
 
    2.1. Using another RP2040/RP2350-based board with `debugprobe software <https://github.com/raspberrypi/debugprobe>`_ on it. (Could be the RP2040-Decoder itself)

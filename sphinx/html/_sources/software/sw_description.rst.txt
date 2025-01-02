@@ -19,12 +19,12 @@ Software files high level overview:
 
 - **shared.c / shared.h** (used by both cores)
 
-- Error handling
-- Helper functions for retrieving CV's
+   - Error handling
+   - Helper functions for retrieving CV's
 
 - **CV.h**
   
-- Default configuration variables
+   - Default configuration variables
 
 - **CMakeLists.txt**
 
@@ -35,7 +35,7 @@ Software files high level overview:
    - Debug logging configuration (via stdio using UART/USB)
    - Linked libraries
 
-- **RP2040-Decoder-board.h or RP2040-Decoder-board-legacy.h**
+- **RP2040-Decoder-board-Rev-X_Y.h**
    
    - Flash Size
    - Pin definitions
