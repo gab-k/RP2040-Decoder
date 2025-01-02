@@ -5,7 +5,10 @@ on:
     branches:
       - dev   # Trigger on push to 'dev' branch
       - main  # Trigger on push to 'main' branch
-
+    paths:
+      - '.github/workflows/docs.yml'  # Trigger if this workflow file changes
+      - 'Software/**'  # Trigger if any file in the 'Software' directory changes
+      - 'docs/**'  # Trigger if any file in the 'docs' directory changes
   
 jobs:
   build:
