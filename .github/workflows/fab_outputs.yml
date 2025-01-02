@@ -18,15 +18,10 @@ jobs:
           sudo add-apt-repository --yes ppa:kicad/kicad-8.0-releases
           sudo apt update
           sudo apt install --install-recommends kicad
-        
-      - name: locate
-        run: |
-          whereis kicad
       
       - name: Clone Fabrication Toolkit
         run: |
           git clone https://github.com/bennymeg/Fabrication-Toolkit.git
-          ls
 
       - name: Run fab toolkit CLI
         run: |
@@ -34,13 +29,8 @@ jobs:
           python3 -m plugins.cli -p ../KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
           cd ..
         
-      - name: ls
-        run: |
-          ls -R
-    
-          
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fabrication-outputs
-          path: fabrication_outputs.zip
+          name: fab_outputs
+          path: ./KiCad/Rev_1_0/production
