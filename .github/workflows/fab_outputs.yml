@@ -1,0 +1,47 @@
+name: Generate Fabrication Outputs
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  generate-fabrication-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: sudo apt-get install python-wxtools
+      - name: Install KiCad
+        run: |
+          sudo add-apt-repository --yes ppa:kicad/kicad-8.0-releases
+          sudo apt update
+          sudo apt install --install-recommends kicad
+
+      - name: Install Fabrication Toolkit
+        run: |
+          git clone https://github.com/bennymeg/Fabrication-Toolkit.git
+          ls
+          cp -r Fabrication-Toolkit/plugins/* ~/.kicad/plugins/
+          cp -r Fabrication-Toolkit/resources/* ~/.kicad/plugins/
+
+      - name: Run fab toolkit cli
+        run: python3 -m plugins.cli -p /KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
+        
+      - name: Archive Outputs
+        run: |
+          zip -r fabrication_outputs.zip fabrication_outputs
+          
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: fabrication-outputs
+          path: fabrication_outputs.zip
