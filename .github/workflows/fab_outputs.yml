@@ -21,9 +21,31 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libgtk-3-dev
-          sudo apt-get install libwebkit2gtk-4.0-dev libjpeg-dev libpng-dev libtiff-dev libgstreamer1.0-dev pkg-config
+          sudo apt-get install -y \
+            build-essential \
+            libgtk-3-dev \
+            libjpeg-dev \
+            libpng-dev \
+            libtiff-dev \
+            libwebkit2gtk-4.0-dev \
+            libgstreamer1.0-dev \
+            libcanberra-gtk3-dev \
+            pkg-config \
+            libglib2.0-dev \
+            libwxgtk3.0-gtk3-dev \
+            libnotify-dev \
+            libsm-dev \
+            libice-dev \
+            libxtst-dev
+            
+      - name: Install wxPython using pip
+        run: |
+          python -m pip install --upgrade pip
           pip install wxPython
+
+      - name: Verify wxPython installation
+        run: |
+          python -c "import wx; print(wx.__version__)"
         
       - name: Install KiCad
         run: |
