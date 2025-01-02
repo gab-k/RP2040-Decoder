@@ -32,11 +32,12 @@ jobs:
         run: |
           cd Fabrication-Toolkit
           python3 -m plugins.cli -p ../KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
+          cd ..
         
-      - name: Archive Outputs
+      - name: ls
         run: |
-          ls
-          zip -r fabrication_outputs.zip fabrication_outputs
+          ls -R
+    
           
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
