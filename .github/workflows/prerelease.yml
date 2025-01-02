@@ -5,7 +5,7 @@ name: Build Software and create release on tag
 on:
   push:
     tags:
-      - "v*.*-rc"  # Trigger on rc tag push
+      - "v[0-9]+.[0-9]+-rc$"  # Trigger on rc version tag push
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -42,7 +42,6 @@ jobs:
         path: ${{github.workspace}}/Software/build
       
   prerelease:
-    if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
     runs-on: ubuntu-latest
     needs: build
     steps:
