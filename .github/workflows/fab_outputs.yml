@@ -22,6 +22,7 @@ jobs:
         run: |
           sudo apt-get update
           pip3 install wheel
+          sudo apt install libwxgtk3.0-gtk3-dev
           curl -O https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-22.04/wxPython-4.2.2-cp313-cp313-linux_x86_64.whl
           pip3 install wxPython-4.2.2-cp313-cp313-linux_x86_64.whl
           
