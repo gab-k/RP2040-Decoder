@@ -1,12 +1,16 @@
 # This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
-name: CMake on a single platform
+name: Build Software and create release on tag
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - dev   # Trigger on push to 'dev' branch
+      - main  # Trigger on push to 'main' branch
+    paths:
+      - '.github/workflows/build_sw.yml'  # Trigger if this workflow file changes
+      - 'Software/**'  # Trigger if any file in the 'Software' directory changes
+
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -20,11 +24,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: install build packages
       run: sudo apt-get update && sudo apt-get install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
     
-    - name: get sdk
+    - name: Get sdk and add PICO_SDK_PATH
       run: cd /tmp && git clone https://github.com/raspberrypi/pico-sdk.git && echo "PICO_SDK_PATH=/tmp/pico-sdk" >> $GITHUB_ENV
       
     - name: Configure CMake
@@ -35,4 +39,17 @@ jobs:
     - name: Build
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            README.md
+            LICENSE
+    
 
