@@ -33,7 +33,8 @@ jobs:
 
       - name: Run fab toolkit CLI
         run: |
-          python3 -m Fabrication-Toolkit/plugins.cli -p ../KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
+          cd Fabrication-Toolkit
+          python3 -m plugins.cli
         
       - name: Archive Outputs
         run: |
