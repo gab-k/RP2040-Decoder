@@ -21,6 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
+          sudo apt install libwxgtk3.0-gtk3-dev
           pip install wxpython
           
       - name: Install KiCad
