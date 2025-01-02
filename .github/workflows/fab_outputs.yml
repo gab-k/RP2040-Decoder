@@ -18,8 +18,9 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install dependencies
-        run: sudo apt-get install python-wxtools
+      - name: Install python-wxtools
+        run: sudo apt-get install python-wxtools && pip install wxPython
+        
       - name: Install KiCad
         run: |
           sudo add-apt-repository --yes ppa:kicad/kicad-8.0-releases
@@ -34,7 +35,7 @@ jobs:
       - name: Run fab toolkit CLI
         run: |
           cd Fabrication-Toolkit
-          python3 -m plugins.cli
+          python3 -m plugins.cli -p ../KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
         
       - name: Archive Outputs
         run: |
