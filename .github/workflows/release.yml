@@ -4,12 +4,8 @@ name: Build Software and create release on tag
 
 on:
   push:
-    branches:
-      - dev   # Trigger on push to 'dev' branch
-      - main  # Trigger on push to 'main' branch
-    paths:
-      - '.github/workflows/build_sw.yml'  # Trigger if this workflow file changes
-      - 'Software/**'  # Trigger if any file in the 'Software' directory changes
+    tags:
+      - "v*.*"  # Trigger on rc tag push
 
 
 env:
@@ -40,3 +36,30 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/Software/build --config ${{env.BUILD_TYPE}}
     
+    - name: Upload build files as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build_files
+        path: ${{github.workspace}}/Software/build
+      
+  release:
+    if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download build files artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build_files
+          
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            RP2040-Decoder.bin
+            RP2040-Decoder.dis
+            RP2040-Decoder.elf
+            RP2040-Decoder.elf.map
+            RP2040-Decoder.hex
+            RP2040-Decoder.uf2
