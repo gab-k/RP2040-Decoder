@@ -7,6 +7,8 @@ on:
     branches:
       - dev   # Trigger on push to 'dev' branch
       - main  # Trigger on push to 'main' branch
+    tags:
+      - '*'  # Trigger on any tag push
     paths:
       - '.github/workflows/build_sw.yml'  # Trigger if this workflow file changes
       - 'Software/**'  # Trigger if any file in the 'Software' directory changes
