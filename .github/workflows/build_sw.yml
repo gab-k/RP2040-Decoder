@@ -56,7 +56,7 @@ jobs:
           name: build_files
           
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls
           
       - name: Release
         uses: softprops/action-gh-release@v2
