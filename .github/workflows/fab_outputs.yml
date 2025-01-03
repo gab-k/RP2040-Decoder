@@ -26,7 +26,7 @@ jobs:
       - name: Run fab toolkit CLI
         run: |
           cd Fabrication-Toolkit
-          python3 -m plugins.cli -p ../KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
+          python3 -m plugins.cli -p ../KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb --autoTranslate --autoFill
           cd ..
         
       - name: Upload Artifact
