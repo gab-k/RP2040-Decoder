@@ -2709,187 +2709,6 @@
 				)
 			)
 		)
-		(symbol "Jumper:SolderJumper_2_Open"
-			(pin_numbers hide)
-			(pin_names
-				(offset 0) hide)
-			(exclude_from_sim yes)
-			(in_bom no)
-			(on_board yes)
-			(property "Reference" "JP"
-				(at 0 2.032 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "SolderJumper_2_Open"
-				(at 0 -2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Solder Jumper, 2-pole, open"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "solder jumper SPST"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "SolderJumper*Open*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "SolderJumper_2_Open_0_1"
-				(arc
-					(start -0.254 1.016)
-					(mid -1.2656 0)
-					(end -0.254 -1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start -0.254 1.016)
-					(mid -1.2656 0)
-					(end -0.254 -1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.254 1.016) (xy -0.254 -1.016)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.254 1.016) (xy 0.254 -1.016)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start 0.254 -1.016)
-					(mid 1.2656 0)
-					(end 0.254 1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start 0.254 -1.016)
-					(mid 1.2656 0)
-					(end 0.254 1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-			)
-			(symbol "SolderJumper_2_Open_1_1"
-				(pin passive line
-					(at -3.81 0 0)
-					(length 2.54)
-					(name "A"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 3.81 0 180)
-					(length 2.54)
-					(name "B"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-		)
 		(symbol "MCU_RaspberryPi:RP2040"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -5278,6 +5097,151 @@
 				)
 			)
 		)
+		(symbol "Switch:SW_Push"
+			(pin_numbers hide)
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "SW"
+				(at 1.27 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "SW_Push"
+				(at 0 -1.524 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Push button switch, generic, two pins"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "switch normally-open pushbutton push-button"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SW_Push_0_1"
+				(circle
+					(center -2.032 0)
+					(radius 0.508)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 1.27) (xy 0 3.048)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 1.27) (xy -2.54 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 0)
+					(radius 0.508)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Transistor_FET:Si1308EDL"
 			(pin_names hide)
 			(exclude_from_sim no)
@@ -6460,6 +6424,16 @@
 	)
 	(wire
 		(pts
+			(xy 66.04 104.14) (xy 67.31 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1f3575fa-9e09-456d-9eda-d10104a30b18")
+	)
+	(wire
+		(pts
 			(xy 78.74 120.65) (xy 92.71 120.65)
 		)
 		(stroke
@@ -6550,6 +6524,16 @@
 	)
 	(wire
 		(pts
+			(xy 55.88 104.14) (xy 54.61 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "241487ac-afe4-4e48-a0b9-e394171dd9c7")
+	)
+	(wire
+		(pts
 			(xy 127 86.36) (xy 127 85.09)
 		)
 		(stroke
@@ -6557,16 +6541,6 @@
 			(type default)
 		)
 		(uuid "242d10a9-f018-4b28-b989-c2185aac01b0")
-	)
-	(wire
-		(pts
-			(xy 54.61 100.33) (xy 54.61 116.84)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "24525171-8bf8-4839-aa87-5f6d050e6bbd")
 	)
 	(wire
 		(pts
@@ -6747,6 +6721,16 @@
 			(type default)
 		)
 		(uuid "36dd4851-786f-490e-b870-bd8fe5df9319")
+	)
+	(wire
+		(pts
+			(xy 54.61 114.3) (xy 54.61 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "398b0373-da03-4320-afd2-bf8031e1180a")
 	)
 	(wire
 		(pts
@@ -7077,26 +7061,6 @@
 			(type default)
 		)
 		(uuid "57c5de63-2283-414c-ae99-7c5bf410e1d6")
-	)
-	(wire
-		(pts
-			(xy 55.88 100.33) (xy 54.61 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "58b9b87d-14be-4556-89a7-bd777cb6bd40")
-	)
-	(wire
-		(pts
-			(xy 63.5 100.33) (xy 64.77 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5952fbdb-1e2f-45e5-bd8a-908b08a5a18b")
 	)
 	(wire
 		(pts
@@ -7450,6 +7414,16 @@
 	)
 	(wire
 		(pts
+			(xy 54.61 104.14) (xy 54.61 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "81778014-fac8-451c-a950-06804e5fd3cb")
+	)
+	(wire
+		(pts
 			(xy 143.51 128.27) (xy 146.05 128.27)
 		)
 		(stroke
@@ -7790,7 +7764,7 @@
 	)
 	(wire
 		(pts
-			(xy 64.77 109.22) (xy 64.77 110.49)
+			(xy 67.31 104.14) (xy 67.31 110.49)
 		)
 		(stroke
 			(width 0)
@@ -8177,16 +8151,6 @@
 			(type default)
 		)
 		(uuid "c5ac4af4-0d4f-4d96-957a-ed430d9b4ae1")
-	)
-	(wire
-		(pts
-			(xy 64.77 100.33) (xy 64.77 101.6)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c5e8b078-4ed6-4b9b-a50a-453d172e4b51")
 	)
 	(wire
 		(pts
@@ -9201,15 +9165,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 72.39 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "56587c0f-92f3-43c8-83b8-8fe9e8ebd8ea")
 		)
@@ -9298,15 +9253,6 @@
 			)
 		)
 		(property "LCSC Part #" "C96446"
-			(at 50.8 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 50.8 35.56 0)
 			(effects
 				(font
@@ -9408,15 +9354,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 234.95 142.24 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "88461131-fdc2-4eca-8979-371b8e987c39")
 		)
@@ -9502,15 +9439,6 @@
 			)
 		)
 		(property "LCSC Part #" "C25917"
-			(at 234.95 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 234.95 132.08 0)
 			(effects
 				(font
@@ -9615,15 +9543,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 187.96 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "bd2a8d9c-0053-49d6-99ad-5f592343ebf8")
 		)
@@ -9645,7 +9564,7 @@
 		(at 262.89 153.67 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "014505fb-0308-4e37-8889-a0041c45e183")
@@ -9696,15 +9615,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 262.89 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 262.89 153.67 0)
 			(effects
 				(font
@@ -9803,15 +9713,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 50.8 74.93 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "672f6a6b-708e-4c06-b2a3-b9531ef06f66")
 		)
@@ -9833,7 +9734,7 @@
 		(at 222.25 21.59 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "08bf2305-cb23-43db-adbe-ed7bba26fbea")
@@ -9884,15 +9785,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 222.25 21.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 222.25 21.59 0)
 			(effects
 				(font
@@ -9983,7 +9875,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
+		(property "FT Rotation Offset" ""
 			(at 63.5 128.27 0)
 			(effects
 				(font
@@ -10098,7 +9990,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" "-90"
+		(property "FT Rotation Offset" "-90"
 			(at 118.11 140.97 0)
 			(effects
 				(font
@@ -10424,7 +10316,7 @@
 		(at 149.86 115.57 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "18002b62-4532-4693-bf99-8088f2394a61")
@@ -10484,15 +10376,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 149.86 115.57 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 149.86 115.57 0)
 			(effects
 				(font
@@ -10658,15 +10541,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 166.37 92.71 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "36fc7652-efa3-458a-ba9c-3688c2d34fb7")
 		)
@@ -10754,15 +10628,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 60.96 29.21 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "2"
 			(uuid "4a7b5c6d-97e3-4304-853b-a17b2d5a8b80")
 		)
@@ -10790,7 +10655,7 @@
 		(at 262.89 158.75 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "2da5741f-f67c-4022-b9aa-f5121fea1695")
@@ -10841,15 +10706,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 262.89 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 262.89 158.75 0)
 			(effects
 				(font
@@ -10943,15 +10799,6 @@
 			)
 		)
 		(property "LCSC Part #" "C1525"
-			(at 177.8 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 177.8 80.01 0)
 			(effects
 				(font
@@ -11122,15 +10969,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 38.1 166.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "cd8086c2-62e4-403f-ba2c-8c3e9b09a76e")
 		)
@@ -11218,15 +11056,6 @@
 			)
 		)
 		(property "LCSC Part #" "C15525"
-			(at 160.02 97.79 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 160.02 97.79 0)
 			(effects
 				(font
@@ -11329,15 +11158,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 114.3 26.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "3848f9fa-edd8-4509-9eea-241f3f05d81b")
 		)
@@ -11359,7 +11179,7 @@
 		(at 149.86 110.49 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "3e0394db-3cc5-4d6f-9151-2b0e66765c08")
@@ -11427,15 +11247,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 149.86 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "077cca6f-979e-4512-ac74-bed51f200afe")
 		)
@@ -11443,108 +11254,6 @@
 			(project "RP2040-Decoder"
 				(path "/11d18738-0f49-4d63-b61c-22a93efd5959"
 					(reference "J11")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 59.69 100.33 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "411f0178-2331-410b-bc2b-9d1053993ce6")
-		(property "Reference" "R4"
-			(at 59.69 95.885 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "1k"
-			(at 59.69 97.79 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 59.69 98.552 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 59.69 100.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 59.69 100.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Tolerance" "10%"
-			(at 59.69 102.87 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternative Part" ""
-			(at 59.69 100.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" "C11702"
-			(at 59.69 100.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 59.69 100.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "251baec6-fdb9-4251-adbd-122c42dd3c7e")
-		)
-		(pin "2"
-			(uuid "f6b39b9a-bd83-4dfa-a22d-7756d3d061b3")
-		)
-		(instances
-			(project "RP2040-Decoder"
-				(path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-					(reference "R4")
 					(unit 1)
 				)
 			)
@@ -11697,15 +11406,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 157.48 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "a024b306-2c7f-48b7-8546-11871e2637c9")
 		)
@@ -11792,15 +11492,6 @@
 			)
 		)
 		(property "LCSC Part #" "C25917"
-			(at 260.35 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 260.35 132.08 0)
 			(effects
 				(font
@@ -11970,15 +11661,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 105.41 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "0e7d3498-eb4f-45e7-91f8-12ed9d62ce41")
 		)
@@ -12000,7 +11682,7 @@
 		(at 27.94 20.32 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "56fc16a4-b0df-4762-9c69-1ff7044684cf")
@@ -12059,15 +11741,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 27.94 20.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "654bcdf7-ce17-46d7-8abd-a9fd927207ab")
 		)
@@ -12086,7 +11759,7 @@
 		(at 86.36 171.45 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "5b08dfbd-7ba0-4ba9-9a9d-5b7868c90d7a")
@@ -12137,15 +11810,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 86.36 171.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 86.36 171.45 0)
 			(effects
 				(font
@@ -12313,15 +11977,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 226.06 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "5e408b0a-daa1-429a-900c-93f0913b7598")
 		)
@@ -12413,7 +12068,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" "180"
+		(property "FT Rotation Offset" "180"
 			(at 267.97 36.83 0)
 			(effects
 				(font
@@ -12653,15 +12308,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 95.25 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "449eb39a-72da-4be6-9ef7-56ad057f6789")
 		)
@@ -12821,15 +12467,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 86.36 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "05722044-8107-4e31-a2fa-a4b861f6442c")
 		)
@@ -12918,15 +12555,6 @@
 			)
 		)
 		(property "LCSC Part #" "C1525"
-			(at 147.32 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 147.32 80.01 0)
 			(effects
 				(font
@@ -13029,15 +12657,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 50.8 77.47 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "1d503d74-7818-4699-9e3b-f339b9485a4c")
 		)
@@ -13048,6 +12667,92 @@
 			(project "RP2040-Decoder"
 				(path "/11d18738-0f49-4d63-b61c-22a93efd5959"
 					(reference "R3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 60.96 104.14 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6f3528c5-8c73-4c07-a575-874af80062a8")
+		(property "Reference" "SW1"
+			(at 60.96 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "YTS1T0162AWJ00"
+			(at 60.96 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "RP2040-Decoder_Additional_Footprints:SW_Push_1P1T_NO_Vertical_Wuerth_434133025816"
+			(at 60.96 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2409302232_YIYUAN-YTS1T0162AWJ00_C3726363.pdf"
+			(at 60.96 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Push button switch, generic, two pins"
+			(at 60.96 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Alternative Part" "434133025816; TS-KG89U-AT25F;"
+			(at 60.96 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C3726363"
+			(at 60.96 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "542dd8c8-59e6-451a-9822-4b09aa68a65f")
+		)
+		(pin "1"
+			(uuid "0a0237e0-fca4-46a0-af21-7aa4dba99af3")
+		)
+		(instances
+			(project ""
+				(path "/11d18738-0f49-4d63-b61c-22a93efd5959"
+					(reference "SW1")
 					(unit 1)
 				)
 			)
@@ -13196,15 +12901,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 156.21 133.35 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "295372b0-4ca3-4c79-b6dc-04b418defc68")
 		)
@@ -13215,95 +12911,6 @@
 			(project "RP2040-Decoder"
 				(path "/11d18738-0f49-4d63-b61c-22a93efd5959"
 					(reference "R10")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Jumper:SolderJumper_2_Open")
-		(at 64.77 105.41 90)
-		(unit 1)
-		(exclude_from_sim yes)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "7370cb96-639b-4db1-b96c-2f30dbde43c0")
-		(property "Reference" "JP1"
-			(at 67.31 104.1399 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "SolderJumper_2_Open"
-			(at 67.31 106.6799 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
-			(at 64.77 105.41 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 64.77 105.41 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Solder Jumper, 2-pole, open"
-			(at 64.77 105.41 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Alternative Part" ""
-			(at 64.77 105.41 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 64.77 105.41 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "23fe91a9-60c7-4c4d-bd92-c7c1d6ff0a63")
-		)
-		(pin "2"
-			(uuid "4bb801cc-e8a3-4d60-a977-1f2f046e28f3")
-		)
-		(instances
-			(project "RP2040-Decoder"
-				(path "/11d18738-0f49-4d63-b61c-22a93efd5959"
-					(reference "JP1")
 					(unit 1)
 				)
 			)
@@ -13380,15 +12987,6 @@
 			)
 		)
 		(property "LCSC Part #" "C138021"
-			(at 86.36 113.03 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 86.36 113.03 0)
 			(effects
 				(font
@@ -13493,15 +13091,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 167.64 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "4335cc5f-322a-4b1a-be9d-72abd67cc988")
 		)
@@ -13579,15 +13168,6 @@
 			)
 		)
 		(property "LCSC Part #" "C2286"
-			(at 166.37 133.35 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 166.37 133.35 0)
 			(effects
 				(font
@@ -13683,15 +13263,6 @@
 			)
 		)
 		(property "LCSC Part #" "C15525"
-			(at 127 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 127 80.01 0)
 			(effects
 				(font
@@ -13848,6 +13419,99 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 54.61 110.49 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "822bd817-cc04-4798-b6e8-2f8518592155")
+		(property "Reference" "R4"
+			(at 57.785 108.585 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 57.785 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 56.388 110.49 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 54.61 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 54.61 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Tolerance" "10%"
+			(at 58.42 112.395 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternative Part" ""
+			(at 54.61 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C11702"
+			(at 54.61 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2d13581e-a84f-4def-a2b2-889cff0157f3")
+		)
+		(pin "2"
+			(uuid "9fb5d4a6-4f1d-41f9-b794-42fe4a95a849")
+		)
+		(instances
+			(project "RP2040-Decoder"
+				(path "/11d18738-0f49-4d63-b61c-22a93efd5959"
+					(reference "R4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Transistor_FET:Si1308EDL")
 		(at 267.97 58.42 0)
 		(unit 1)
@@ -13923,7 +13587,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" "180"
+		(property "FT Rotation Offset" "180"
 			(at 267.97 58.42 0)
 			(effects
 				(font
@@ -14022,7 +13686,7 @@
 		(at 149.86 107.95 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "8ab2fbad-0f11-4b9d-8352-0fc0944e1396")
@@ -14082,15 +13746,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 149.86 107.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 149.86 107.95 0)
 			(effects
 				(font
@@ -14187,7 +13842,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" "180"
+		(property "FT Rotation Offset" "180"
 			(at 238.76 58.42 0)
 			(effects
 				(font
@@ -14361,15 +14016,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 269.24 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "f492e1f2-b394-44de-94ec-6ffdb5b23f04")
 		)
@@ -14391,7 +14037,7 @@
 		(at 262.89 151.13 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "93601489-7271-4ee9-8e63-561248b10772")
@@ -14442,15 +14088,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 262.89 151.13 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 262.89 151.13 0)
 			(effects
 				(font
@@ -14543,15 +14180,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 83.82 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "b71c994e-9256-4845-928c-ba09ab9d0862")
 		)
@@ -14573,7 +14201,7 @@
 		(at 27.94 22.86 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "9642770f-2cb8-469f-ae0f-81cbb44e53da")
@@ -14624,15 +14252,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 27.94 22.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 27.94 22.86 0)
 			(effects
 				(font
@@ -14857,7 +14476,7 @@
 		(at 44.45 29.21 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "9a3ac055-60d1-4ec9-b004-a74f2a036002")
@@ -14908,15 +14527,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 44.45 29.21 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 44.45 29.21 0)
 			(effects
 				(font
@@ -15007,15 +14617,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 30.48 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "B5"
 			(uuid "36a7d412-4a8d-4154-8b63-0f1b35dfcf59")
 		)
@@ -15082,7 +14683,7 @@
 		(at 149.86 113.03 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a188b67f-e016-44c5-9883-66ff740f7aa9")
@@ -15142,15 +14743,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 149.86 113.03 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 149.86 113.03 0)
 			(effects
 				(font
@@ -15318,15 +14910,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 85.09 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "4bdf5002-1e4c-4cf2-8f70-3fa1533e4691")
 		)
@@ -15413,7 +14996,7 @@
 		(at 149.86 105.41 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a794e23d-fe43-44a1-a826-d40ff8e94208")
@@ -15473,15 +15056,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 149.86 105.41 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 149.86 105.41 0)
 			(effects
 				(font
@@ -15583,15 +15157,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 137.16 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "c2cdefee-20c4-4a3f-b9e4-69e6de688b15")
 		)
@@ -15683,7 +15248,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" "180"
+		(property "FT Rotation Offset" "180"
 			(at 238.76 36.83 0)
 			(effects
 				(font
@@ -15716,7 +15281,7 @@
 		(at 86.36 102.87 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "afc7d67a-bdf2-45c2-9e57-d48839b81096")
@@ -15767,15 +15332,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 86.36 102.87 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 86.36 102.87 0)
 			(effects
 				(font
@@ -15874,15 +15430,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 52.07 160.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "2b36c109-d26c-4ebb-979f-569f6e44b486")
 		)
@@ -15907,7 +15454,7 @@
 	(symbol
 		(lib_name "GND_2")
 		(lib_id "power:GND")
-		(at 64.77 110.49 0)
+		(at 67.31 110.49 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15915,7 +15462,7 @@
 		(dnp no)
 		(uuid "b60643bc-69df-49c6-82f9-bfb75b713572")
 		(property "Reference" "#PWR011"
-			(at 64.77 116.84 0)
+			(at 67.31 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15924,7 +15471,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 64.77 114.3 0)
+			(at 67.31 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15932,7 +15479,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 64.77 110.49 0)
+			(at 67.31 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15941,7 +15488,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 64.77 110.49 0)
+			(at 67.31 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15950,7 +15497,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 64.77 110.49 0)
+			(at 67.31 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16041,15 +15588,6 @@
 			)
 		)
 		(property "LCSC Part #" "C25917"
-			(at 114.3 39.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 114.3 39.37 0)
 			(effects
 				(font
@@ -16417,15 +15955,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 63.5 166.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "47a206b5-8b8f-4610-b97f-38125c428821")
 		)
@@ -16649,7 +16178,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" "180"
+		(property "FT Rotation Offset" "180"
 			(at 124.46 33.02 0)
 			(effects
 				(font
@@ -16682,7 +16211,7 @@
 		(at 227.33 21.59 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "ca4da494-51e7-4f87-b203-750faf3e2015")
@@ -16733,15 +16262,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 227.33 21.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 227.33 21.59 0)
 			(effects
 				(font
@@ -16834,7 +16354,7 @@
 		(at 86.36 168.91 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "d77910eb-3af8-4b8d-b5b2-f740b27dce95")
@@ -16885,15 +16405,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 86.36 168.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 86.36 168.91 0)
 			(effects
 				(font
@@ -16994,7 +16505,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
+		(property "FT Rotation Offset" "-90"
 			(at 99.06 29.21 0)
 			(effects
 				(font
@@ -17096,7 +16607,7 @@
 		(at 149.86 102.87 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "ddbddcf3-151f-41ad-8e82-d924493b0611")
@@ -17156,15 +16667,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 149.86 102.87 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 149.86 102.87 0)
 			(effects
 				(font
@@ -17258,7 +16760,7 @@
 		(at 224.79 21.59 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "e7cb28ad-4c77-4994-bcf3-19f54d02035d")
@@ -17309,15 +16811,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 224.79 21.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 224.79 21.59 0)
 			(effects
 				(font
@@ -17411,15 +16904,6 @@
 			)
 		)
 		(property "LCSC Part #" "C1525"
-			(at 41.91 128.27 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 41.91 128.27 0)
 			(effects
 				(font
@@ -17522,15 +17006,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 260.35 142.24 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "7f1ec12d-8df1-41b8-9305-d0017ef1954f")
 		)
@@ -17617,7 +17092,7 @@
 		(at 262.89 156.21 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "efdc393b-24fc-4600-b765-45a2b9975002")
@@ -17668,15 +17143,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 262.89 156.21 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 262.89 156.21 0)
 			(effects
 				(font
@@ -17775,15 +17241,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 73.66 160.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "f311c062-c572-4347-bab3-2b53a574bdfe")
 		)
@@ -17869,7 +17326,7 @@
 		(at 46.99 116.84 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp yes)
 		(uuid "f1db6a07-aff1-4768-acad-f2a63cb6f46c")
@@ -17925,15 +17382,6 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
-			(at 46.99 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "15dfdae2-6107-421a-859c-ab97f908fb77")
 		)
@@ -17955,7 +17403,7 @@
 		(at 229.87 21.59 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "f2d86098-ce21-4b96-a67a-ba9d63d20c3c")
@@ -18006,15 +17454,6 @@
 			)
 		)
 		(property "Alternative Part" ""
-			(at 229.87 21.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Rotation Offset" ""
 			(at 229.87 21.59 0)
 			(effects
 				(font
@@ -18240,7 +17679,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Rotation Offset" ""
+		(property "FT Rotation Offset" ""
 			(at 247.65 123.19 0)
 			(effects
 				(font
