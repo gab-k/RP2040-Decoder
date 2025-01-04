@@ -11,7 +11,7 @@ speed_step_t speed_step_target = SPEED_STEP_REVERSE_STOP;
 speed_step_t speed_step_target_prev = SPEED_STEP_REVERSE_STOP;
 bool cv_setup_check_done = false;
 bool flash_safe_execute_core_init_done = false;
-static error_t error_state = 0;
+error_t error_state = 0;
 
 // Functions in shared.c are accessed by both cores
 

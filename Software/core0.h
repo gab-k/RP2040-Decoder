@@ -9,22 +9,74 @@
 #include "shared.h"
 #include "CV.h"
 
+/**
+ * @def MESSAGE_3_BYTES
+ * @brief Comparison bitmask for detecting 3 byte long DCC messages/packets
+ */
 #define MESSAGE_3_BYTES 0b11111111110000000000000000000000000001
+/**
+ * @def MESSAGE_MASK_3_BYTES
+ * @brief Bitmask for detecting 3 byte long DCC messages/packets, input_bit_buffer is bitwise ANDed with the mask
+ */
 #define MESSAGE_MASK_3_BYTES 0b11111111111000000001000000001000000001
+/**
+ * @def MESSAGE_4_BYTES
+ * @brief Comparison bitmask for detecting 4 byte long DCC messages/packets
+ */
 #define MESSAGE_4_BYTES 0b11111111110000000000000000000000000000000000001
+/**
+ * @def MESSAGE_MASK_4_BYTES
+ * @brief Bitmask for detecting 4 byte long DCC messages/packets, input_bit_buffer is bitwise ANDed with the mask
+ */
 #define MESSAGE_MASK_4_BYTES 0b11111111111000000001000000001000000001000000001
+/**
+ * @def MESSAGE_5_BYTES
+ * @brief Comparison bitmask for detecting 5 byte long DCC messages/packets
+ */
 #define MESSAGE_5_BYTES 0b11111111110000000000000000000000000000000000000000000001
+/**
+ * @def MESSAGE_MASK_5_BYTES
+ * @brief Bitmask for detecting 5 byte long DCC messages/packets, input_bit_buffer is bitwise ANDed with the mask
+ */
 #define MESSAGE_MASK_5_BYTES 0b11111111111000000001000000001000000001000000001000000001
 
+/**
+ * @def INVALID_PACKAGE
+ * @brief Return value of detect_dcc_packet() when the packet is invalid, meaning no packet was detected
+ */
 #define INVALID_PACKAGE SIZE_MAX
 
+/**
+ * @def RING_BUFFER_PACKETS
+ * @brief First dimension of dcc ring buffer array - meaning RING_BUFFER_PACKETS can be retained inside the buffer
+ */
 #define RING_BUFFER_PACKETS 8
+/**
+ * @def RING_BUFFER_BYTES
+ * @brief Secoond dimension of dcc ring buffer array - meaning each packet can have a maximum size of RING_BUFFER_BYTES
+ */
 #define RING_BUFFER_BYTES 5
 
+/**
+ * @def FLASH_CMD_READ_JEDEC_ID
+ * @brief Constant value of 0x9F used as a JEDEC ID read command for reading the JEDEC ID of a winbond flash memory chip
+ */
 #define FLASH_CMD_READ_JEDEC_ID 0x9F
+/**
+ * @def FLASH_TIMEOUT_IN_MS
+ * @brief Timeout value for flash access
+ */
 #define FLASH_TIMEOUT_IN_MS 500
 
+/**
+ * @def ADC_CALIBRATION_ITERATIONS
+ * @brief Iterations for measuring adc offset
+ */
 #define ADC_CALIBRATION_ITERATIONS 8192
+/**
+ * @def WATCHDOG_TIMER_IN_MS
+ * @brief Watchdog timer setting, watchdog update needs to be called every WATCHDOG_TIMER_IN_MS milliseconds, otherwise decoder resets itself.
+ */
 #define WATCHDOG_TIMER_IN_MS 5000
 
 /*!
@@ -53,6 +105,7 @@ const uint32_t clr_bit_arr[6] = {
  * 
  * This structure is used to store the data and length of a DCC packet.
  * 
+ * @typedef dcc_packet_t
  * @struct dcc_packet_t
  * 
  * @param data An array of bytes representing the DCC packet data.
@@ -71,6 +124,7 @@ typedef struct dcc_packet_t {
  * This structure is used to manage a ring buffer that stores DCC packets.
  * It contains an array of packets and indices for writing and reading.
  * 
+ * @typedef dcc_ring_buffer_t
  * @struct dcc_ring_buffer_t
  */
 typedef struct dcc_ring_buffer_t {

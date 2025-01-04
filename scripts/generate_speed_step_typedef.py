@@ -31,18 +31,18 @@ def print_speed_steps():
     * | 255 | 1111 1111 | Forward   | Speed step 126       |
     """
     # Reverse speed steps
-    print(f"SPEED_STEP_REVERSE_STOP = 0x{0:02X}, // {0:08b}bin {0:03d}dec")
-    print(f"SPEED_STEP_REVERSE_EMERGENCY_STOP = 0x{1:02X}, // {1:08b}bin {1:03d}dec")
+    print(f"SPEED_STEP_REVERSE_STOP = 0x{0:02X}, /**< {0:08b}bin {0:03d}dec */") 
+    print(f"SPEED_STEP_REVERSE_EMERGENCY_STOP = 0x{1:02X}, /**< {1:08b}bin {1:03d}dec */")
     for i in range(1, 127):
-        print(f"SPEED_STEP_REVERSE_{i:03d} = 0x{i+1:02X}, // {i+1:08b}bin {i+1:03d}dec")
+        print(f"SPEED_STEP_REVERSE_{i:03d} = 0x{i+1:02X}, /**< {i+1:08b}bin {i+1:03d}dec */")
     
     print("\n\n")
     
     # Forward speed steps
-    print(f"SPEED_STEP_FORWARD_STOP = 0x{128:02X}, // {128:08b}bin {128:03d}dec")
-    print(f"SPEED_STEP_FORWARD_EMERGENCY_STOP = 0x{129:02X}, // {129:08b}bin {129:03d}dec")
+    print(f"SPEED_STEP_FORWARD_STOP = 0x{128:02X}, /**< {128:08b}bin {128:03d}dec */")
+    print(f"SPEED_STEP_FORWARD_EMERGENCY_STOP = 0x{129:02X}, /**< {129:08b}bin {129:03d}dec */")
     for i in range(1, 127):
-        print(f"SPEED_STEP_FORWARD_{i:03d} = 0x{i+129:02X}, // {i+129:08b}bin {i+129:03d}dec")
+        print(f"SPEED_STEP_FORWARD_{i:03d} = 0x{i+129:02X}, /**< {i+129:08b}bin {i+129:03d}dec */")
 
 # Call the function
 print_speed_steps()

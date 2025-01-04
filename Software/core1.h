@@ -8,78 +8,107 @@
 #pragma once
 #include "shared.h"
 
+
+/**
+ * @def BASE_PWM_ARR_LEN
+ * @brief The length of the base PWM array.
+ *
+ * This macro defines the length of the base PWM ring buffer array.
+ */
 #define BASE_PWM_ARR_LEN 16
 
+/**
+ * @brief Enumeration for controller operating modes.
+ *
+ * Defines the two controller operating modes.
+ *
+ * @enum controller_mode_t
+ */
 typedef enum {
-    STARTUP_MODE,
-    PID_MODE,
+    STARTUP_MODE, /**< Controller startup mode state */
+    PID_MODE, /**< Controller pid mode state */
 } controller_mode_t;
 
+/**
+ * @brief Structure for startup controller parameters and variables.
+ *
+ * This structure defines the parameters and variables used in the startup 
+ * controller, including the latest PWM level, base pwm level ring buffer array and the respective ring buffer index.
+ *
+ * @typedef startup_parameters_t
+ * @struct startup_parameters_t
+ */
 typedef struct startup_parameters_t {
-    uint16_t level;
-    uint16_t base_pwm_arr[BASE_PWM_ARR_LEN];
-    uint16_t base_pwm_arr_i;
+    uint16_t level; /**< Latest level */
+    uint16_t base_pwm_arr[BASE_PWM_ARR_LEN]; /**< base pwm ring buffer array */
+    uint16_t base_pwm_arr_i; /**< base pwm ring buffer array index */
 }startup_parameters_t;
 
+/**
+ * @brief Structure for PID controller parameters and variables.
+ *
+ * This structure defines the parameters and variables used in the PID 
+ * controller, including gains, error tracking, integrator limits, ...
+ *
+ * @typedef pid_parameters_t
+ * @struct pid_parameters_t
+ */
 typedef struct pid_parameters_t{
     // PID Controller variables
-    float k_i;                      // Integral gain
-    float k_d;                      // Derivative gain
-    float t;                        // Sampling time
-    float tau;                      // Low-pass-filter time constant
-    float ci_0;                     // (k_i*t)/2
-    float cd_0;                     // (k_d*2)/(2*tau+t)
-    float cd_1;                     // (2*tau-t)/(2*tau+t)
-    float int_lim_max;              // max limit for integrator
-    float int_lim_min;              // min limit for integrator
-    float max_output;               // max possible pwm output value
-    float k_p;                      // Proportional gain
-    float e;                        // Error
-    float e_prev;                   // Previous Error
-    float i_prev;                   // Previous Integral Value
-    float d_prev;                   // Previous Derivative Value
-    // Variable gain variables
-    float k_p_x_1_shift;
-    float k_p_x_1;
-    float k_p_x_2;
-    float k_p_y_0;
-    float k_p_y_1;
-    float k_p_y_2;
-    float k_p_m_1;
-    float k_p_m_2;
-} pid_parameter_t;
+    float k_i;                      /**< Integral gain */
+    float k_d;                      /**< Derivative gain */
+    float t;                        /**< Sampling time */ 
+    float tau;                      /**< Low-pass-filter time constant */ 
+    float ci_0;                     /**< (k_i*t)/2 */ 
+    float cd_0;                     /**< (k_d*2)/(2*tau+t) */ 
+    float cd_1;                     /**< (2*tau-t)/(2*tau+t) */ 
+    float int_lim_max;              /**< max limit for integrator */ 
+    float int_lim_min;              /**< min limit for integrator */ 
+    float max_output;               /**< max possible pwm output value */ 
+    float k_p;                      /**< Proportional gain */ 
+    float e;                        /**< Error */ 
+    float e_prev;                   /**< Previous Error */ 
+    float i_prev;                   /**< Previous Integral Value */ 
+    float d_prev;                   /**< Previous Derivative Value */ 
+    // Variable gain variables - See gain scheduling documentation for more details
+    float k_p_x_1_shift;            /**< Effectively defines where x1 is shifted from 0% of max setpoint to 100% of max setpoint */ 
+    float k_p_x_1;                  /**< x1 */ 
+    float k_p_x_2;                  /**< x2 */ 
+    float k_p_y_0;                  /**< y0 = KP @ x0 */ 
+    float k_p_y_1;                  /**< y1 = KP @ x1 */ 
+    float k_p_y_2;                  /**< y2 = KP @ x2 */ 
+    float k_p_m_1;                  /**< slope from (x0, y0) to (x1, y1) */ 
+    float k_p_m_2;                  /**< slope from (x1, y1) to (x2, y2) */ 
+} pid_parameters_t;
 
+/**
+ * @brief Structure for various controller parameters.
+ * 
+ * This structure defines the highest level general controller parameters, including 
+ * General settings (setpoint, mode), startup controller settings struct, PID controller struct, and measurement data.
+ * 
+ * @typedef controller_parameter_t
+ * @struct controller_parameter_t
+ */
 typedef struct controller_parameter_t{
-    /*!
-     * General Variables
-     */
-    controller_mode_t mode;         // Controller mode
-    float feed_fwd;                 // Feed forward value
-    uint32_t setpoint;              // Current setpoint
-    uint16_t speed_table[127];      // Array with setpoint values corresponding to every speed step
-
-    /*!
-     * Startup controller mode specific variables
-     */
-    startup_parameters_t startup;
-
-    /*!
-     * PID Controller variables
-     */
-    pid_parameter_t pid;
-
-    /*!
-     * Measurement Variables
-     */
-    float measurement;              // Newest Measurement value
-    float measurement_prev;         // Previous Measurement
-    float measurement_corrected;    // measurement - adc_offset = measurement_corrected
-    float adc_offset;               // ADC offset value
-    uint8_t msr_delay_in_us;        // Delay before VEMF Measurement
-    uint8_t msr_total_iterations;   // Amount of samples
-    uint8_t l_side_arr_cutoff;      // Discarded samples (left side)
-    uint8_t r_side_arr_cutoff;      // Discarded samples (right side)
-
+    // General controller parameters
+    controller_mode_t mode;         /**< Current controller mode */
+    float feed_fwd;                 /**< Current feed forward value set by startup controller */
+    uint32_t setpoint;              /**< Current setpoint */
+    uint16_t speed_table[127];      /**< Array with setpoint values corresponding to every speed step */
+    // Startup controller parameters
+    startup_parameters_t startup;   /**< Struct for startup controller specific variables */
+    // PID controller parameters
+    pid_parameters_t pid;            /**< Struct for PID controller specific variables */
+    // Measurement variables
+    float measurement;              /**< Latest measurement value */ 
+    float measurement_prev;         /**< Previous measurement value */ 
+    float measurement_corrected;    /**< Corrected measurement value (measurement - adc_offset = measurement_corrected) */ 
+    float adc_offset;               /**< ADC offset value */ 
+    uint8_t msr_delay_in_us;        /**< Delay before V_EMF is measured */ 
+    uint8_t msr_total_iterations;   /**< Amount of samples */ 
+    uint8_t l_side_arr_cutoff;      /**< Discarded outlier samples (left side) */ 
+    uint8_t r_side_arr_cutoff;      /**< Discarded outlier samples (right side) */ 
 } controller_parameter_t;
 
 
