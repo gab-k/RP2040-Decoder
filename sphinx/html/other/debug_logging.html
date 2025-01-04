@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Other &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
+  <title>Debugging and Logging &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -16,12 +16,11 @@
       <script src="../_static/documentation_options.js?v=6bd3bce2"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
-    <link rel="prev" title="core0.h" href="../software/header_files.html" /> 
+    <link rel="next" title="Configuration Variables (CV)" href="CV_list.html" />
+    <link rel="prev" title="Troubleshooting" href="troubleshooting.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,9 +47,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../gs/getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../hardware/index.html">Hardware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../software/index.html">Software</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Other</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Other</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="debug_logging.html">Debugging and Logging</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Debugging and Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#debugging-via-swd">Debugging via SWD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logging">Logging</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="CV_list.html">Configuration Variables (CV)</a></li>
 </ul>
 </li>
@@ -70,9 +73,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Other</li>
+          <li class="breadcrumb-item"><a href="index.html">Other</a></li>
+      <li class="breadcrumb-item active">Debugging and Logging</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/other/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/other/debug_logging.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -80,39 +84,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="other">
-<h1>Other<a class="headerlink" href="#other" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#enable-logging-and-or-debug-via-swd">Enable logging and or debug via SWD</a></li>
-<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#checking-the-power-supply">Checking the power supply:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#check-your-motor">Check your motor:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#cv-reset">CV Reset:</a></li>
+  <section id="debugging-and-logging">
+<h1>Debugging and Logging<a class="headerlink" href="#debugging-and-logging" title="Link to this heading"></a></h1>
+<p>For logging and debugging you have to build the software yourself. This is explained here: <a class="reference internal" href="../gs/getting_started.html#building-the-software"><span class="std std-ref">3. Building the software</span></a></p>
+<section id="debugging-via-swd">
+<span id="id1"></span><h2>Debugging via SWD<a class="headerlink" href="#debugging-via-swd" title="Link to this heading"></a></h2>
+<p>Please refer to <a class="reference internal" href="../gs/getting_started.html#flashing-the-software-swd"><span class="std std-ref">4.2. Flashing the software via SWD</span></a>.</p>
+</section>
+<section id="logging">
+<span id="id2"></span><h2>Logging<a class="headerlink" href="#logging" title="Link to this heading"></a></h2>
+<p>Logging can be enabled in <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>, and is available with two interfaces:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Logging via UART RX/TX pins (GPIO0/GPIO1 by default)</p></li>
+<li><p>Logging via USB CDC/ACM</p></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="debug_logging.html">Debugging and Logging</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="debug_logging.html#debugging-via-swd">Debugging via SWD</a></li>
-<li class="toctree-l2"><a class="reference internal" href="debug_logging.html#logging">Logging</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="CV_list.html">Configuration Variables (CV)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="CV_list.html#reset-all-cvs">Reset all CVs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="CV_list.html#speed-step-configuration">Speed step configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="CV_list.html#cv-list">CV List</a></li>
-</ul>
-</li>
-</ul>
-</div>
+</div></blockquote>
+<p>Additionally you can make the decoder wait for input via serial port by setting LOG_WAIT to 1. For more details please see comments inside <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>.</p>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../software/header_files.html" class="btn btn-neutral float-left" title="core0.h" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="troubleshooting.html" class="btn btn-neutral float-right" title="Troubleshooting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="troubleshooting.html" class="btn btn-neutral float-left" title="Troubleshooting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="CV_list.html" class="btn btn-neutral float-right" title="Configuration Variables (CV)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuration Variables (CV) &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=6bd3bce2"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Debugging and Logging" href="debug_logging.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RP2040-Decoder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../gs/getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software/index.html">Software</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Other</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debug_logging.html">Debugging and Logging</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Configuration Variables (CV)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reset-all-cvs">Reset all CVs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#speed-step-configuration">Speed step configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cv-list">CV List</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cv-1-basic-address"><span class="math notranslate nohighlight">\(CV_{1}\)</span> - Basic address</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-2-v-min"><span class="math notranslate nohighlight">\(CV_{2}\)</span> - <span class="math notranslate nohighlight">\(v_{min}\)</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-3-acceleration-rate"><span class="math notranslate nohighlight">\(CV_{3}\)</span> - Acceleration rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-4-deceleration-rate"><span class="math notranslate nohighlight">\(CV_{4}\)</span> - Deceleration rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-5-v-max"><span class="math notranslate nohighlight">\(CV_{5}\)</span> - <span class="math notranslate nohighlight">\(v_{max}\)</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-6-v-mid"><span class="math notranslate nohighlight">\(CV_{6}\)</span> - <span class="math notranslate nohighlight">\(v_{mid}\)</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-7-version-no-read-only"><span class="math notranslate nohighlight">\(CV_{7}\)</span> - Version No. (Read-Only)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-8-manufacturer-read-only"><span class="math notranslate nohighlight">\(CV_{8}\)</span> - Manufacturer (Read-Only)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-9-motor-pwm-frequency"><span class="math notranslate nohighlight">\(CV_{9}\)</span> - Motor PWM Frequency</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-11-packet-timeout"><span class="math notranslate nohighlight">\(CV_{11}\)</span> - Packet timeout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-12-permitted-operating-modes"><span class="math notranslate nohighlight">\(CV_{12}\)</span> - Permitted operating modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-17-cv-18-14-bit-extended-long-address"><span class="math notranslate nohighlight">\(CV_{17}\)</span> &amp; <span class="math notranslate nohighlight">\(CV_{18}\)</span> - 14-Bit extended/long address</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-29-decoder-configuration"><span class="math notranslate nohighlight">\(CV_{29}\)</span> - Decoder Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-31-cv-32-extended-cv-pointer-read-only"><span class="math notranslate nohighlight">\(CV_{31}\)</span> &amp; <span class="math notranslate nohighlight">\(CV_{32}\)</span> - Extended CV pointer (Read-Only)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cv-116-to-cv-171-pwm-slice-configuration"><span class="math notranslate nohighlight">\(CV_{116}\)</span> to <span class="math notranslate nohighlight">\(CV_{171}\)</span> - PWM Slice configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RP2040-Decoder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Other</a></li>
+      <li class="breadcrumb-item active">Configuration Variables (CV)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/other/CV_list.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="configuration-variables-cv">
+<h1>Configuration Variables (CV)<a class="headerlink" href="#configuration-variables-cv" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CV.h</span></code> contains default values for every CV. When your board is still “factory new” these values are automatically written into flash. <code class="docutils literal notranslate"><span class="pre">CV_65</span> <span class="pre">==</span> <span class="pre">255</span></code> indicates a factory condition and resets all CVs to default.</p></li>
+<li><p>Index 0 in the CV array corresponds with <code class="docutils literal notranslate"><span class="pre">CV_1</span></code>, index 1 corresponds with <code class="docutils literal notranslate"><span class="pre">CV_2</span></code> and so forth.</p></li>
+</ul>
+</div>
+<section id="reset-all-cvs">
+<h2>Reset all CVs<a class="headerlink" href="#reset-all-cvs" title="Link to this heading"></a></h2>
+<p>To reset all CVs to default, a value of <code class="docutils literal notranslate"><span class="pre">8</span></code> can be written to <code class="docutils literal notranslate"><span class="pre">CV8</span></code>. Alternatively write a value of <code class="docutils literal notranslate"><span class="pre">255</span></code> to <code class="docutils literal notranslate"><span class="pre">CV_65</span></code> this will also reset all CVs to default, but only after power cycling the decoder.</p>
+</section>
+<section id="speed-step-configuration">
+<h2>Speed step configuration<a class="headerlink" href="#speed-step-configuration" title="Link to this heading"></a></h2>
+<figure class="align-center" id="id1">
+<img alt="Speed Table" src="../_images/speed_table.svg" />
+<figcaption>
+<p><span class="caption-text">Speed Table</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(v_{min} = CV_{2}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(v_{mid} = 16 \cdot CV_{6}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(v_{max} = 16 \cdot CV_{5}\)</span></p></li>
+</ul>
+<p>The figure above shows how the speed steps can be configured using the corresponding CVs. The red * represents <span class="math notranslate nohighlight">\(v_{min}\)</span> which is always at speed step 1, the green * shows <span class="math notranslate nohighlight">\(v_{mid}\)</span> at speed step 63, and the blue * shows <span class="math notranslate nohighlight">\(v_{max}\)</span> at speed step 126.</p>
+</section>
+<section id="cv-list">
+<h2>CV List<a class="headerlink" href="#cv-list" title="Link to this heading"></a></h2>
+<section id="cv-1-basic-address">
+<h3><span class="math notranslate nohighlight">\(CV_{1}\)</span> - Basic address<a class="headerlink" href="#cv-1-basic-address" title="Link to this heading"></a></h3>
+<p>Short DCC address</p>
+</section>
+<section id="cv-2-v-min">
+<h3><span class="math notranslate nohighlight">\(CV_{2}\)</span> - <span class="math notranslate nohighlight">\(v_{min}\)</span><a class="headerlink" href="#cv-2-v-min" title="Link to this heading"></a></h3>
+<p>Min motor voltage/speed is: <span class="math notranslate nohighlight">\(v_{min} = CV_{2}\)</span></p>
+</section>
+<section id="cv-3-acceleration-rate">
+<h3><span class="math notranslate nohighlight">\(CV_{3}\)</span> - Acceleration rate<a class="headerlink" href="#cv-3-acceleration-rate" title="Link to this heading"></a></h3>
+<p>The time for one discrete acceleration time step can be calculated as <span class="math notranslate nohighlight">\(CV_{3} \cdot CV_{175}\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Base speed steps are always 128/126 steps.</p>
+</div>
+</section>
+<section id="cv-4-deceleration-rate">
+<h3><span class="math notranslate nohighlight">\(CV_{4}\)</span> - Deceleration rate<a class="headerlink" href="#cv-4-deceleration-rate" title="Link to this heading"></a></h3>
+<p>The time for one discrete deceleration time step can be calculated as <span class="math notranslate nohighlight">\(CV_{4} \cdot CV_{175}\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Base speed steps are always 128/126 steps.</p>
+</div>
+</section>
+<section id="cv-5-v-max">
+<h3><span class="math notranslate nohighlight">\(CV_{5}\)</span> - <span class="math notranslate nohighlight">\(v_{max}\)</span><a class="headerlink" href="#cv-5-v-max" title="Link to this heading"></a></h3>
+<p>Max motor voltage/speed is calculated as: <span class="math notranslate nohighlight">\(v_{max} = 16 \cdot CV_{5}\)</span></p>
+</section>
+<section id="cv-6-v-mid">
+<h3><span class="math notranslate nohighlight">\(CV_{6}\)</span> - <span class="math notranslate nohighlight">\(v_{mid}\)</span><a class="headerlink" href="#cv-6-v-mid" title="Link to this heading"></a></h3>
+<p>Mid motor voltage/speed is calculated as: <span class="math notranslate nohighlight">\(v_{mid} = 16 \cdot CV_{6}\)</span></p>
+</section>
+<section id="cv-7-version-no-read-only">
+<h3><span class="math notranslate nohighlight">\(CV_{7}\)</span> - Version No. (Read-Only)<a class="headerlink" href="#cv-7-version-no-read-only" title="Link to this heading"></a></h3>
+<p>Writing a value of <code class="docutils literal notranslate"><span class="pre">7</span></code> triggers an ADC offset adjustment.</p>
+</section>
+<section id="cv-8-manufacturer-read-only">
+<h3><span class="math notranslate nohighlight">\(CV_{8}\)</span> - Manufacturer (Read-Only)<a class="headerlink" href="#cv-8-manufacturer-read-only" title="Link to this heading"></a></h3>
+<p>Default = <code class="docutils literal notranslate"><span class="pre">13</span></code> = Public Domain &amp; Do-It-Yourself Decoders</p>
+<p>Even though <span class="math notranslate nohighlight">\(CV_{8}\)</span> is defined as a Read-only CV, writing a value of <code class="docutils literal notranslate"><span class="pre">8</span></code> resets all CV values to the default values in <code class="docutils literal notranslate"><span class="pre">CV.h</span></code>.</p>
+</section>
+<section id="cv-9-motor-pwm-frequency">
+<h3><span class="math notranslate nohighlight">\(CV_{9}\)</span> - Motor PWM Frequency<a class="headerlink" href="#cv-9-motor-pwm-frequency" title="Link to this heading"></a></h3>
+<p><span class="math notranslate nohighlight">\(f_{PWM_{MOTOR}} = (CV_9 \cdot 100 + 10000) \, Hz\)</span></p>
+</section>
+<section id="cv-11-packet-timeout">
+<h3><span class="math notranslate nohighlight">\(CV_{11}\)</span> - Packet timeout<a class="headerlink" href="#cv-11-packet-timeout" title="Link to this heading"></a></h3>
+<p>If no package is received for <span class="math notranslate nohighlight">\(x = CV_{11}\)</span> seconds the decoder will automatically stop the motor (Emergency Stop).</p>
+</section>
+<section id="cv-12-permitted-operating-modes">
+<h3><span class="math notranslate nohighlight">\(CV_{12}\)</span> - Permitted operating modes<a class="headerlink" href="#cv-12-permitted-operating-modes" title="Link to this heading"></a></h3>
+<p>Currently, DCC Digital mode is the only supported mode.</p>
+</section>
+<section id="cv-17-cv-18-14-bit-extended-long-address">
+<h3><span class="math notranslate nohighlight">\(CV_{17}\)</span> &amp; <span class="math notranslate nohighlight">\(CV_{18}\)</span> - 14-Bit extended/long address<a class="headerlink" href="#cv-17-cv-18-14-bit-extended-long-address" title="Link to this heading"></a></h3>
+<p>Address is only used if bit5 of <span class="math notranslate nohighlight">\(CV_{29}\)</span> has a value of <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+<img alt="Long Address" class="align-center" src="../_images/Long_address.svg" />
+<p>Bit15 and bit14 which correspond to bit7 and bit6 of <span class="math notranslate nohighlight">\(CV_{17}\)</span> are always <code class="docutils literal notranslate"><span class="pre">1</span></code>. <span class="math notranslate nohighlight">\(CV_{17} = 192\)</span> &amp; <span class="math notranslate nohighlight">\(CV_{18} = 0\)</span> is also not a valid address.
+Otherwise, the valid value range of <span class="math notranslate nohighlight">\(CV_{17}\)</span> ranges from <code class="docutils literal notranslate"><span class="pre">192</span></code> to <code class="docutils literal notranslate"><span class="pre">231</span></code> and <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">255</span></code> for <span class="math notranslate nohighlight">\(CV_{18}\)</span> respectively.</p>
+</section>
+<section id="cv-29-decoder-configuration">
+<h3><span class="math notranslate nohighlight">\(CV_{29}\)</span> - Decoder Configuration<a class="headerlink" href="#cv-29-decoder-configuration" title="Link to this heading"></a></h3>
+<p>Bit0 is can be used to reverse motor direction, i.e., <code class="docutils literal notranslate"><span class="pre">0</span></code> = normal, <code class="docutils literal notranslate"><span class="pre">1</span></code> = reverse.
+Bit5 switches between basic and extended addressing modes, i.e., <code class="docutils literal notranslate"><span class="pre">0</span></code> = basic address, <code class="docutils literal notranslate"><span class="pre">1</span></code> = extended address.
+The other 6 bits are currently not in use and therefore irrelevant.</p>
+</section>
+<section id="cv-31-cv-32-extended-cv-pointer-read-only">
+<h3><span class="math notranslate nohighlight">\(CV_{31}\)</span> &amp; <span class="math notranslate nohighlight">\(CV_{32}\)</span> - Extended CV pointer (Read-Only)<a class="headerlink" href="#cv-31-cv-32-extended-cv-pointer-read-only" title="Link to this heading"></a></h3>
+<p>Not in use.</p>
+</section>
+<section id="cv-116-to-cv-171-pwm-slice-configuration">
+<h3><span class="math notranslate nohighlight">\(CV_{116}\)</span> to <span class="math notranslate nohighlight">\(CV_{171}\)</span> - PWM Slice configuration<a class="headerlink" href="#cv-116-to-cv-171-pwm-slice-configuration" title="Link to this heading"></a></h3>
+<img alt="GPIO Slices" class="align-center" src="../_images/GPIO_slices.svg" />
+<p>Every slice controls two independent output channels, duty cycle from 0% to 100% inclusive, and can be configured with several parameters:</p>
+<ul class="simple">
+<li><p>Wrap (16Bit): Sets the slice time period of x cycles - effectively determining the frequency</p></li>
+<li><p>Clock Divider: Additional clock divider</p></li>
+<li><p>Level Channel A / Level Channel B (16Bit each): Determining how many of the x cycles the signal is at a high level - effectively determining the duty cycle</p></li>
+</ul>
+<p>To see which CVs correspond to which slice and channel, it is advisable to use <code class="docutils literal notranslate"><span class="pre">CV.h</span></code> as a reference.</p>
+<p>The PWM frequency is calculated as follows: <span class="math notranslate nohighlight">\(f_{PWM} = \frac{125 \, \text{MHz}}{(CV_{\text{clk_div}} + 1) \cdot (CV_{\text{wrap}} + 1)}\)</span></p>
+<p>The duty-cycle can be calculated as follows: <span class="math notranslate nohighlight">\(D = \frac{CV_{\text{Level}}}{CV_{\text{wrap}} + 1}\)</span></p>
+<p>A more detailed explanation regarding PWM can be found in the <a class="reference external" href="https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf">RP2040-Datasheet - Chapter 4.5</a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="debug_logging.html" class="btn btn-neutral float-left" title="Debugging and Logging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Gabriel Koppenstein.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

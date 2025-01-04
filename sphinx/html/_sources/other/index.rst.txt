@@ -5,5 +5,6 @@ Other
    :maxdepth: 2
    :caption: Contents:
 
-   CV_list
    troubleshooting
+   debug_logging
+   CV_list
