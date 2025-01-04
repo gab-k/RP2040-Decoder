@@ -10,8 +10,7 @@ RP2040-Decoder Documentation
    :maxdepth: 3
    :caption: Contents:
 
-   other/getting_started
+   gs/getting_started
    hardware/index
    software/index
    other/index
-   other/troubleshooting

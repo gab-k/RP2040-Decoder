@@ -65,14 +65,14 @@ Control Loop & Digital Controller
 
    Control Loop - Block diagram
 
-The block diagram above shows the complete control loop. The actual digital controller block is explained below.
+The block diagram above shows the (simplified) control loop. The actual digital controller block is explained below.
 
-The Speed Helper block effectively sets the setpoint of the controller according to the CV configured acceleration and deceleration rates and actual target speedstep.
+The *Speed Helper* block effectively sets the setpoint of the controller according to the CV configured acceleration and deceleration rates and actual target speedstep.
 
-For feedback the back EMF voltage V_EMF is measured via voltage divider and ADC. V_EMF is proportional to the motor speed in RPM.
+For feedback the back EMF voltage *V_EMF* is measured via voltage divider and ADC. *V_EMF* is proportional to the motor speed.
 
 
-TODO: rewrite this: While the central component is the PID controller, there is an additional block called `Feed-forward <https://en.wikipedia.org/wiki/Feed_forward_(control)>`_ that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the ``speed_helper()`` function, which delays changing the setpoint according to the configured deceleration/acceleration rates.
+While the central component is the PID controller, there is an additional block called `Feed-forward <https://en.wikipedia.org/wiki/Feed_forward_(control)>`_ that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the ``speed_helper()`` function, which delays changing the setpoint according to the configured deceleration/acceleration rates.
 
 .. figure:: ../../../svg/sw/Block_Diagram_Digital_Controller.svg
    :alt: Block Diagram - Digital Controller
@@ -80,12 +80,27 @@ TODO: rewrite this: While the central component is the PID controller, there is 
 
    Digital Controller - Block diagram
 
-The controller is divided into two parts, depending on whether the motor is stationary or in motion. The startup controller handles overcoming friction of the motor, and finding base PWM level for overcoming friction. The base PWM level is saved and added to the output of the PID controller which handles motor control when the motor is in motion.
+The controller is divided into two parts, depending on whether the motor is stationary or in motion.
+At all times either the startup controller or the PID controller is active.
+
+The startup controller handles overcoming friction of the motor, and finding a base PWM level for overcoming friction.
+The base PWM level is equivalent to a certain PWM duty cycle.
+The base level gets saved and added to the output of the PID controller which handles motor control when the motor is in motion.
+This means the actual output of the PID controller is the sum of the PID output and the base PWM level. This is referred to as the :ref:`feed forward <feed_forward>` block.
+The benefit of doing this is that the PID controller does not have to work in the non linear friction region of the motor, improving control performance.
 
 
 Startup Controller
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Used on startup, meaning when the motor is not moving. The startup controller sets a PWM duty cycle level of :math:`\frac{2}{3} \cdot \text{base_pwm}` and then ramps up the duty cycle/PWM level until the motor starts moving. This is done in order to overcome the friction of the drive train and motor. :math:`\text{base_pwm}` is the average value of the 16 previous startup PWM levels. When no previous startup PWM levels are saved the startup controller begins ramping up from 0. The actual value at which the motor started moving is used as a reference for the :ref:`feed forward <feed_forward>` block. 
+
+Used on startup, meaning when the motor is not moving. First the startup controller retrieves the last `BASE_PWM_ARR_LEN` base PWM levels.
+The base pwm levels are not retained on a power cycle. That means when there is no previous base PWM level saved, the startup controller will start ramping up from 0.
+When there is less than `BASE_PWM_ARR_LEN` base PWM levels saved, the startup controller will ramp up from the average of the saved base PWM levels.
+
+After the startup controller retrieved the average of the last base pwm levels :math:`\bar{b}` it sets a PWM duty cycle level of :math:`\frac{2}{3} \cdot \bar{b}` and then ramps up the duty cycle/PWM level until the motor starts moving.
+When no previous startup PWM levels are saved the startup controller begins ramping up from 0.
+The actual value at which the motor started moving is multiplied by `K_FF` and used as a reference for the :ref:`feed forward <feed_forward>` block.
+
 
 
 PID Controller
@@ -131,7 +146,7 @@ This results in the following difference equations which are then implemented in
 
 
 Gain Scheduling
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: ../../../svg/sw/adaptive_kp.svg
    :alt: Gain Scheduling figure
@@ -145,19 +160,12 @@ Another aspect to consider is the implementation of `gain scheduling <https://en
 .. _feed_forward:
 
 Feed-forward
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
+As previously mentioned, to achieve better control, `Feed-forward <https://en.wikipedia.org/wiki/Feed_forward_(control)>`_ is used.
+In essence this means that the output of the PID controller is not only the sum of the proportional, integral, and derivative parts, but also the base PWM level.
+The base PWM level is set by the startup controller and is the PWM level at which the motor starts moving.
 
-.. figure:: ../../../svg/sw/feed_forward.svg
-   :alt: Feed forward figure
-   :align: center
-   
-   Feed-forward
-
-
-TODO: Update this part:
-
-To achieve better control, `Feed-forward <https://en.wikipedia.org/wiki/Feed_forward_(control)>`_ is used. On startup, the decoder will check for a configuration regarding Feed-forward control. When no configuration is found, the decoder automatically runs a calibration to establish a base PWM level (y\ :sub:`1`) for both directions. The base PWM level (y\ :sub:`1`) will vary depending on load, motor, and voltage on the tracks and can be configured with CV_176 - CV_179. If the setpoint is greater than the threshold, y\ :sub:`2` is corrected automatically when i\ :sub:`n` reaches 0.5i\ :sub:`min` or 0.5i\ :sub:`max`. CV_47 can be used to set how sensitive this correction is.
 
 Back-EMF voltage measurement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

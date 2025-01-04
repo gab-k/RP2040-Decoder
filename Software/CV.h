@@ -62,7 +62,7 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_44  -
    0b00000000,         //CV_45  -
    0b00000000,         //CV_46  -
-   // TODO: Update controller CVs
+   // TODO: Update controller CVs and implement/redefine k_ff  in the speed controller initialization
    // Speed controller - Configuration /////////////////////////////////////////////////////////////////////////////////
    0b00110010,         //CV_47  -   Feed-forward gain k_ff      =   CV_47/10000     Default = 50 -> 0.005             //
    0b00001010,         //CV_48  -   PID Control low pass filter time constant (tau) in ms                             //
@@ -213,10 +213,10 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    0b00000001,         //CV_174  -  Additional motor-PWM clock divider.
    0b00000111,         //CV_175  -  speed_helper timer delay -  can be used to adjust accel/decel rate
-   0b00000000,         //CV_176  -  Base-PWM forward bits 8-15
-   0b00000000,         //CV_177  -  Base-PWM forward bits 0-7
-   0b00000000,         //CV_178  -  Base-PWM reverse bits 15-8
-   0b00000000,         //CV_179  -  Base-PWM reverse bits 0-7
+   0b00000000,         //CV_176  -  
+   0b00000000,         //CV_177  -  
+   0b00000000,         //CV_178  -  
+   0b00000000,         //CV_179  -  
    0b00000000,         //CV_180  -
    0b00000000,         //CV_181  -
    0b00000000,         //CV_182  -

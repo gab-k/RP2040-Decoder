@@ -147,7 +147,7 @@ float get_kp(const controller_parameter_t *const ctrl_par) {
 uint16_t get_initial_level(controller_parameter_t *const ctrl_par){
     uint32_t sum = 0;
     uint32_t i = 0;
-    while (i < 16) {
+    while (i < BASE_PWM_ARR_LEN) {
         if (ctrl_par->startup.base_pwm_arr[i] > 0) {
             sum += ctrl_par->startup.base_pwm_arr[i];
             i++;
@@ -177,7 +177,7 @@ void controller_startup_mode(controller_parameter_t *const ctrl_par) {
         // Save level value in array
         ctrl_par->startup.base_pwm_arr[ctrl_par->startup.base_pwm_arr_i] = ctrl_par->startup.level;
         // Update index
-        ctrl_par->startup.base_pwm_arr_i = (ctrl_par->startup.base_pwm_arr_i+1)%16;
+        ctrl_par->startup.base_pwm_arr_i = (ctrl_par->startup.base_pwm_arr_i+1)%BASE_PWM_ARR_LEN;
         // Set ramp_up_mode flag to true
         ctrl_par->mode = PID_MODE;
         // multiply with constant value of 0.9 and set as current feed forward value for pid mode

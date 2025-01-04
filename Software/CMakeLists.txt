@@ -79,13 +79,13 @@ endif()
 #   limit the frequency of log outputs—such as logging only every 100th iteration.
 # - Note that with UART logging enabled, PICO_DEFAULT_UART_TX_PIN and PICO_DEFAULT_UART_RX_PIN are disabled for decoder functions.
 #   These pins are used for UART communication. Disabling is done automatically in RP2040-Decoder-board.h or RP2040-Decoder-board-legacy.h respectively.
-set(LOGLEVEL 1)
+set(LOGLEVEL 0)
 # Additionally, the LOG_WAIT parameter can be configured to make the controller wait for user input via stdio before continuing.
 # This is useful for ensuring that all stdio logging outputs are captured.
 # If disabled, there may not be enough time to connect the serial terminal before most of the logging has already been completed.
 set(LOG_WAIT 0)
 # Modify the below lines to enable/disable output over UART and/or USB
-set(STDIO_USB_ENABLED 1)
+set(STDIO_USB_ENABLED 0)
 set(STDIO_UART_ENABLED 0)
 # Leave those two unmodified
 pico_enable_stdio_uart(RP2040-Decoder ${STDIO_UART_ENABLED})
