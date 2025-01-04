@@ -1,4 +1,4 @@
-name: Build Software and create release on tag
+name: Build Software and create prerelease on tag
 
 on:
   push:

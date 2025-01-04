@@ -1,4 +1,4 @@
-name: pcb_image
+name: Render PCB images and rotating gif
 on:
   push:
     branches:

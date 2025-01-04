@@ -1,4 +1,4 @@
-name: Doxygen Action
+name: Generate documentation doxygen/breathe/sphinx and deploy on gh-pages/gh-pages-dev
 
 on:
   push:
