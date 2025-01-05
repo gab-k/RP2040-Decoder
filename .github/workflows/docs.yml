@@ -52,9 +52,9 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./html
+          publish_dir: docs/sphinx
           publish_branch: gh-pages
-          destination_dir: docs/sphinx/build
+          destination_dir: sphinx
 
   deploy-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
