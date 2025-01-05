@@ -1,0 +1,42 @@
+name: Build Software
+
+on:
+  push:
+    branches:
+      - dev   # Trigger on push to 'dev' branch
+      - main  # Trigger on push to 'main' branch
+    paths:
+      - '.github/workflows/build_sw.yml'  # Trigger if this workflow file changes
+      - 'Software/**'  # Trigger if any file in the 'Software' directory changes
+
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: install build packages
+      run: sudo apt-get update && sudo apt-get install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi g++ libstdc++-arm-none-eabi-newlib build-essential
+    
+    - name: Get SDK and add PICO_SDK_PATH
+      run: git clone https://github.com/raspberrypi/pico-sdk.git && echo "PICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk" >> $GITHUB_ENV
+     
+    - name: Init submodules to get tinyUSB stack
+      run: ls && cd pico-sdk && git submodule update --init && cd ..
+      
+    - name: Configure and run CMake for Hardware Rev 0.3
+      run: cmake -B ${{github.workspace}}/Software/build-Rev-0_3 -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-Rev-0_3
+
+    - name: Build for Hardware Rev 0.3
+      run: cmake --build ${{github.workspace}}/Software/build-Rev-0_3 --config ${{env.BUILD_TYPE}}
+    
+    - name: Configure and run CMake for Hardware Rev 1.0
+      run: cmake -B ${{github.workspace}}/Software/build-Rev-1_0 -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-Rev-1_0
+
+    - name: Build for Hardware Rev 1.0
+      run: cmake --build ${{github.workspace}}/Software/build-Rev-1_0 --config ${{env.BUILD_TYPE}}

@@ -1,0 +1,77 @@
+name: Generate documentation doxygen/breathe/sphinx and deploy on gh-pages/gh-pages-dev
+
+on:
+  push:
+    branches:
+      - dev   # Trigger on push to 'dev' branch
+      - main  # Trigger on push to 'main' branch
+    paths:
+      - '.github/workflows/docs.yml'  # Trigger if this workflow file changes
+      - 'Software/**'  # Trigger if any file in the 'Software' directory changes
+      - 'docs/**'  # Trigger if any file in the 'docs' directory changes
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repo
+      uses: actions/checkout@v4
+        
+    - name: Doxygen build
+      uses: mattnotmitt/doxygen-action@v1.9.5
+      with:
+        # Path to Doxyfile
+        doxyfile-path: './Doxyfile'
+        working-directory: 'docs/doxygen'
+    
+    - name: Sphinx build
+      uses: ammaraskar/sphinx-action@0.4
+      with:
+        docs-folder: "docs/sphinx/"
+     
+    - name: Upload sphinx files as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: sphinx_files
+        path: docs/sphinx/build
+
+  
+  deploy-main:
+    if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Download sphinx files artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sphinx_files
+          path: docs/sphinx
+          
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./html
+          publish_branch: gh-pages
+          destination_dir: docs/sphinx/build
+
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Download doxygen files artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sphinx_files
+          path: docs/sphinx
+      
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/sphinx
+          publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
+          destination_dir: sphinx

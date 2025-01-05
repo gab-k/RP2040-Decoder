@@ -12,11 +12,13 @@ Features
 
 - DCC digital signal decoding
 - Motor load/speed control
-- 4 Outputs to drive loads up to 400mA each
-- 6 GPIO for lighter loads or custom applications
+- 4 Outputs switched by transistors with configurable optional PWM
+- 6 additional GPIO for lighter loads or custom applications
 - Programmable on programming track
 - CV Function Mapping
 - Board size of 25x20 mm
+- Pre-compiled software available and flashable via USB using your regular file explorer
+- Debugging via Serial Wire Debug or optional logging via stdio and UART/USB serial port
 
 Getting Started
 ------------
@@ -29,18 +31,19 @@ License
 -------
 - Software - MIT license
 - Hardware - CERN Open Hardware Licence Version 2 - Permissive
-- [LICENSE](https://github.com/1nct/RP2040-Decoder/blob/main/LICENSE)
+- [LICENSE](https://github.com/gab-k/RP2040-Decoder/blob/main/LICENSE)
 
 ------------
-Further details about the project can be found here:  [RP2040-Decoder Wiki](https://github.com/GabrielKoppenstein/pico-decoder/wiki)
+Further details about the project can be found here:  [RP2040-Decoder Wiki](https://github.com/gab-k/RP2040-Decoder/wiki)
 
 Note: The decoder is still in early development, there might (will) be bugs as its not tested that much yet.
 So suggestions on how to improve things and bug reports are always much appreciated.
 The wiki is also work in progress and will be updated to be as comprehensive as possible.
 
 ------------
-<p float="left">
-<img src="/docs/png/RP2040-Decoder-Rev_0_2_front.png" alt="PCB Front Side Image" title="Front" width="400"/>
-<img src="/docs/png/RP2040-Decoder-Rev_0_2_back.png" alt="PCB Back Side Image" title="Back" width="400"/>
-</p>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img/top.png" alt="Image 1" style="width: 50%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img/bottom.png" alt="Image 2" style="width: 50%;"/>
+</div>
+
 
