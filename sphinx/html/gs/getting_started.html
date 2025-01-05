@@ -102,9 +102,15 @@ In case you are ordering from JLCPCB it is recommended to use the <a class="refe
 <span id="id1"></span><h2>3. Building the software<a class="headerlink" href="#building-the-software" title="Link to this heading"></a></h2>
 <p>If you got a RP2040-Decoder with USB the easiest way to get the RP2040-Decoder up and running is to just use the precompiled .uf2 file in the latest <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/releases">release</a> and skip to <a class="reference internal" href="#flashing-the-software"><span class="std std-ref">4. Flashing the software</span></a>.</p>
 <p>However sometimes you might want to build by yourself, be it for debugging or to make your own modifications to the source code.
-The easiest way to do this is to just use <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a> and the Raspberry Pi Pico extension.
+The easiest way to do this is to just use <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a> and the <a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=raspberry-pi.raspberry-pi-pico">Raspberry Pi Pico extension</a>.
 The <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#vscode-extension">official documentation</a> of the Pi Pico does a great job of explaining this in detail.</p>
-<p>Note: If you are building for Hardware Rev 0.3 or below change the board defintion in your CMakeLists.txt file to: “RP2040-Decoder-board-legacy.h”</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Make sure to choose the correct board definition file in your CMakeLists.txt file for example <code class="docutils literal notranslate"><span class="pre">RP2040-Decoder-board-Rev-1_0</span></code> for Hardware Rev 1.0.</p></li>
+<li><p>In VSCode open the “Software” subdirectory for the extension to detect you project automatically.</p></li>
+</ul>
+</div>
 </section>
 <section id="flashing-the-software">
 <span id="id2"></span><h2>4. Flashing the software<a class="headerlink" href="#flashing-the-software" title="Link to this heading"></a></h2>

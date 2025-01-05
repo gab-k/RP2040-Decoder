@@ -21,10 +21,12 @@ In case you are ordering from JLCPCB it is recommended to use the `Fabrication-T
 If you got a RP2040-Decoder with USB the easiest way to get the RP2040-Decoder up and running is to just use the precompiled .uf2 file in the latest `release <https://github.com/gab-k/RP2040-Decoder/releases>`_ and skip to :ref:`flashing_the_software`.
 
 However sometimes you might want to build by yourself, be it for debugging or to make your own modifications to the source code.
-The easiest way to do this is to just use `Visual Studio Code <https://code.visualstudio.com/>`_ and the Raspberry Pi Pico extension. 
+The easiest way to do this is to just use `Visual Studio Code <https://code.visualstudio.com/>`_ and the `Raspberry Pi Pico extension <https://marketplace.visualstudio.com/items?itemName=raspberry-pi.raspberry-pi-pico>`_. 
 The `official documentation <https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#vscode-extension>`_ of the Pi Pico does a great job of explaining this in detail.
 
-Note: If you are building for Hardware Rev 0.3 or below change the board defintion in your CMakeLists.txt file to: "RP2040-Decoder-board-legacy.h"
+.. note::
+   - Make sure to choose the correct board definition file in your CMakeLists.txt file for example ``RP2040-Decoder-board-Rev-1_0`` for Hardware Rev 1.0.
+   - In VSCode open the "Software" subdirectory for the extension to detect you project automatically.
 
 .. _flashing_the_software:
 
