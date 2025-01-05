@@ -1,4 +1,4 @@
-name: Render PCB images and rotating gif
+name: Render PCB images and rotating mp4
 on:
   push:
     branches:
@@ -9,25 +9,38 @@ on:
       - 'KiCad/**'  # Trigger if any file in the 'KiCad' directory changes
 
 jobs:
-  render-image:
-    name: render-image
+  render-images:
+    name: render images
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Render PCB image
+      - name: Render PCB image and .mp4 (Rev 1.0)
         uses: linalinn/kicad-render@main
         with:
           pcb_file: KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
-          output_path: ${{ github.workspace }}/images
-          animation: gif
+          output_path: ${{ github.workspace }}/images_rev_1_0
+          animation: mp4
 
-      - name: Upload images as artifact
+      - name: Render PCB image and .mp4 (Rev 0.3)
+        uses: linalinn/kicad-render@main
+        with:
+          pcb_file: KiCad/Rev_0_3/RP2040-Decoder.kicad_pcb
+          output_path: ${{ github.workspace }}/images_rev_0_3
+          animation: mp4
+
+      - name: Upload images and mp4 as artifact (Rev 1.0)
         uses: actions/upload-artifact@v4
         with:
-          name: pcb-images
-          path: images/
+          name: pcb-images_rev_1_0
+          path: images_rev_1_0/
+      
+      - name: Upload images and mp4 as artifact (Rev 0.3)
+        uses: actions/upload-artifact@v4
+        with:
+          name: pcb-images_rev_0_3
+          path: images_rev_0_3/
 
   deploy-pages-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
@@ -35,19 +48,33 @@ jobs:
     needs: render-image
 
     steps:
-      - name: Download pcb-images artifact
+      - name: Download pcb-images_rev_1_0 artifact
         uses: actions/download-artifact@v4
         with:
-          name: pcb-images
-          path: images/
+          name: pcb-images_rev_1_0
+          path: images_rev_1_0/
       
+      - name: Download pcb-images_rev_0_3 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pcb-images_rev_0_3
+          path: images_rev_0_3/
+          
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./images
+          publish_dir: ./images_rev_1_0
           publish_branch: gh-pages  # Specify the target branch (gh-pages in this case)
-          destination_dir: img
+          destination_dir: img_rev_1_0
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./images_rev_0_3
+          publish_branch: gh-pages  # Specify the target branch (gh-pages in this case)
+          destination_dir: img_rev_0_3
 
   deploy-pages-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
@@ -55,16 +82,30 @@ jobs:
     needs: render-image
     
     steps:
-      - name: Download pcb-images artifact
+      - name: Download pcb-images_rev_1_0 artifact
         uses: actions/download-artifact@v4
         with:
-          name: pcb-images
-          path: images/
+          name: pcb-images_rev_1_0
+          path: images_rev_1_0/
+
+      - name: Download pcb-images_rev_0_3 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pcb-images_rev_0_3
+          path: images_rev_0_3/
       
-      - name: Deploy
+      - name: Deploy Rev 1.0
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./images
+          publish_dir: ./images_rev_1_0
           publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
-          destination_dir: img
+          destination_dir: img_rev_1_0
+          
+      - name: Deploy Rev 0.3
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./images_rev_0_3
+          publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
+          destination_dir: img_rev_0_3
