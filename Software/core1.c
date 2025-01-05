@@ -180,8 +180,8 @@ void controller_startup_mode(controller_parameter_t *const ctrl_par) {
         ctrl_par->startup.base_pwm_arr_i = (ctrl_par->startup.base_pwm_arr_i+1)%BASE_PWM_ARR_LEN;
         // Set ramp_up_mode flag to true
         ctrl_par->mode = PID_MODE;
-        // multiply with constant value of 0.9 and set as current feed forward value for pid mode
-        ctrl_par->feed_fwd = 0.9f * (float)ctrl_par->startup.level;
+        // Multiply with k_ff constant and set as current feed forward value
+        ctrl_par->feed_fwd = ctrl_par->startup.k_ff * (float)ctrl_par->startup.level;
     }
 }
 
@@ -229,7 +229,6 @@ void controller_pid_mode(controller_parameter_t *const ctrl_par) {
 }
 
 // General controller function gets called every x milliseconds where x is CV_49 i.e. sampling time (pid->t)
-// TODO: Consider fixed point arithmetic to improve performance...
 void controller_general(controller_parameter_t * ctrl_par) {
     // Change in direction -> reset previous derivative, error and integral parts and pwm_base_done
     const bool direction_changed = get_direction_of_speed_step(speed_step_target) !=
@@ -275,11 +274,16 @@ void init_controller(controller_parameter_t *const ctrl_par) {
     LOG(1, "Motor controller initialization...\n")
     // General controller variables
     ctrl_par->mode = STARTUP_MODE;
+    ctrl_par->measurement = 0.0f;
+    ctrl_par->measurement_prev = 0.0f;
+    ctrl_par->measurement_corrected = 0.0f;
+    ctrl_par->setpoint = 0;
     ctrl_par->feed_fwd = 0;
 
     // Startup controller variables
     ctrl_par->startup.level = 0;
     ctrl_par->startup.base_pwm_arr_i = 0;
+    ctrl_par->startup.k_ff = (float) CV_ARRAY_FLASH[46]/255;
     for (int i = 0; i < BASE_PWM_ARR_LEN; ++i) {
         ctrl_par->startup.base_pwm_arr[i] = 0;
     }
@@ -331,11 +335,6 @@ void init_controller(controller_parameter_t *const ctrl_par) {
     ctrl_par->pid.k_p_m_1 = (ctrl_par->pid.k_p_y_1 - ctrl_par->pid.k_p_y_0) / ctrl_par->pid.k_p_x_1;
     ctrl_par->pid.k_p_m_2 = (ctrl_par->pid.k_p_y_2 - ctrl_par->pid.k_p_y_1) / ctrl_par->pid.k_p_x_2;
 
-    // General Controller initialization
-    ctrl_par->measurement = 0.0f;
-    ctrl_par->measurement_prev = 0.0f;
-    ctrl_par->measurement_corrected = 0.0f;
-    ctrl_par->setpoint = 0;
     LOG(1, "Motor controller initialization done!\n")
 }
 
@@ -356,6 +355,7 @@ void core1_entry() {
     flash_safe_execute_core_init_done = flash_safe_execute_core_init();
     if (flash_safe_execute_core_init_done != true){
         set_error(FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE);
+        panic("Error calling flash_safe_execute_core_init() on core1!");
         return;
     }
 

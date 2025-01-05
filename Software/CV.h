@@ -62,9 +62,8 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_44  -
    0b00000000,         //CV_45  -
    0b00000000,         //CV_46  -
-   // TODO: Update controller CVs and implement/redefine k_ff  in the speed controller initialization
    // Speed controller - Configuration /////////////////////////////////////////////////////////////////////////////////
-   0b00110010,         //CV_47  -   Feed-forward gain k_ff      =   CV_47/10000     Default = 50 -> 0.005             //
+   0b11100110,         //CV_47  -   Feed-forward factor k_ff in % = CV_47/255  Default = 230 -> 0.902 = 90.2%         //
    0b00001010,         //CV_48  -   PID Control low pass filter time constant (tau) in ms                             //
    0b00000101,         //CV_49  -   PID Control sampling time t in ms                                                 //
    0b00011001,         //CV_50  -   PID Control I_Factor        =   CV_50/10        Default = 25 -> 2.5               //

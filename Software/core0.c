@@ -784,15 +784,7 @@ int main() {
     while (!flash_safe_execute_core_init_done) {
         watchdog_update();
     }
-
-    busy_wait_ms(100);
     
-
-    // Check for error calling flash_safe_execute_core_init() on core1
-    if(get_error_state() & FLASH_SAFE_EXECUTE_CORE_INIT_FAILURE){
-        panic("Error calling flash_safe_execute_core_init() on core1!"); //TODO: test
-    }
-
     // Check CV array for factory state of flash or missing ADC offset setup
     cv_setup_check();
     

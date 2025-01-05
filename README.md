@@ -37,6 +37,9 @@ So suggestions on how to improve things and bug reports are always much apprecia
 The wiki is also work in progress and will be updated to be as comprehensive as possible.
 
 ------------
-![rotating gif of RP2040-Decoder](https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img/rotating.gif)
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img/top.png" alt="Image 1" style="width: 50%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img/bottom.png" alt="Image 2" style="width: 50%;"/>
+</div>
 
 

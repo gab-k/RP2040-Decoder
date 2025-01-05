@@ -42,6 +42,7 @@ typedef struct startup_parameters_t {
     uint16_t level; /**< Latest level */
     uint16_t base_pwm_arr[BASE_PWM_ARR_LEN]; /**< base pwm ring buffer array */
     uint16_t base_pwm_arr_i; /**< base pwm ring buffer array index */
+    float k_ff; /**< Feed forward factor */
 }startup_parameters_t;
 
 /**

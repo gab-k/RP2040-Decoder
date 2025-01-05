@@ -6,7 +6,7 @@
 
 #include "shared.h"
 
-// TODO: Implement enum typedef for speed steps, also getter and setter functions checking validity of speed step values.
+// TODO: Implement getter and setter functions for speed steps, checking validity of speed step values.
 speed_step_t speed_step_target = SPEED_STEP_REVERSE_STOP;
 speed_step_t speed_step_target_prev = SPEED_STEP_REVERSE_STOP;
 bool cv_setup_check_done = false;
