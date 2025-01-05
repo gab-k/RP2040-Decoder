@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Software Description &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=6bd3bce2"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="core0.h" href="header_files.html" />
+    <link rel="prev" title="Software" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RP2040-Decoder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../gs/getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Software</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Software Description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#control-loop-digital-controller">Control Loop &amp; Digital Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#startup-controller">Startup Controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pid-controller">PID Controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#back-emf-voltage-measurement">Back-EMF voltage measurement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dcc-signal-decoding">DCC signal decoding</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="header_files.html">core0.h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_files.html#core1-h">core1.h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_files.html#shared-h">shared.h</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_files.html#cv-h">CV.h</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RP2040-Decoder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Software</a></li>
+      <li class="breadcrumb-item active">Software Description</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/software/sw_description.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="software-description">
+<h1>Software Description<a class="headerlink" href="#software-description" title="Link to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>Software files high level overview:</p>
+<ul>
+<li><p><strong>core0.c / core0.h</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>DCC package detection &amp; decoding</p></li>
+<li><p>Programming mode (Modify and read CVs on programming track)</p></li>
+<li><p>ADC-Offset measurement</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>core1.c / core0.h</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PID motor controller</p></li>
+<li><p>Back-EMF voltage measurement</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>shared.c / shared.h</strong> (used by both cores)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Error handling</p></li>
+<li><p>Helper functions for retrieving CV’s</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>CV.h</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Default configuration variables</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>CMakeLists.txt</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>CMake version, SDK version, C standard version</p></li>
+<li><p>Board definitions</p></li>
+<li><p>Compile/Build options</p></li>
+<li><p>Sources files, header files</p></li>
+<li><p>Debug logging configuration (via stdio using UART/USB)</p></li>
+<li><p>Linked libraries</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>RP2040-Decoder-board-Rev-X_Y.h</strong></p>
+<blockquote>
+<div><ul>
+<li><p>Flash Size</p></li>
+<li><p>Pin definitions</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>LED pin when available</p></li>
+<li><p>UART_TX/UART_RX pins when used for logging</p></li>
+<li><p>DCC input pin</p></li>
+<li><p>Motor Control PWM pins</p></li>
+<li><p>ADC pins</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>post_build.cmake</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Post build script for checking whether the size of the binary is within the limits of the flash size minus one sector (used for storing CVs).</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>pico_sdk_import.cmake</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Helps to locate and import the Pico SDK</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>The <a class="reference external" href="https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf">Raspberry Pi Pico SDK</a> is a dependency of the decoder software. The SDK provides abstraction to a higher level, so hopefully, in combination with the comments included in header and source files, the code is easy enough to understand.</p>
+</section>
+<section id="control-loop-digital-controller">
+<h2>Control Loop &amp; Digital Controller<a class="headerlink" href="#control-loop-digital-controller" title="Link to this heading"></a></h2>
+<figure class="align-center" id="id5">
+<img alt="Block Diagram - Control Loop" src="../_images/Block_Diagram_Control_Loop.svg" />
+<figcaption>
+<p><span class="caption-text">Control Loop - Block diagram</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The block diagram above shows the (simplified) control loop. The actual digital controller block is explained below.</p>
+<p>The <em>Speed Helper</em> block effectively sets the setpoint of the controller according to the CV configured acceleration and deceleration rates and actual target speedstep.</p>
+<p>For feedback the back EMF voltage <em>V_EMF</em> is measured via voltage divider and ADC. <em>V_EMF</em> is proportional to the motor speed.</p>
+<p>While the central component is the PID controller, there is an additional block called <a class="reference external" href="https://en.wikipedia.org/wiki/Feed_forward_(control)">Feed-forward</a> that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the <code class="docutils literal notranslate"><span class="pre">speed_helper()</span></code> function, which delays changing the setpoint according to the configured deceleration/acceleration rates.</p>
+<figure class="align-center" id="id6">
+<img alt="Block Diagram - Digital Controller" src="../_images/Block_Diagram_Digital_Controller.svg" />
+<figcaption>
+<p><span class="caption-text">Digital Controller - Block diagram</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The controller is divided into two parts, depending on whether the motor is stationary or in motion.
+At all times either the startup controller or the PID controller is active.</p>
+<p>The startup controller handles overcoming friction of the motor, and finding a base PWM level for overcoming friction.
+The base PWM level is equivalent to a certain PWM duty cycle.
+The base level gets saved and added to the output of the PID controller which handles motor control when the motor is in motion.
+This means the actual output of the PID controller is the sum of the PID output and the base PWM level. This is referred to as the <a class="reference internal" href="#id2"><span class="std std-ref">feed forward</span></a> block.
+The benefit of doing this is that the PID controller does not have to work in the non linear friction region of the motor, improving control performance.</p>
+<section id="startup-controller">
+<h3>Startup Controller<a class="headerlink" href="#startup-controller" title="Link to this heading"></a></h3>
+<p>Used on startup, meaning when the motor is not moving. First the startup controller retrieves the last <cite>BASE_PWM_ARR_LEN</cite> base PWM levels.
+The base pwm levels are not retained on a power cycle. That means when there is no previous base PWM level saved, the startup controller will start ramping up from 0.
+When there is less than <cite>BASE_PWM_ARR_LEN</cite> base PWM levels saved, the startup controller will ramp up from the average of the saved base PWM levels.</p>
+<p>After the startup controller retrieved the average of the last base pwm levels <span class="math notranslate nohighlight">\(\bar{b}\)</span> it sets a PWM duty cycle level of <span class="math notranslate nohighlight">\(\frac{2}{3} \cdot \bar{b}\)</span> and then ramps up the duty cycle/PWM level until the motor starts moving.
+When no previous startup PWM levels are saved the startup controller begins ramping up from 0.
+The actual value at which the motor started moving is multiplied by <cite>K_FF</cite> and used as a reference for the <a class="reference internal" href="#id2"><span class="std std-ref">feed forward</span></a> block.</p>
+</section>
+<section id="pid-controller">
+<h3>PID Controller<a class="headerlink" href="#pid-controller" title="Link to this heading"></a></h3>
+<figure class="align-center" id="id7">
+<img alt="PID Controller figure" src="../_images/Block_Diagram_PID.svg" />
+<figcaption>
+<p><span class="caption-text">PID Controller</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The block diagram above shows the PID controller in the s-domain. The derivative part contains an additional digital low-pass filter used to filter out high-frequency noise.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+\text{Output} &amp;= E \cdot \left(K_P + \frac{K_I}{s} + \frac{K_D \cdot s}{s \tau + 1}\right) = P + I + D \\
+P &amp;= E \cdot K_P \\
+I &amp;= E \cdot \frac{K_I}{s} \\
+D &amp;= E \cdot \frac{K_D \cdot s}{s \tau + 1}
+\end{align}\end{split}\]</div>
+<p>With <span class="math notranslate nohighlight">\(T_s\)</span> being the sampling time / controller update rate / time step of the discrete system.
+And <span class="math notranslate nohighlight">\(\tau\)</span> being the filter time constant of the digital filter</p>
+<p>The continuous-time system representation can now be transformed into a discrete-time representation using <a class="reference external" href="https://en.wikipedia.org/wiki/Bilinear_transform">bilinear transform</a> <span class="math notranslate nohighlight">\(s = \frac{2 \cdot (z - 1)}{T_s \cdot (z + 1)}\)</span>.</p>
+<p>This results in the following difference equations which are then implemented in software:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+p_n &amp;= K_P \cdot e_n \\
+i_n &amp;= 0.5 \cdot K_I \cdot \left(e_n + e_{n-1}\right) + i_{n-1} \\
+d_n &amp;= \frac{2 K_D \cdot \left(e_n - e_{n-1}\right) + \left(2 \tau - T_s\right) \cdot d_{n-1}}{2 \tau + T_s} \\
+\text{output}_n &amp;= p_n + i_n + d_n
+\end{align}\end{split}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Instead of using the derivative of error, the derivative on measurement is used. This is done to prevent a high derivative part in the event of a large change in setpoint.</p></li>
+<li><p>The previously explained base PWM is added to the actual output as well, meaning the formula above only shows the actual PID control part without feed forward.</p></li>
+</ul>
+</div>
+<section id="gain-scheduling">
+<h4>Gain Scheduling<a class="headerlink" href="#gain-scheduling" title="Link to this heading"></a></h4>
+<figure class="align-center" id="id8">
+<img alt="Gain Scheduling figure" src="../_images/adaptive_kp.svg" />
+<figcaption>
+<p><span class="caption-text">Gain Scheduling</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Another aspect to consider is the implementation of <a class="reference external" href="https://en.wikipedia.org/wiki/Gain_scheduling">gain scheduling</a>. K<sub>P</sub> is a function of the current setpoint. Often it is favorable to have a higher proportional gain K<sub>P</sub> for slow speeds, achieving better control results. The illustration above shows the default setting for K<sub>P</sub>. CV_54 &amp; CV_55 are used to set K<sub>P</sub> &#64; x<sub>0</sub>, CV_56 &amp; CV_57 for K<sub>P</sub> &#64; x<sub>1</sub>, and CV_58 &amp; CV_59 for K<sub>P</sub> &#64; x<sub>2</sub>. Additionally, CV_60 is used to shift x<sub>1</sub> from the leftmost point (0% = 0/255) to the rightmost point (100% = 255/255).</p>
+</section>
+<section id="id2">
+<span id="id3"></span><h4>Feed-forward<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<p>As previously mentioned, to achieve better control, <a class="reference external" href="https://en.wikipedia.org/wiki/Feed_forward_(control)">Feed-forward</a> is used.
+In essence this means that the output of the PID controller is not only the sum of the proportional, integral, and derivative parts, but also the base PWM level.
+The base PWM level is set by the startup controller and is the PWM level at which the motor starts moving.</p>
+</section>
+</section>
+<section id="back-emf-voltage-measurement">
+<h3>Back-EMF voltage measurement<a class="headerlink" href="#back-emf-voltage-measurement" title="Link to this heading"></a></h3>
+<p>To provide a feedback signal proportional to the motor speed, the ADC is used to measure the <a class="reference external" href="https://en.wikipedia.org/wiki/Counter-electromotive_force">Back-EMF voltage</a>. The measurement works by setting the PWM duty cycle to 0%, waiting for a certain delay time (CV_62), and then measuring x times (x = CV_63). While measuring, the array with measurement values is sorted using insertion sort. Afterwards, y elements (y = CV_63) from the left (lowest values) and z elements (z = CV_64) from the right (highest values) will be dismissed to mitigate the impact of potential outliers in measurement. The average value of the remaining values will be computed and fed back into the control algorithm. Considering default settings (100us delay, 100 samples, ~2µs sampling time), the complete measurement run, including averaging, takes about 0.3ms to 0.35ms, which effectively reduces the maximum possible duty cycle to about 93% to 94%.</p>
+</section>
+</section>
+<section id="dcc-signal-decoding">
+<h2>DCC signal decoding<a class="headerlink" href="#dcc-signal-decoding" title="Link to this heading"></a></h2>
+<p>The detection of the DCC signal works by looking at every rising and falling edge and calculating the time between them. When the time between rising and falling edge is greater than 87μs, then this is equivalent to “0”; otherwise, “1”. This value then gets shifted into a 64-Bit variable.</p>
+<p>Decoding is done after every falling edge. It starts with an error detection, which, when not passed, dismisses the received command. Then the address will be decoded and compared to the address stored in the configuration. If the address matches, the command/instruction will be decoded.</p>
+<p>Only a few instructions are currently implemented; only 128 speed step instructions are supported.</p>
+<p><strong>Implemented instructions:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0011-1111</span></code> - (128 Speed Step Control) - 2 Byte length</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">10XX-XXXX</span></code> - (Function Group Instruction) (F0 - F12)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">110X-XXXX</span></code> - Expansion Instruction  (F13 - F31)</p></li>
+</ul>
+<p>All DCC instructions can be found in Section 9.2, 9.2.1, and 9.2.1.1 of the <a class="reference external" href="https://www.nmra.org/index-nmra-standards-and-recommended-practices">NMRA Communications Standard</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Software" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="header_files.html" class="btn btn-neutral float-right" title="core0.h" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Gabriel Koppenstein.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Troubleshooting &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=6bd3bce2"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Debugging and Logging" href="debug_logging.html" />
+    <link rel="prev" title="Other" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RP2040-Decoder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../gs/getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software/index.html">Software</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Other</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#enable-logging-and-or-debug-via-swd">Enable logging and or debug via SWD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-the-power-supply">Checking the power supply:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#check-your-motor">Check your motor:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cv-reset">CV Reset:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="debug_logging.html">Debugging and Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CV_list.html">Configuration Variables (CV)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RP2040-Decoder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Other</a></li>
+      <li class="breadcrumb-item active">Troubleshooting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/other/troubleshooting.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="troubleshooting">
+<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h1>
+<p>To narrow down the issue when your decoder is not working as expected, you can do the following (in no particular order):</p>
+<section id="enable-logging-and-or-debug-via-swd">
+<h2>Enable logging and or debug via SWD<a class="headerlink" href="#enable-logging-and-or-debug-via-swd" title="Link to this heading"></a></h2>
+<p>Log messages can be enabled and output via either UART or USB please see <a class="reference internal" href="debug_logging.html#logging"><span class="std std-ref">Logging</span></a> for details.
+For more advanced users it might also be beneficial to <a class="reference internal" href="debug_logging.html#debugging-via-swd"><span class="std std-ref">debug with SWD</span></a></p>
+</section>
+<section id="checking-the-power-supply">
+<h2>Checking the power supply:<a class="headerlink" href="#checking-the-power-supply" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>+3V3 to GND</strong> should be 3.3V ± 1%</p></li>
+<li><p><strong>VDC/+V to GND</strong> should be somewhere in the range of at least 6V to 23V depending on your track voltage.</p></li>
+</ul>
+<p>If you don’t measure the correct voltages, try to <a class="reference external" href="https://dccwiki.com/Measuring_Track_Voltage">measure your track voltage</a></p>
+</section>
+<section id="check-your-motor">
+<h2>Check your motor:<a class="headerlink" href="#check-your-motor" title="Link to this heading"></a></h2>
+<p>Desolder your motor and try the motor with an appropriate power supply and DC voltage, to check if the motor is working or not.</p>
+</section>
+<section id="cv-reset">
+<h2>CV Reset:<a class="headerlink" href="#cv-reset" title="Link to this heading"></a></h2>
+<p>Try to reset the decoder by writing a value of <code class="docutils literal notranslate"><span class="pre">8</span></code> to <code class="docutils literal notranslate"><span class="pre">CV8</span></code> (beware, this will reset the complete CV memory!)</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Other" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="debug_logging.html" class="btn btn-neutral float-right" title="Debugging and Logging" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Gabriel Koppenstein.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

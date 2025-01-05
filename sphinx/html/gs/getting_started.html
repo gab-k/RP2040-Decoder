@@ -1,0 +1,190 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting started &mdash; RP2040-Decoder 0.3, 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=6bd3bce2"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Hardware" href="../hardware/index.html" />
+    <link rel="prev" title="RP2040-Decoder Documentation" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RP2040-Decoder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#where-to-get-the-board">1. Where to get the board?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#production-files">2. Production files?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-software">3. Building the software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flashing-the-software">4. Flashing the software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flashing-the-software-via-uf2-file">4.1. Flashing the software via .uf2 file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flashing-the-software-via-swd">4.2. Flashing the software via SWD</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wiring">5. Wiring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resolving-issues">6. Resolving issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software/index.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/index.html">Other</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RP2040-Decoder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/gs/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<section id="where-to-get-the-board">
+<h2>1. Where to get the board?<a class="headerlink" href="#where-to-get-the-board" title="Link to this heading"></a></h2>
+<p>You can choose any PCB manufacturer you like. The PCB is designed to fit with JLCPCB.com’s capabilities and constraints. You can assemble the board yourself, but it’s best not to do so if you’re not familiar with soldering small components. Alternatively, you can order the board fully or partly assembled. Soldering the back of the PCB by hand is not too difficult. All parts are normally available at LCSC.com, who supply parts to JLCPCB.com.</p>
+</section>
+<section id="production-files">
+<h2>2. Production files?<a class="headerlink" href="#production-files" title="Link to this heading"></a></h2>
+<p>The latest release includes the production files for JLCPCB, which includes the Gerber files, BOM, and Pick and Place files. You can find the latest release <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/releases">here</a>.</p>
+<p>In order to manually export the production files (Gerber/BOM/Pick and Place), you need <a class="reference external" href="https://www.kicad.org/download/">KiCad</a> which is open source.
+In case you are ordering from JLCPCB it is recommended to use the <a class="reference external" href="https://github.com/bennymeg/Fabrication-Toolkit">Fabrication-Toolkit KiCad plugin by bennymeg</a></p>
+</section>
+<section id="building-the-software">
+<span id="id1"></span><h2>3. Building the software<a class="headerlink" href="#building-the-software" title="Link to this heading"></a></h2>
+<p>If you got a RP2040-Decoder with USB the easiest way to get the RP2040-Decoder up and running is to just use the precompiled .uf2 file in the latest <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/releases">release</a> and skip to <a class="reference internal" href="#flashing-the-software"><span class="std std-ref">4. Flashing the software</span></a>.</p>
+<p>However sometimes you might want to build by yourself, be it for debugging or to make your own modifications to the source code.
+The easiest way to do this is to just use <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a> and the <a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=raspberry-pi.raspberry-pi-pico">Raspberry Pi Pico extension</a>.
+The <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#vscode-extension">official documentation</a> of the Pi Pico does a great job of explaining this in detail.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Make sure to choose the correct board definition file in your CMakeLists.txt file for example <code class="docutils literal notranslate"><span class="pre">RP2040-Decoder-board-Rev-1_0</span></code> for Hardware Rev 1.0.</p></li>
+<li><p>In VSCode open the “Software” subdirectory for the extension to detect you project automatically.</p></li>
+</ul>
+</div>
+</section>
+<section id="flashing-the-software">
+<span id="id2"></span><h2>4. Flashing the software<a class="headerlink" href="#flashing-the-software" title="Link to this heading"></a></h2>
+<p>For RP2040-Decoders with USB there is two ways of flashing the software:</p>
+<ol class="arabic">
+<li><p>Flashing via USB using the .uf2 file by copying it with your preferred file explorer.</p></li>
+<li><p>Using Serial Wire Debug (SWD)</p>
+<p>2.1. Using another RP2040/RP2350-based board with <a class="reference external" href="https://github.com/raspberrypi/debugprobe">debugprobe software</a> on it. (Could be the RP2040-Decoder itself)</p>
+<p>2.2. Using any other supported SWD debug interface</p>
+</li>
+</ol>
+<p>For RP2040-Decoders without USB the only way of flashing the software is via SWD</p>
+<section id="flashing-the-software-via-uf2-file">
+<h3>4.1. Flashing the software via .uf2 file<a class="headerlink" href="#flashing-the-software-via-uf2-file" title="Link to this heading"></a></h3>
+<p>When first plugged in the RP2040 boots into Mass Storage Device mode. To flash the software, you need to drag the ‘.uf2’ file onto the disk using any file explorer.
+This will write the file to the Flash and restart the RP2040.
+In case you want to repeat the flashing process, hold the button SW1 while re-plugging the decoder into your computer. The decoder should now show as a Mass Storage Device again.
+This procedure is also described in the <a class="reference external" href="https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf#_programming_the_flash">Raspberry Pi Pico Datasheet Chapter 4.1</a></p>
+</section>
+<section id="flashing-the-software-via-swd">
+<span id="flashing-the-software-swd"></span><h3>4.2. Flashing the software via SWD<a class="headerlink" href="#flashing-the-software-via-swd" title="Link to this heading"></a></h3>
+<p>Flashing via SWD is a little more complicated but also comes with great advantages in terms of debugging.
+The book on <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf">Getting started with Raspberry Pi Pico-series</a> does a great job of explaining how debugging works.
+As already suggested in <a class="reference internal" href="#building-the-software"><span class="std std-ref">3. Building the software</span></a> it is recommended to use the <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#vscode-extension">Visual Studio Code Extension</a>.
+The most relevant sections in the book are <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#_debug">Chapter 4.3. Debug</a> and <a class="reference external" href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#debugprobe_section">Appendix A: Debugprobe</a></p>
+</section>
+</section>
+<section id="wiring">
+<h2>5. Wiring<a class="headerlink" href="#wiring" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line">Please refer to the hardware section for your board:</div>
+<div class="line"><a class="reference internal" href="../hardware/rev_1_0/hw_description.html#wiring-rev-1-0"><span class="std std-ref">Wiring Rev 1.0</span></a></div>
+<div class="line"><a class="reference internal" href="../hardware/rev_0_3/hw_description.html#wiring-rev-0-3"><span class="std std-ref">Wiring Rev 0.3</span></a></div>
+</div>
+</section>
+<section id="resolving-issues">
+<h2>6. Resolving issues<a class="headerlink" href="#resolving-issues" title="Link to this heading"></a></h2>
+<p>If the decoder is not working as expected:</p>
+<ol class="arabic simple">
+<li><p>Follow the <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/wiki/Troubleshooting">Troubleshooting instructions</a></p></li>
+<li><p>If you still have trouble, create a new <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/discussions">discussion</a> or <a class="reference external" href="https://github.com/gab-k/RP2040-Decoder/issues">issue</a> and describe your question/issue.</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="RP2040-Decoder Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../hardware/index.html" class="btn btn-neutral float-right" title="Hardware" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Gabriel Koppenstein.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
