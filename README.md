@@ -16,11 +16,10 @@ Features
 - Pre-compiled software available and flashable via USB using your regular file explorer
 - Debugging via Serial Wire Debug or optional logging via stdio and UART/USB serial port
 
-Getting Started
+Getting Started & Documentation
 ------------
 
-
-The ["Getting Started"](https://github.com/gab-k/RP2040-Decoder/wiki/Getting-started) page provides an overview of the steps required to use the decoder as well as brief instructions for all the necessary steps.
+The [documentation](https://gab-k.github.io/RP2040-Decoder/) provides an overview of the steps required to use the decoder. It also tries to give an insight into how the hardware and software works.
 
 
 License
@@ -28,10 +27,6 @@ License
 - Software - MIT license
 - Hardware - CERN Open Hardware Licence Version 2 - Permissive
 - [LICENSE](https://github.com/gab-k/RP2040-Decoder/blob/main/LICENSE)
-
-Documentation
-------------
-Further details and documentation can be found here:  [RP2040-Decoder Wiki](https://github.com/gab-k/RP2040-Decoder/wiki)
 
 
 ------------
