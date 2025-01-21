@@ -4,7 +4,12 @@ Getting started
 1. Where to get the board?
 ----------------------------------
 
-You can choose any PCB manufacturer you like. The PCB is designed to fit with JLCPCB.com's capabilities and constraints. You can assemble the board yourself, but it's best not to do so if you're not familiar with soldering small components. Alternatively, you can order the board fully or partly assembled. Soldering the back of the PCB by hand is not too difficult. All parts are normally available at LCSC.com, who supply parts to JLCPCB.com.
+You can choose any PCB manufacturer you like. The PCB is designed to fit with JLCPCB.com's capabilities and constraints.
+You have 3 options for board assembling from the hardest to the easiest:
+
+1. You can assemble the board yourself, but it's best not to do so if you're not familiar with soldering small components. You order the board with the necessery parts and solder the parts together. The parts are available at LCSC.com, they supply parts to JLCPCB.com.
+2. Order the board from any PCB manufacturer with assembling only the top side. This way You have to separately order the parts for the bottom part from LCSC.com (or any other supplier) and solder just the bottom part Yourself. Soldering the back of the PCB by hand is not too difficult.
+3. Alternatively, you can order the board fully assembled both on the top and bottom side. This is the easiest, but the most expecsive solution.
 
 2. Production files?
 ----------------------------------
