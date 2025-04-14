@@ -1,7 +1,7 @@
 Overview
 ==============================
 
-.. figure:: ../../../../svg/hw/rev_0_3/Block_Diagram_Hardware.svg
+.. figure:: ../../../../svg/hw/Legacy/Block_Diagram_Hardware.svg
    :alt: Block Diagram
    :align: center
 
@@ -51,7 +51,7 @@ Electrical Characteristics
 Input Stage
 ==============================
 
-.. figure:: ../../../../svg/hw/rev_0_3/Input_Stage.svg
+.. figure:: ../../../../svg/hw/Legacy/Input_Stage.svg
    :alt: Input Stage
    :align: center
 
@@ -64,7 +64,7 @@ The MOSFET on the right effectively translates the rather high DCC voltage to a 
 Motor Driver
 ==============================
 
-.. figure:: ../../../../svg/hw/rev_0_3/Motor_Driver.svg
+.. figure:: ../../../../svg/hw/Legacy/Motor_Driver.svg
    :alt: Motor Driver
    :align: center
 
@@ -75,7 +75,7 @@ The Motor Driver is a special H-Bridge IC that is made for DC motors. To control
 Auxiliary Outputs
 ==============================
 
-.. figure:: ../../../../svg/hw/rev_0_3/Aux_Outputs.svg
+.. figure:: ../../../../svg/hw/Legacy/Aux_Outputs.svg
    :alt: Auxiliary Outputs
    :align: center
 
@@ -93,7 +93,7 @@ To switch lighter loads, six GPIO soldering pads are connected to GPIO0 to GPIO5
 Microcontroller
 ==============================
 
-.. figure:: ../../../../svg/hw/rev_0_3/Microcontroller.svg
+.. figure:: ../../../../svg/hw/Legacy/Microcontroller.svg
    :alt: Microcontroller
    :align: center
 
@@ -104,19 +104,19 @@ The Microcontroller needs a crystal oscillator for its clock. External flash mem
 Complete Schematic
 ==============================
 
-.. figure:: ../../../../svg/hw/rev_0_3/RP2040-Decoder.svg
+.. figure:: ../../../../svg/hw/Legacy/RP2040-Decoder.svg
    :alt: Complete Schematic
    :align: center
    
    Complete Schematic
 
 
-.. _wiring_rev_0_3:
+.. _wiring_Legacy:
 
 Wiring the Decoder
 ==============================
 
-.. figure:: ../../../../svg/hw/rev_0_3/Wiring_diagram.svg
+.. figure:: ../../../../svg/hw/Legacy/Wiring_diagram.svg
    :align: center
    :width: 700
    :alt: Wiring Diagram

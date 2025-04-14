@@ -24,35 +24,35 @@ jobs:
     - name: Init submodules to get tinyUSB stack
       run: ls && cd pico-sdk && git submodule update --init && cd ..
       
-    - name: Configure and run CMake for Hardware Rev 0.3
+    - name: Configure and run CMake for Legacy Hardware Revision
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/Software/build-Rev-0_3 -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-Rev-0_3
+      run: cmake -B ${{github.workspace}}/Software/build-Legacy -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-Legacy
 
-    - name: Build for Hardware Rev 0.3
+    - name: Build for Legacy Hardware Revision
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/Software/build-Rev-0_3 --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/Software/build-Legacy --config ${{env.BUILD_TYPE}}
     
-    - name: Configure and run CMake for Hardware Rev 1.0
+    - name: Configure and run CMake for USB Hardware Revision
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/Software/build-Rev-1_0 -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-Rev-1_0
+      run: cmake -B ${{github.workspace}}/Software/build-USB -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-USB
 
-    - name: Build for Hardware Rev 1.0
+    - name: Build for Hardware for USB Hardware Revision
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/Software/build-Rev-1_0 --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/Software/build-USB --config ${{env.BUILD_TYPE}}
     
-    - name: Upload build files as artifact Rev 0.3
+    - name: Upload build files as artifact for Legacy Hardware Revision
       uses: actions/upload-artifact@v4
       with:
-        name: build_files_Rev-0_3
-        path: ${{github.workspace}}/Software/build-Rev-0_3
+        name: build_files_Legacy
+        path: ${{github.workspace}}/Software/build-Legacy
     
-    - name: Upload build files as artifact Rev 1.0
+    - name: Upload build files as artifact for USB Hardware Revision
       uses: actions/upload-artifact@v4
       with:
-        name: build_files_Rev-1_0
-        path: ${{github.workspace}}/Software/build-Rev-1_0
+        name: build_files_USB
+        path: ${{github.workspace}}/Software/build-USB
 
   generate-fabrication-files:
     runs-on: ubuntu-latest
@@ -74,14 +74,14 @@ jobs:
       - name: Run fab toolkit CLI
         run: |
           cd Fabrication-Toolkit
-          python3 -m plugins.cli -p ../KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb --autoTranslate --autoFill
+          python3 -m plugins.cli -p ../KiCad/USB/RP2040-Decoder.kicad_pcb --autoTranslate --autoFill
           cd ..
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fab_outputs_rev_1_0
-          path: ./KiCad/Rev_1_0/production
+          name: fab_outputs_USB
+          path: ./KiCad/USB/production
       
   prerelease:
     runs-on: ubuntu-latest
@@ -93,32 +93,32 @@ jobs:
       - name: Download fabrication outputs artifact
         uses: actions/download-artifact@v4
         with:
-          name: fab_outputs_rev_1_0
-          path: fab_outputs_rev_1_0
+          name: fab_outputs_USB
+          path: fab_outputs_USB
         
-      - name: Download build files artifact for Rev 0.3
+      - name: Download build files artifact for Legacy Hardware Revision
         uses: actions/download-artifact@v4
         with:
-          name: build_files_Rev-0_3
-          path: build_files_Rev-0_3
+          name: build_files_Legacy
+          path: build_files_Legacy
           
-      - name: Download build files artifact for Rev 1.0
+      - name: Download build files artifact for USB Hardware Revision
         uses: actions/download-artifact@v4
         with:
-          name: build_files_Rev-1_0
-          path: build_files_Rev-1_0
+          name: build_files_USB
+          path: build_files_USB
           
       - name: ls
         run: ls
 
       - name: Zip fabrication outputs
-        run: zip -r FABRICATION_OUTPUTS-REV-1_0.zip fab_outputs_rev_1_0
+        run: zip -r FABRICATION_OUTPUTS-USB.zip fab_outputs_USB
  
-      - name: Zip Rev 0.3 build files
-        run: zip -r SW_BUILD-REV-0_3.zip build_files_Rev-0_3
+      - name: Zip SW_BUILD-Legacy files
+        run: zip -r SW_BUILD-Legacy.zip build_files_Legacy
       
-      - name: Zip Rev 1.0 build files
-        run: zip -r SW_BUILD-REV-1_0.zip build_files_Rev-1_0
+      - name: Zip SW_BUILD-USB files
+        run: zip -r SW_BUILD-USB.zip build_files_USB
       
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -126,6 +126,6 @@ jobs:
         with:
           prerelease: true
           files: |
-            SW_BUILD-REV-0_3.zip
-            SW_BUILD-REV-1_0.zip
-            FABRICATION_OUTPUTS-REV-1_0.zip
+            SW_BUILD-Legacy.zip
+            SW_BUILD-USB.zip
+            FABRICATION_OUTPUTS-USB.zip

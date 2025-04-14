@@ -35,7 +35,7 @@ Software files high level overview:
    - Debug logging configuration (via stdio using UART/USB)
    - Linked libraries
 
-- **RP2040-Decoder-board-Rev-X_Y.h**
+- **RP2040-Decoder-board-USB.h / RP2040-Decoder-board-Legacy.h**
    
    - Flash Size
    - Pin definitions

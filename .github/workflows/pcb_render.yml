@@ -16,31 +16,31 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Render PCB image and .mp4 (Rev 1.0)
+      - name: Render PCB image and .mp4 (USB Hardware Revision)
         uses: linalinn/kicad-render@main
         with:
-          pcb_file: KiCad/Rev_1_0/RP2040-Decoder.kicad_pcb
-          output_path: ${{ github.workspace }}/images_rev_1_0
+          pcb_file: KiCad/USB/RP2040-Decoder.kicad_pcb
+          output_path: ${{ github.workspace }}/images_USB
           animation: mp4
 
-      - name: Render PCB image and .mp4 (Rev 0.3)
+      - name: Render PCB image and .mp4 (Legacy Hardware Revision)
         uses: linalinn/kicad-render@main
         with:
-          pcb_file: KiCad/Rev_0_3/RP2040-Decoder.kicad_pcb
-          output_path: ${{ github.workspace }}/images_rev_0_3
+          pcb_file: KiCad/Legacy/RP2040-Decoder.kicad_pcb
+          output_path: ${{ github.workspace }}/images_Legacy
           animation: mp4
 
-      - name: Upload images and mp4 as artifact (Rev 1.0)
+      - name: Upload images and mp4 as artifact (USB Hardware Revision)
         uses: actions/upload-artifact@v4
         with:
-          name: pcb-images_rev_1_0
-          path: images_rev_1_0/
+          name: pcb-images_USB
+          path: images_USB/
       
-      - name: Upload images and mp4 as artifact (Rev 0.3)
+      - name: Upload images and mp4 as artifact (Legacy Hardware Revision)
         uses: actions/upload-artifact@v4
         with:
-          name: pcb-images_rev_0_3
-          path: images_rev_0_3/
+          name: pcb-images_Legacy
+          path: images_Legacy/
 
   deploy-pages-main:
     if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch
@@ -48,33 +48,33 @@ jobs:
     needs: render-images
 
     steps:
-      - name: Download pcb-images_rev_1_0 artifact
+      - name: Download pcb-images_USB artifact
         uses: actions/download-artifact@v4
         with:
-          name: pcb-images_rev_1_0
-          path: images_rev_1_0/
+          name: pcb-images_USB
+          path: images_USB/
       
-      - name: Download pcb-images_rev_0_3 artifact
+      - name: Download pcb-images_Legacy artifact
         uses: actions/download-artifact@v4
         with:
-          name: pcb-images_rev_0_3
-          path: images_rev_0_3/
+          name: pcb-images_Legacy
+          path: images_Legacy/
           
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./images_rev_1_0
+          publish_dir: ./images_USB
           publish_branch: gh-pages  # Specify the target branch (gh-pages in this case)
-          destination_dir: img_rev_1_0
+          destination_dir: img_USB
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./images_rev_0_3
+          publish_dir: ./images_Legacy
           publish_branch: gh-pages  # Specify the target branch (gh-pages in this case)
-          destination_dir: img_rev_0_3
+          destination_dir: img_Legacy
 
   deploy-pages-dev:
     if: github.ref == 'refs/heads/dev'  # Only deploy on 'dev' branch
@@ -82,30 +82,30 @@ jobs:
     needs: render-images
     
     steps:
-      - name: Download pcb-images_rev_1_0 artifact
+      - name: Download pcb-images_USB artifact
         uses: actions/download-artifact@v4
         with:
-          name: pcb-images_rev_1_0
-          path: images_rev_1_0/
+          name: pcb-images_USB
+          path: images_USB/
 
-      - name: Download pcb-images_rev_0_3 artifact
+      - name: Download pcb-images_Legacy artifact
         uses: actions/download-artifact@v4
         with:
-          name: pcb-images_rev_0_3
-          path: images_rev_0_3/
+          name: pcb-images_Legacy
+          path: images_Legacy/
       
-      - name: Deploy Rev 1.0
+      - name: Deploy USB Hardware Revision
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./images_rev_1_0
+          publish_dir: ./images_USB
           publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
-          destination_dir: img_rev_1_0
+          destination_dir: img_USB
           
-      - name: Deploy Rev 0.3
+      - name: Deploy Legacy Hardware Revision
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./images_rev_0_3
+          publish_dir: ./images_Legacy
           publish_branch: gh-pages-dev  # Specify the target branch (gh-pages-dev in this case)
-          destination_dir: img_rev_0_3
+          destination_dir: img_Legacy

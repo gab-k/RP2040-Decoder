@@ -7,7 +7,7 @@ Revision 1.0
 .. toctree::
    :maxdepth: 1
 
-   rev_1_0/hw_description
+   USB/hw_description
 
 Revision 0.3
 ------------
@@ -15,4 +15,4 @@ Revision 0.3
 .. toctree::
    :maxdepth: 1
 
-   rev_0_3/hw_description
+   Legacy/hw_description

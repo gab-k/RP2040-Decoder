@@ -30,15 +30,15 @@ License
 
 
 ------------
-Rev 1.0
+USB hardware version
 <div style="display: flex; justify-content: space-between; align-items: center;">
-  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_rev_1_0/top.png" alt="Image 1" style="width: 45%;"/>
-  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_rev_1_0/bottom.png" alt="Image 2" style="width: 45%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_USB/top.png" alt="Image 1" style="width: 45%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_USB/bottom.png" alt="Image 2" style="width: 45%;"/>
 </div>
 
-Rev 0.3
+Legacy hardware version
 <div style="display: flex; justify-content: space-between; align-items: center;">
-  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_rev_0_3/top.png" alt="Image 1" style="width: 45%;"/>
-  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_rev_0_3/bottom.png" alt="Image 2" style="width: 45%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_Legacy/top.png" alt="Image 1" style="width: 45%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_Legacy/bottom.png" alt="Image 2" style="width: 45%;"/>
 </div>
 

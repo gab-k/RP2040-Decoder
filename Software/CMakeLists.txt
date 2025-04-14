@@ -26,9 +26,9 @@ endif()
 set(PICO_BOARD_HEADER_DIRS ${CMAKE_SOURCE_DIR}) 
 # Board type selection:
 #
-# Please select RP2040-Decoder-board-Rev-1_0 for Rev >= 1.0 or RP2040-Decoder-board-Rev-0_3 for Rev <= 0.3
-# running cmake with -DPICO_BOARD=RP2040-Decoder-board-Rev-X_Y explicitly from command line overrides this setting
-set(PICO_BOARD RP2040-Decoder-board-Rev-1_0 CACHE STRING "Board type")
+# Please select RP2040-Decoder-board-USB for Rev >= 1.0 or RP2040-Decoder-board-Legacy for Rev <= 0.3
+# running cmake with -DPICO_BOARD=RP2040-Decoder-board-*** explicitly from command line overrides this setting
+set(PICO_BOARD RP2040-Decoder-board-USB CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)

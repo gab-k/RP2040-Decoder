@@ -29,14 +29,14 @@ jobs:
     - name: Init submodules to get tinyUSB stack
       run: ls && cd pico-sdk && git submodule update --init && cd ..
       
-    - name: Configure and run CMake for Hardware Rev 0.3
-      run: cmake -B ${{github.workspace}}/Software/build-Rev-0_3 -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-Rev-0_3
+    - name: Configure and run CMake for Legacy Hardware Revision
+      run: cmake -B ${{github.workspace}}/Software/build-Legacy -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-Legacy
 
-    - name: Build for Hardware Rev 0.3
-      run: cmake --build ${{github.workspace}}/Software/build-Rev-0_3 --config ${{env.BUILD_TYPE}}
+    - name: Build for Legacy Hardware Revision
+      run: cmake --build ${{github.workspace}}/Software/build-Legacy --config ${{env.BUILD_TYPE}}
     
-    - name: Configure and run CMake for Hardware Rev 1.0
-      run: cmake -B ${{github.workspace}}/Software/build-Rev-1_0 -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-Rev-1_0
+    - name: Configure and run CMake for USB Hardware Revision
+      run: cmake -B ${{github.workspace}}/Software/build-USB -S ${{github.workspace}}/Software -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPICO_BOARD=RP2040-Decoder-board-USB
 
-    - name: Build for Hardware Rev 1.0
-      run: cmake --build ${{github.workspace}}/Software/build-Rev-1_0 --config ${{env.BUILD_TYPE}}
+    - name: Build for USB Hardware Revision
+      run: cmake --build ${{github.workspace}}/Software/build-USB --config ${{env.BUILD_TYPE}}
