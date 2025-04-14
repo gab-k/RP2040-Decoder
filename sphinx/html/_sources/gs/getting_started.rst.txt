@@ -30,7 +30,7 @@ The easiest way to do this is to just use `Visual Studio Code <https://code.visu
 The `official documentation <https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#vscode-extension>`_ of the Pi Pico does a great job of explaining this in detail.
 
 .. note::
-   - Make sure to choose the correct board definition file in your CMakeLists.txt file for example ``RP2040-Decoder-board-Rev-1_0`` for Hardware Rev 1.0.
+   - Make sure to choose the correct board definition file in your CMakeLists.txt file ``RP2040-Decoder-board-USB`` for the USB Hardware or ``RP2040-Decoder-board-Legacy`` for the old legacy version without usb.
    - In VSCode open the "Software" subdirectory for the extension to detect you project automatically.
 
 .. _flashing_the_software:
@@ -70,8 +70,8 @@ The most relevant sections in the book are `Chapter 4.3. Debug <https://datashee
 ----------------------------------
 
 | Please refer to the hardware section for your board:
-| :ref:`Wiring Rev 1.0 <wiring_rev_1_0>`
-| :ref:`Wiring Rev 0.3 <wiring_rev_0_3>`
+| :ref:`Wiring USB Hardware Revision <wiring_USB>`
+| :ref:`Wiring Legacy Hardware Revision <wiring_Legacy>`
 
 6. Resolving issues
 ----------------------------------

@@ -19,8 +19,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Overview" href="../rev_0_3/hw_description.html" />
-    <link rel="prev" title="Hardware" href="../index.html" /> 
+    <link rel="next" title="Software" href="../../software/index.html" />
+    <link rel="prev" title="Overview" href="../USB/hw_description.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,7 +46,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../gs/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Hardware</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#revision-1-0">Revision 1.0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#revision-1-0">Revision 1.0</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#revision-0-3">Revision 0.3</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Overview</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#electrical-characteristics">Electrical Characteristics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#input-stage">Input Stage</a></li>
@@ -58,7 +59,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#wiring-the-decoder">Wiring the Decoder</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#revision-0-3">Revision 0.3</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../software/index.html">Software</a></li>
@@ -82,7 +82,7 @@
           <li class="breadcrumb-item"><a href="../index.html">Hardware</a></li>
       <li class="breadcrumb-item active">Overview</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/hardware/rev_1_0/hw_description.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/hardware/Legacy/hw_description.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -93,7 +93,7 @@
   <section id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h1>
 <figure class="align-center" id="id1">
-<img alt="Block Diagram" src="../../_images/Block_Diagram_Hardware1.svg" />
+<img alt="Block Diagram" src="../../_images/Block_Diagram_Hardware.svg" />
 <figcaption>
 <p><span class="caption-text">Harware block diagram</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
@@ -128,7 +128,6 @@
 <dt><strong>Microcontroller</strong></dt><dd><ul>
 <li><p>Flash memory</p></li>
 <li><p>Crystal oscillator</p></li>
-<li><p>USB Connector</p></li>
 </ul>
 </dd>
 </dl>
@@ -148,25 +147,25 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Absolute max. DCC input voltage difference</p></td>
+<tr class="row-even"><td><p>Absolute max. DCC Input Voltage difference</p></td>
 <td><p>V<sub>DCC</sub></p></td>
-<td></td>
+<td><p>0</p></td>
 <td><p>+24</p></td>
 <td><p>V</p></td>
 </tr>
-<tr class="row-odd"><td><p>Absolute max. GPIO voltage<sup>(0)</sup></p></td>
+<tr class="row-odd"><td><p>Absolute max. GPIO Voltage<sup>(0)</sup></p></td>
 <td><p>V<sub>PIN</sub></p></td>
 <td><p>-0.5</p></td>
 <td><p>3.3+0.5</p></td>
 <td><p>V</p></td>
 </tr>
-<tr class="row-even"><td><p>Input voltage high<sup>(0)</sup></p></td>
+<tr class="row-even"><td><p>Input Voltage High<sup>(0)</sup></p></td>
 <td><p>V<sub>IH</sub></p></td>
 <td><p>2.145</p></td>
 <td><p>3.6</p></td>
 <td><p>V</p></td>
 </tr>
-<tr class="row-odd"><td><p>Input voltage low<sup>(0)</sup></p></td>
+<tr class="row-odd"><td><p>Input Voltage Low<sup>(0)</sup></p></td>
 <td><p>V<sub>IL</sub></p></td>
 <td><p>0</p></td>
 <td><p>1.155</p></td>
@@ -184,18 +183,17 @@
 <td><p>2.8</p></td>
 <td><p>A</p></td>
 </tr>
-<tr class="row-even"><td><p>Absolute max. auxiliary output current <sup>(2)(3)</sup></p></td>
+<tr class="row-even"><td><p>Absolute max. auxiliary output current <sup>(2)</sup></p></td>
 <td><p>I<sub>AUX</sub></p></td>
 <td></td>
-<td><p>1.4</p></td>
-<td><p>A</p></td>
+<td><p>400</p></td>
+<td><p>mA</p></td>
 </tr>
 </tbody>
 </table>
 <p>(0): According to: <a class="reference external" href="https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf">RP2040 Datasheet</a> (assuming V<sub>DD</sub>= 3.3V)</p>
 <p>(1): According to: <a class="reference external" href="https://www.lcsc.com/datasheet/lcsc_datasheet_2409291808_Bardeen-Micro--BDR6133_C2687793.pdf">BDR6133 Datasheet</a></p>
-<p>(2): According to: <a class="reference external" href="https://www.vishay.com/docs/63399/si1308edl.pdf">Si1308EDL Datasheet</a></p>
-<p>(3): T<sub>Case</sub>= 25°C, keep power dissipation, thermal resistance the corresponding temperature rise ΔT and switching losses in PWM mode in mind!</p>
+<p>(2): According to: <a class="reference external" href="https://toshiba.semicon-storage.com/info/T2N7002BK_datasheet_en_20191025.pdf?did=30376&amp;prodName=T2N7002BK">T2N7002BK Datasheet</a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Keep in mind that realistically these maximum ratings can’t be reached in practice due to thermal limitations. For example the motor current can probably not exceed 1.5A for continuous operation.</p>
@@ -204,18 +202,18 @@
 <section id="input-stage">
 <h1>Input Stage<a class="headerlink" href="#input-stage" title="Link to this heading"></a></h1>
 <figure class="align-center" id="id3">
-<img alt="Input Stage" src="../../_images/Input_Stage1.svg" />
+<img alt="Input Stage" src="../../_images/Input_Stage.svg" />
 <figcaption>
 <p><span class="caption-text">Input stage</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<p>D2 Rectifies the DCC square-wave into VDC, the amplitude is not critical as long as it’s within the 25V limit. The rectified voltage VDC is then provided to the 3.3V voltage regulator and to the motor driver. The shottky diode D1 and the bridge rectifier D2 ensure a logical “or” linkage of the VBUS supply voltages and the DCC input voltage, meaning that the decoder can be powered either by the DCC track signal or by the VBUS supply voltage which is supplied via USB connector.</p>
-<p>The MOSFET on the right effectively translates the rather high DCC voltage to a suitable level for the microcontroller to process. When Q1 is turned off GPIO21 is pulled high by the RP2040 internal pull-up resistor, as soon as Q1 gets turned on (V<sub>GS</sub>&gt; V<sub>GS,th</sub>), GPIO21 gets pulled to GND potential. R1 and R2 ensure that V<sub>GS</sub>doesn’t exceed ±12V.</p>
+<p>D1 Rectifies the DCC square-wave into +V, the amplitude is not critical as long as it’s within the 25V limit. The rectified voltage +V is then provided to the 3.3V voltage regulator (U1) and to the motor driver (U2).</p>
+<p>The MOSFET on the right effectively translates the rather high DCC voltage to a suitable level for the microcontroller to process. When Q1 is turned off GPIO21 is pulled high by the RP2040 internal pull-up resistor, as soon as Q1 gets turned on (V<sub>GS</sub>&gt; V<sub>GS,th</sub>), GPIO21 gets pulled to GND potential. R1 and R2 ensure that V<sub>GS</sub>doesn’t exceed ±20V.</p>
 </section>
 <section id="motor-driver">
 <h1>Motor Driver<a class="headerlink" href="#motor-driver" title="Link to this heading"></a></h1>
 <figure class="align-center" id="id4">
-<img alt="Motor Driver" src="../../_images/Motor_Driver1.svg" />
+<img alt="Motor Driver" src="../../_images/Motor_Driver.svg" />
 <figcaption>
 <p><span class="caption-text">Motor driver</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
 </figcaption>
@@ -225,12 +223,12 @@
 <section id="auxiliary-outputs">
 <h1>Auxiliary Outputs<a class="headerlink" href="#auxiliary-outputs" title="Link to this heading"></a></h1>
 <figure class="align-center" id="id5">
-<img alt="Auxiliary Outputs" src="../../_images/Aux_Outputs1.svg" />
+<img alt="Auxiliary Outputs" src="../../_images/Aux_Outputs.svg" />
 <figcaption>
 <p><span class="caption-text">Auxiliary Outputs</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<p>Switching of loads can be done using four N-Channel MOSFETs (Q2 to Q5). The amount of current is somewhat dependend on either static R<sub>DS(on)</sub> losses and/or switching losses using PWM. They are switching on the low-side, which means the load effectively gets connected to GND potential as the transistor starts to conduct. GPIO24 - GPIO27 are used.</p>
+<p>Switching of loads can be done using four N-Channel MOSFETs (Q2 to Q5). The amount of current is somewhat dependend on either static R<sub>DS(on)</sub>losses and/or switching losses using PWM. They are switching on the low-side, which means the load effectively gets connected to GND potential as the transistor starts to conduct. GPIO24 - GPIO27 are used.</p>
 </section>
 <section id="gpio">
 <h1>GPIO<a class="headerlink" href="#gpio" title="Link to this heading"></a></h1>
@@ -239,26 +237,26 @@
 <section id="microcontroller">
 <h1>Microcontroller<a class="headerlink" href="#microcontroller" title="Link to this heading"></a></h1>
 <figure class="align-center" id="id6">
-<img alt="Microcontroller" src="../../_images/Microcontroller1.svg" />
+<img alt="Microcontroller" src="../../_images/Microcontroller.svg" />
 <figcaption>
-<p><span class="caption-text">Microcontroller, flash memory, crystal oscillator, USB connector, …</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+<p><span class="caption-text">Microcontroller, flash memory, crystal oscillator, …</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<p>The Microcontroller needs a crystal oscillator for its clock. External flash memory holds the configuration variables and the program itself. The USB connector can be used to flash the software onto the decoder and also for logging via stdio (can be enabled via CMakeLists.txt). D3 is used as a status LED. R11 &amp; C13 are used to filter ADC_AVDD (ADC Reference Voltage).</p>
+<p>The Microcontroller needs a crystal oscillator for its clock. External flash memory holds the configuration variables and the program itself. R3 &amp; C14 are used to filter ADC_AVDD (ADC Reference Voltage).</p>
 </section>
 <section id="complete-schematic">
 <h1>Complete Schematic<a class="headerlink" href="#complete-schematic" title="Link to this heading"></a></h1>
 <figure class="align-center" id="id7">
-<img alt="Complete Schematic" src="../../_images/RP2040-Decoder1.svg" />
+<img alt="Complete Schematic" src="../../_images/RP2040-Decoder.svg" />
 <figcaption>
 <p><span class="caption-text">Complete Schematic</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </section>
 <section id="wiring-the-decoder">
-<span id="wiring-rev-1-0"></span><h1>Wiring the Decoder<a class="headerlink" href="#wiring-the-decoder" title="Link to this heading"></a></h1>
+<span id="wiring-legacy"></span><h1>Wiring the Decoder<a class="headerlink" href="#wiring-the-decoder" title="Link to this heading"></a></h1>
 <figure class="align-center" id="id8">
-<a class="reference internal image-reference" href="../../_images/Wiring_diagram1.svg"><img alt="Wiring Diagram" src="../../_images/Wiring_diagram1.svg" style="width: 700px;" />
+<a class="reference internal image-reference" href="../../_images/Wiring_diagram.svg"><img alt="Wiring Diagram" src="../../_images/Wiring_diagram.svg" style="width: 700px;" />
 </a>
 <figcaption>
 <p><span class="caption-text">Wiring Diagram</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
@@ -273,8 +271,8 @@ When switching inductive loads, always include a free-wheeling diode to protect 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../index.html" class="btn btn-neutral float-left" title="Hardware" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../rev_0_3/hw_description.html" class="btn btn-neutral float-right" title="Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../USB/hw_description.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../software/index.html" class="btn btn-neutral float-right" title="Software" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
