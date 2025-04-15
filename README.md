@@ -32,13 +32,13 @@ License
 ------------
 USB hardware version
 <div style="display: flex; justify-content: space-between; align-items: center;">
-  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_USB/top.png" alt="Image 1" style="width: 45%;"/>
-  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_USB/bottom.png" alt="Image 2" style="width: 45%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages/img_USB/top.png" alt="Image 1" style="width: 45%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages/img_USB/bottom.png" alt="Image 2" style="width: 45%;"/>
 </div>
 
 Legacy hardware version
 <div style="display: flex; justify-content: space-between; align-items: center;">
-  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_Legacy/top.png" alt="Image 1" style="width: 45%;"/>
-  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages-dev/img_Legacy/bottom.png" alt="Image 2" style="width: 45%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages/img_Legacy/top.png" alt="Image 1" style="width: 45%;"/>
+  <img src="https://raw.githubusercontent.com/gab-k/RP2040-Decoder/refs/heads/gh-pages/img_Legacy/bottom.png" alt="Image 2" style="width: 45%;"/>
 </div>
 
