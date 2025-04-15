@@ -15,11 +15,11 @@ import subprocess
 import os
 
 # Output directory path
-svg_dir = "../docs/svg/"
+svg_dir = "../docs/svg/hw/USB/"
 # Temp directory path
 temp_dir = "temp/"
 # .kicad_sch path/filename
-kicad_sch_filename = "../KiCad/RP2040-Decoder.kicad_sch"
+kicad_sch_filename = "../KiCad/USB/RP2040-Decoder.kicad_sch"
 
 # Define crop areas with p1 (bottom-left) and p2 (top-right) points and custom pdf_name
 crop_areas = {
