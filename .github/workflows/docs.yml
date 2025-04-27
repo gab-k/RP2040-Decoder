@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Check out the repo
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # fetch all commits and tags
         
     - name: Doxygen build
       uses: mattnotmitt/doxygen-action@v1.9.5

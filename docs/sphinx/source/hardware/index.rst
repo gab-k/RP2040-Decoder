@@ -1,7 +1,7 @@
 Hardware
 ======================
 
-Revision 1.0
+USB
 ------------
 
 .. toctree::
@@ -9,7 +9,7 @@ Revision 1.0
 
    USB/hw_description
 
-Revision 0.3
+Legacy
 ------------
 
 .. toctree::
