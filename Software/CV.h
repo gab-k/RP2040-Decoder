@@ -7,61 +7,61 @@
 // This effectively means: array_index = cv_index - 1
 
 uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
-   0b00000011,         //CV_1  -    Basic address       -   CV_1 = 0 and CV_1 > 127 are not valid - Default = 3
-   0b00001000,         //CV_2  -    V_min               -   Default = 8
+   3,                //CV_1  -    Basic address
+   0,                //CV_2  -    V_start
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 0 == Fastest dec/acc rate; 255 == slowest;
-   0b00000000,         //CV_3  -    Acceleration rate   -   CV_3*CV_175 = Time for one discrete speed step change in ms
-   0b00000000,         //CV_4  -    Deceleration rate   -   CV_4*CV_175 = Time for one discrete speed step change in ms
+   0,                //CV_3  -    Acceleration rate
+   0,                //CV_4  -    Deceleration rate
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b01100100,         //CV_5  -    V_max               -   Default = 100*16
-   0b00111111,         //CV_6  -    V_mid               -   Default = 63*16
-   0b00000010,         //CV_7  -    Version no.                                                         (read-only)
+   255,              //CV_5  -    V_max
+   0,                //CV_6  -    V_mid
+   2,                //CV_7  -    Version no.                                                         (read-only)
     // Writing a value of 8 to CV_8 resets all CV values to the default values in CV.h
-   0b00001101,         //CV_8  -    Manufacturer (13 = Public Domain & Do-It-Yourself Decoders)         (read-only)
-   0b10010110,         //CV_9  -    PWM frequency in Hz = CV_9*100+10000    - Default = (150*100+10000)Hz = 25kHz
-   0b00000001,         //CV_10  -
-   0b11111111,         //CV_11  -   Packet timeout in seconds
-   0b00000100,         //CV_12  -   Permitted operating modes
-   0b00000000,         //CV_13  -
-   0b00000000,         //CV_14  -
-   0b00000000,         //CV_15  -
-   0b00000000,         //CV_16  -
-   0b11000011,         //CV_17  -   Extended/Long 14-Bit address    (Bits 8 to 13)
-   0b11101000,         //CV_18  -   Extended/Long 14-Bit address    (Bits 0 to 7)
-   0b00000000,         //CV_19  -
-   0b00000000,         //CV_20  -
-   0b00000000,         //CV_21  -
-   0b00000000,         //CV_22  -
-   0b00000000,         //CV_23  -
-   0b00000000,         //CV_24  -
-   0b00000000,         //CV_25  -
-   0b00000000,         //CV_26  -
-   0b00000000,         //CV_27  -
-   0b00000000,         //CV_28  -
+   13,               //CV_8  -    Manufacturer (13 = Public Domain & Do-It-Yourself Decoders)         (read-only)
+   0,                //CV_9  -    PWM frequency
+   0,                //CV_10 -    BEMF Cutout
+   0,                //CV_11 -    Packet timeout
+   0,                //CV_12 -    Power Source Conversion
+   0,                //CV_13 -    DC Mode Function Status F1-F8
+   0,                //CV_14 -    DC Mode Function Status F0 & F9-F12
+   0,                //CV_15 -    Decoder Lock (Key)
+   0,                //CV_16 -    Decoder Lock (Lock)
+   0b11000011,       //CV_17 -    Extended/Long 14-Bit address    (High Byte)
+   0b11101000,       //CV_18 -    Extended/Long 14-Bit address    (Low Byte)
+   0,                //CV_19 -    Consist Address
+   0,                //CV_20 -    (Reserved by NMRA)
+   0,                //CV_21 -    Consist Function Control (F1-F8)
+   0,                //CV_22 -    Consist Function Control (F0 & F9-F12)
+   0,                //CV_23 -    Consist Acceleration Adjustment
+   0,                //CV_24 -    Consist Deceleration Adjustment
+   0,                //CV_25 -    Speed Table Selection
+   0,                //CV_26 -    (Reserved by NMRA)
+   0,                //CV_27 -    Decoder Automatic Stopping Configuration
+   1,                //CV_28 -    RailCom Configuration - Default: RailCom enabled
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    //Bit_1, Bit_2, Bit_3, Bit_4, Bit_6 are currently not in use and therefore irrelevant.
    //Bit_0 is used to reverse direction i.e. 0 = normal; 1 = reverse
    //Bit_5 switches between basic and extended address i.e. 0 = basic address 1 = extended address
-   0b00000000,         //CV_29  -   Decoder Configuration
+   6,                //CV_29 -    Decoder Configuration - Default: Analog Mode enabled, Normal Direction, Speed Steps 28/128
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   0b00000000,         //CV_30  -
-   0b00010000,         //CV_31  -   Extended CV pointer Bits 8-15
-   0b00000000,         //CV_32  -   Extended CV pointer Bits 0-7
-   0b00000000,         //CV_33  -
-   0b00000000,         //CV_34  -
-   0b00000000,         //CV_35  -
-   0b00000000,         //CV_36  -
-   0b00000000,         //CV_37  -
-   0b00000000,         //CV_38  -
-   0b00000000,         //CV_39  -
-   0b00000000,         //CV_40  -
-   0b00000000,         //CV_41  -
-   0b00000000,         //CV_42  -
-   0b00000000,         //CV_43  -
-   0b00000000,         //CV_44  -
-   0b00000000,         //CV_45  -
-   0b00000000,         //CV_46  -
+   0,                //CV_30 -    Error Information
+   0b00010000,         //CV_31  -   Indexed CV High Byte
+   0b00000000,         //CV_32  -   Indexed CV Low Byte
+   1,                //CV_33 -    F0(f) Output Location
+   2,                //CV_34 -    F0(r) Output Location
+   4,                //CV_35 -    F1 Output Location
+   8,                //CV_36 -    F2 Output Location
+   16,               //CV_37 -    F3 Output Location
+   32,               //CV_38 -    F4 Output Location
+   64,               //CV_39 -    F5 Output Location
+   128,              //CV_40 -    F6 Output Location
+   1,                //CV_41 -    F7 Output Location
+   2,                //CV_42 -    F8 Output Location
+   4,                //CV_43 -    F9 Output Location
+   8,                //CV_44 -    F10 Output Location
+   16,               //CV_45 -    F11 Output Location
+   32,               //CV_46 -    F12 Output Location
    // Speed controller - Configuration /////////////////////////////////////////////////////////////////////////////////
    0b11100110,         //CV_47  -   Feed-forward factor k_ff in % = CV_47/255  Default = 230 -> 0.902 = 90.2%         //
    0b00001010,         //CV_48  -   PID Control low pass filter time constant (tau) in ms                             //
