@@ -51,6 +51,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Software Description</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#control-loop-digital-controller">Control Loop &amp; Digital Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#speed-table-initialization">Speed Table Initialization</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#startup-controller">Startup Controller</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pid-controller">PID Controller</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#back-emf-voltage-measurement">Back-EMF voltage measurement</a></li>
@@ -189,7 +190,7 @@
 <p>The block diagram above shows the (simplified) control loop. The actual digital controller block is explained below.</p>
 <p>The <em>Speed Helper</em> block effectively sets the setpoint of the controller according to the CV configured acceleration and deceleration rates and actual target speedstep.</p>
 <p>For feedback the back EMF voltage <em>V_EMF</em> is measured via voltage divider and ADC. <em>V_EMF</em> is proportional to the motor speed.</p>
-<p>While the central component is the PID controller, there is an additional block called <a class="reference external" href="https://en.wikipedia.org/wiki/Feed_forward_(control)">Feed-forward</a> that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the <code class="docutils literal notranslate"><span class="pre">speed_helper()</span></code> function, which delays changing the setpoint according to the configured deceleration/acceleration rates.</p>
+<p>While the central component is the PID controller, there is an additional block called <a class="reference external" href="https://en.wikipedia.org/wiki/Feed_forward_(control)">Feed-forward</a> that has an impact on the control output variable. The Feed-forward block adds an additional offset to the output depending on the setpoint; this is done to achieve better control. A more detailed explanation regarding Feed-forward can be found below. The speed helper block corresponds to the <code class="xref c c-func docutils literal notranslate"><span class="pre">speed_helper()</span></code> function, which delays changing the setpoint according to the configured deceleration/acceleration rates.</p>
 <figure class="align-center" id="id6">
 <img alt="Block Diagram - Digital Controller" src="../_images/Block_Diagram_Digital_Controller.svg" />
 <figcaption>
@@ -203,14 +204,28 @@ The base PWM level is equivalent to a certain PWM duty cycle.
 The base level gets saved and added to the output of the PID controller which handles motor control when the motor is in motion.
 This means the actual output of the PID controller is the sum of the PID output and the base PWM level. This is referred to as the <a class="reference internal" href="#id2"><span class="std std-ref">feed forward</span></a> block.
 The benefit of doing this is that the PID controller does not have to work in the non linear friction region of the motor, improving control performance.</p>
+<section id="speed-table-initialization">
+<h3>Speed Table Initialization<a class="headerlink" href="#speed-table-initialization" title="Link to this heading"></a></h3>
+<p>The speed table is a crucial component of the motor control system, as it translates the 128 speed steps received from the DCC controller into specific setpoints for the PID controller. This table is initialized once at startup in the <code class="xref c c-func docutils literal notranslate"><span class="pre">init_controller()</span></code> function. The shape of the speed curve can be configured using three CV values: <cite>V_min</cite> (CV2), <cite>V_mid</cite> (CV6), and <cite>V_max</cite> (CV5).</p>
+<ul class="simple">
+<li><p><strong>V_min (CV2):</strong> Defines the starting voltage (setpoint) for the first speed step.</p></li>
+<li><p><strong>V_mid (CV6):</strong> Sets the voltage at the midpoint of the speed range (speed step 64).</p></li>
+<li><p><strong>V_max (CV5):</strong> Determines the maximum voltage at the highest speed step (126).</p></li>
+</ul>
+<p>The speed table is calculated with two linear interpolations: one from <cite>V_min</cite> to <cite>V_mid</cite> and another from <cite>V_mid</cite> to <cite>V_max</cite>. This creates a two-segment linear speed curve, which allows for a non-linear relationship between the speed step and the motor voltage. For example, you can have a gentle acceleration at low speeds and a more aggressive one at higher speeds.</p>
+<p>The <code class="xref c c-func docutils literal notranslate"><span class="pre">speed_helper()</span></code> function then uses this table to gradually adjust the setpoint based on the configured acceleration and deceleration rates.</p>
+</section>
 <section id="startup-controller">
 <h3>Startup Controller<a class="headerlink" href="#startup-controller" title="Link to this heading"></a></h3>
-<p>Used on startup, meaning when the motor is not moving. First the startup controller retrieves the last <cite>BASE_PWM_ARR_LEN</cite> base PWM levels.
-The base pwm levels are not retained on a power cycle. That means when there is no previous base PWM level saved, the startup controller will start ramping up from 0.
-When there is less than <cite>BASE_PWM_ARR_LEN</cite> base PWM levels saved, the startup controller will ramp up from the average of the saved base PWM levels.</p>
-<p>After the startup controller retrieved the average of the last base pwm levels <span class="math notranslate nohighlight">\(\bar{b}\)</span> it sets a PWM duty cycle level of <span class="math notranslate nohighlight">\(\frac{2}{3} \cdot \bar{b}\)</span> and then ramps up the duty cycle/PWM level until the motor starts moving.
-When no previous startup PWM levels are saved the startup controller begins ramping up from 0.
-The actual value at which the motor started moving is multiplied by <cite>K_FF</cite> and used as a reference for the <a class="reference internal" href="#id2"><span class="std std-ref">feed forward</span></a> block.</p>
+<p>The startup controller is used when the motor is stationary to find the minimum PWM level required to overcome static friction. This process is not retained on a power cycle.</p>
+<p>The initial PWM level for the startup sequence is determined as follows:</p>
+<ul class="simple">
+<li><p>If previous successful startup levels are saved in memory, the controller calculates their average, <span class="math notranslate nohighlight">\(\bar{b}\)</span>, and sets the initial PWM level to <span class="math notranslate nohighlight">\(\frac{2}{3} \cdot \bar{b}\)</span>.</p></li>
+<li><p>If no previous levels are saved, the ramp-up starts from a PWM level of 0.</p></li>
+</ul>
+<p>From this starting point, the controller progressively ramps up the duty cycle until motor movement is detected. The ramp-up is not smooth but occurs in steps, with the step size determined by the maximum PWM level (which is a function of the PWM frequency).</p>
+<p>If the PWM level reaches its maximum without motor movement, the controller reduces the starting level by half and retries, preventing excessive power to a stalled motor.</p>
+<p>Once movement is detected (via back-EMF voltage), the current PWM <cite>level</cite> is saved as a new base value for future startups. This value is also multiplied by <cite>K_FF</cite> (from CV47) and used as the feed-forward term for the PID controller.</p>
 </section>
 <section id="pid-controller">
 <h3>PID Controller<a class="headerlink" href="#pid-controller" title="Link to this heading"></a></h3>
@@ -255,6 +270,8 @@ d_n &amp;= \frac{2 K_D \cdot \left(e_n - e_{n-1}\right) + \left(2 \tau - T_s\rig
 </figcaption>
 </figure>
 <p>Another aspect to consider is the implementation of <a class="reference external" href="https://en.wikipedia.org/wiki/Gain_scheduling">gain scheduling</a>. K<sub>P</sub> is a function of the current setpoint. Often it is favorable to have a higher proportional gain K<sub>P</sub> for slow speeds, achieving better control results. The illustration above shows the default setting for K<sub>P</sub>. CV_54 &amp; CV_55 are used to set K<sub>P</sub> &#64; x<sub>0</sub>, CV_56 &amp; CV_57 for K<sub>P</sub> &#64; x<sub>1</sub>, and CV_58 &amp; CV_59 for K<sub>P</sub> &#64; x<sub>2</sub>. Additionally, CV_60 is used to shift x<sub>1</sub> from the leftmost point (0% = 0/255) to the rightmost point (100% = 255/255).</p>
+<p>The <code class="xref c c-func docutils literal notranslate"><span class="pre">get_kp()</span></code> function implements this gain scheduling. It calculates the proportional gain <cite>K_p</cite> based on the current setpoint <cite>sp</cite>. The function uses two different linear equations to determine <cite>K_p</cite>, depending on whether the setpoint is above or below the <cite>k_p_x_1</cite> threshold. This creates a piecewise linear function for <cite>K_p</cite>, allowing for different gain characteristics at different speed ranges.</p>
+<p>The parameters for these linear equations (<cite>k_p_m_1</cite>, <cite>k_p_m_2</cite>, <cite>k_p_y_0</cite>, <cite>k_p_y_1</cite>) are pre-calculated in the <code class="xref c c-func docutils literal notranslate"><span class="pre">init_controller()</span></code> function based on the corresponding CV values.</p>
 </section>
 <section id="id2">
 <span id="id3"></span><h4>Feed-forward<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
@@ -262,10 +279,16 @@ d_n &amp;= \frac{2 K_D \cdot \left(e_n - e_{n-1}\right) + \left(2 \tau - T_s\rig
 In essence this means that the output of the PID controller is not only the sum of the proportional, integral, and derivative parts, but also the base PWM level.
 The base PWM level is set by the startup controller and is the PWM level at which the motor starts moving.</p>
 </section>
+<section id="speed-helper">
+<h4>Speed Helper<a class="headerlink" href="#speed-helper" title="Link to this heading"></a></h4>
+<p>The <code class="xref c c-func docutils literal notranslate"><span class="pre">speed_helper()</span></code> function is responsible for implementing smooth acceleration and deceleration. It is called by a repeating timer, with the interval configured by CV175. This function acts as a temporal filter for the speed setpoint.</p>
+<p>Instead of instantly changing the motor’s setpoint to the new target speed step, the <code class="xref c c-func docutils literal notranslate"><span class="pre">speed_helper()</span></code> function gradually increments or decrements the current setpoint based on the acceleration (CV3) and deceleration (CV4) rates. These CVs determine how many calls to <code class="xref c c-func docutils literal notranslate"><span class="pre">speed_helper()</span></code> are needed for a single speed step change. For example, if the acceleration rate is set to 5, the <code class="xref c c-func docutils literal notranslate"><span class="pre">speed_helper()</span></code> must be called 5 times before the setpoint is incremented to the next speed step. This creates a time-based acceleration/deceleration curve.</p>
+<p>The function also handles direction changes. If a direction change is detected, it will immediately jump to the new target speed without any delay, ensuring a responsive change in direction.</p>
+</section>
 </section>
 <section id="back-emf-voltage-measurement">
 <h3>Back-EMF voltage measurement<a class="headerlink" href="#back-emf-voltage-measurement" title="Link to this heading"></a></h3>
-<p>To provide a feedback signal proportional to the motor speed, the ADC is used to measure the <a class="reference external" href="https://en.wikipedia.org/wiki/Counter-electromotive_force">Back-EMF voltage</a>. The measurement works by setting the PWM duty cycle to 0%, waiting for a certain delay time (CV_62), and then measuring x times (x = CV_63). While measuring, the array with measurement values is sorted using insertion sort. Afterwards, y elements (y = CV_63) from the left (lowest values) and z elements (z = CV_64) from the right (highest values) will be dismissed to mitigate the impact of potential outliers in measurement. The average value of the remaining values will be computed and fed back into the control algorithm. Considering default settings (100us delay, 100 samples, ~2µs sampling time), the complete measurement run, including averaging, takes about 0.3ms to 0.35ms, which effectively reduces the maximum possible duty cycle to about 93% to 94%.</p>
+<p>To provide a feedback signal proportional to the motor speed, the ADC is used to measure the <a class="reference external" href="https://en.wikipedia.org/wiki/Counter-electromotive_force">Back-EMF voltage</a>. The measurement works by setting the PWM duty cycle to 0%, waiting for a certain delay time (CV_62), and then measuring x times (x = CV_61). The ADC input channel is selected based on the motor’s direction (forward or reverse). While measuring, the array with measurement values is sorted using insertion sort. Afterwards, y elements (y = CV_63) from the left (lowest values) and z elements (z = CV_64) from the right (highest values) will be dismissed to mitigate the impact of potential outliers in measurement. The average value of the remaining values will be computed and fed back into the control algorithm. Considering default settings (100us delay, 100 samples, ~2µs sampling time), the complete measurement run, including averaging, takes about 0.3ms to 0.35ms, which effectively reduces the maximum possible duty cycle to about 93% to 94%.</p>
 </section>
 </section>
 <section id="dcc-signal-decoding">
