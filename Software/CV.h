@@ -127,11 +127,11 @@ uint8_t CV_ARRAY_DEFAULT [CV_ARRAY_SIZE] = {
    0b00000000,         //CV_102  -
    0b00000000,         //CV_103  -
    0b00000000,         //CV_104  -
-   0b00000000,         //CV_105  -
-   0b00000000,         //CV_106  -
-   0b00000000,         //CV_107  -
-   0b00000000,         //CV_108  -
-   0b00000000,         //CV_109  -
+   0b00000000,         //CV_105  - user data
+   0b00000000,         //CV_106  - user data
+   0b00000001,         //CV_107  - MSB Manufacturer ID for DIY https://www.decoderdb.com/database/decoderdb-list
+   0b00001011,         //CV_108  - LSB Manufacturer ID
+   0b00000000,         //CV_109  - decoder id
    0b00000000,         //CV_110  -
    0b00000000,         //CV_111  -
 ///// PWM - Configuration //////////////////////////////////////////////////////////////////////////////////////////////
