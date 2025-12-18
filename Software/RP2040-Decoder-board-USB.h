@@ -19,6 +19,9 @@
 // For board detection
 #define RP2040_DECODER
 
+// Decoder ID (CV_109)
+#define DECODER_ID 2
+
 // In case the xosc takes longer to stabilize than usual
 #ifndef PICO_XOSC_STARTUP_DELAY_MULTIPLIER
 #define PICO_XOSC_STARTUP_DELAY_MULTIPLIER 64
