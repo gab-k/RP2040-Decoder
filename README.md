@@ -15,12 +15,12 @@ Designed to be a low-cost, open-source alternative to commercial DCC decoders, i
 The system uses each of the two ARM Cortex-M0+ cores for separate tasks:
 
 *   **Core 0: Signal Processing & Management**
-    *   Real-time DCC edge detection and packet decoding.
+    *   DCC edge detection and packet decoding.
     *   Configuration Variable (CV) management using persistent flash storage.
     *   Service Mode (Programming Track) logic and acknowledgment pulse generation.
 *   **Core 1: Motion Control**
-    *   **PID Controller**: A discrete-time PID implementation utilizing a bilinear transform for stability.
-    *   **Back-EMF Feedback**: Real-time load compensation via ADC sampling during PWM-off cycles.
+    *   **PID Controller**: A discrete-time PID motor controller implementation utilizing based on a bilinear transform formula.
+    *   **Back-EMF Feedback**: ADC sampling during PWM-off cycles.
     *   **Adaptive Control**: Gain scheduling for $K_P$ and a startup controller (feed-forward) to overcome static friction.
 
 ## Hardware Revisions
